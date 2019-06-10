@@ -42,8 +42,20 @@ $config = [
                 ],
             ],
         ],
-        'db' => $db,
-
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=localhost;dbname=binapile_dss',
+            'username' => 'root',
+            'password' => '',
+            'charset' => 'utf8',
+        ],
+        'db1' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=localhost;dbname=binapile_bpqc',
+            'username' => 'binapile_bpqc',
+            'password' => 'bpqcadmin1234',
+            'charset' => 'utf8',
+        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
