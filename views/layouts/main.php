@@ -10,7 +10,13 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
-AppAsset::register($this);
+
+/* @var $this \yii\web\View */
+/* @var $content string */
+/*
+use yii\dependencies
+*/
+//Register class
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>

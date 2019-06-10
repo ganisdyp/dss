@@ -1,8 +1,8 @@
 <?php
-
+use yii\web\Request;
+$baseUrl = str_replace('/web', '', (new Request)->getBaseUrl());
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
-
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
@@ -15,6 +15,7 @@ $config = [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'TSkjbBih8QcVc-_UMg0sjZY22iEGh_sa',
+            'baseUrl' => $baseUrl,
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -61,6 +62,15 @@ $config = [
             'showScriptName' => false,
             'rules' => [
             ],
+            'baseUrl' => $baseUrl,
+        ],
+        'view'=>[
+            'theme'=>[
+                'pathMap'=>[
+                    '@app/views'=>'@app/themes/adminlte/views'
+                   // '@app/views' => '@vendor/ramosisw/yii2-material-dashboard/views'
+                ]
+            ]
         ],
 
     ],
