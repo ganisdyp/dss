@@ -60,7 +60,7 @@
                             ],
                         ],
                     ],
-                    ['label' => 'User Management', 'icon' => 'user', 'url' => ['/personal/profile/index']],
+                    ['label' => 'User Management', 'icon' => 'user', 'url' => ['/profile/index']],
                 ],
             ]
         ) ?>
