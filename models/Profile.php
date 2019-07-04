@@ -3,7 +3,7 @@
 namespace app\models;
 
 use Yii;
-
+use yii\behaviors\TimestampBehavior;
 /**
  * This is the model class for table "profile".
  *
@@ -34,19 +34,25 @@ class Profile extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+   /* public function behaviors()
+    {
+        return [
+            TimestampBehavior::className(),
+        ];
+    }*/
     public function rules()
     {
         return [
-            [['id', 'Name', 'user_id', 'Username', 'Password', 'plant_id'], 'required'],
+            [['Name', 'user_id', 'Username', 'Password', 'plant_id'], 'required'],
             [['id', 'user_id', 'Inactive', 'plant_id'], 'integer'],
-            [['date_created', 'last_accessed'], 'safe'],
-            [['Status'], 'string'],
-            [['Name'], 'string', 'max' => 100],
-            [['Username', 'Password'], 'string', 'max' => 20],
-            [['Username'], 'unique'],
-            [['id', 'user_id', 'plant_id'], 'unique', 'targetAttribute' => ['id', 'user_id', 'plant_id']],
-            [['plant_id'], 'exist', 'skipOnError' => true, 'targetClass' => Plant::className(), 'targetAttribute' => ['plant_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+         //   [['date_created', 'last_accessed'], 'safe'],
+         //   [['Status'], 'string'],
+         //   [['Name'], 'string', 'max' => 100],
+         //   [['Username', 'Password'], 'string', 'max' => 20],
+         //   [['Username'], 'unique'],
+        //    [['id', 'user_id', 'plant_id'], 'unique', 'targetAttribute' => ['id', 'user_id', 'plant_id']],
+        //    [['plant_id'], 'exist', 'skipOnError' => true, 'targetClass' => Plant::className(), 'targetAttribute' => ['plant_id' => 'id']],
+        //    [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 

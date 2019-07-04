@@ -78,6 +78,9 @@ class ProfileController extends Controller
                     $model->profile_photo = $user->id . '.' . $file->extension;
                     $file->saveAs('uploads/profile/' . $user->id . '.' . $file->extension);
                 }*/
+
+                $model->Inactive = 0;
+                $model->Username = $user->username;
                 $model->Password = $password;
                 $model->user_id = $user->id;
                 if($user->role == 1){
@@ -87,11 +90,12 @@ class ProfileController extends Controller
                 }else if($user->role == 9){
                     $model->Status = 'ADMIN';
                 }
+             //   $model->plant_id = 4;
                 $model->save();
             }
-            //  var_dump($model);
-            //  var_dump($user);
-            return $this->redirect(['view', 'id' => $model->user_id, 'user_id' => $user->id]);
+
+          //  var_dump($user);
+            return $this->redirect(['view', 'id' => $model->id, 'user_id' => $user->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,

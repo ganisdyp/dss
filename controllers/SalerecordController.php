@@ -8,7 +8,9 @@ use app\models\SalerecordSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use yii\filters\AccessControl;
+use app\components\BinapileRule;
+use app\models\User;
 /**
  * SalerecordController implements the CRUD actions for Salerecord model.
  */

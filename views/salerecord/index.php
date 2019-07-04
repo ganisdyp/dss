@@ -6,6 +6,7 @@ use yii\widgets\Pjax;
 use fedemotta\datatables\DataTables;
 use app\models\Salerecord;
 use app\models\SalerecordSearch;
+use app\models\User;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\SalerecordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -82,10 +83,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php Pjax::end(); ?>
 
 </div>
+<?php //if () { ?>
 <div class="salerecord-create">
 
-    <?= $this->render('_form', [
+    <?= $this->render('create', [
         'model' => $model,
     ]) ?>
 
 </div>
+<?php //} ?>
