@@ -17,7 +17,7 @@ class ProfileOldSearch extends Profile
     public function rules()
     {
         return [
-            [['id', 'UserID', 'Inactive', 'plant_id'], 'integer'],
+            [['id', 'user_id', 'Inactive', 'plant_id'], 'integer'],
             [['Name', 'date_created', 'Status', 'Username', 'Password', 'last_accessed'], 'safe'],
         ];
     }
@@ -60,7 +60,7 @@ class ProfileOldSearch extends Profile
         $query->andFilterWhere([
             'id' => $this->id,
             'date_created' => $this->date_created,
-            'UserID' => $this->UserID,
+            'user_id' => $this->user_id,
             'Inactive' => $this->Inactive,
             'last_accessed' => $this->last_accessed,
             'plant_id' => $this->plant_id,

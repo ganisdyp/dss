@@ -6,12 +6,12 @@
  * Time: 16:41
  */
 
-namespace common\components;
+namespace app\components;
 
 
 use yii\filters\AccessRule;
 
-class HanumanRule extends AccessRule
+class BinapileRule extends AccessRule
 {
     protected function matchRole($user)
     {

@@ -47,15 +47,15 @@ class ProfileOldController extends Controller
     /**
      * Displays a single Profile model.
      * @param integer $id
-     * @param integer $UserID
+     * @param integer $user_id
      * @param integer $plant_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id, $UserID, $plant_id)
+    public function actionView($id, $user_id, $plant_id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id, $UserID, $plant_id),
+            'model' => $this->findModel($id, $user_id, $plant_id),
         ]);
     }
 
@@ -69,7 +69,7 @@ class ProfileOldController extends Controller
         $model = new Profile();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id, 'UserID' => $model->UserID, 'plant_id' => $model->plant_id]);
+            return $this->redirect(['view', 'id' => $model->id, 'user_id' => $model->user_id, 'plant_id' => $model->plant_id]);
         }
 
         return $this->render('create', [
@@ -81,17 +81,17 @@ class ProfileOldController extends Controller
      * Updates an existing Profile model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
-     * @param integer $UserID
+     * @param integer $user_id
      * @param integer $plant_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id, $UserID, $plant_id)
+    public function actionUpdate($id, $user_id, $plant_id)
     {
-        $model = $this->findModel($id, $UserID, $plant_id);
+        $model = $this->findModel($id, $user_id, $plant_id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id, 'UserID' => $model->UserID, 'plant_id' => $model->plant_id]);
+            return $this->redirect(['view', 'id' => $model->id, 'user_id' => $model->user_id, 'plant_id' => $model->plant_id]);
         }
 
         return $this->render('update', [
@@ -103,14 +103,14 @@ class ProfileOldController extends Controller
      * Deletes an existing Profile model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @param integer $UserID
+     * @param integer $user_id
      * @param integer $plant_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id, $UserID, $plant_id)
+    public function actionDelete($id, $user_id, $plant_id)
     {
-        $this->findModel($id, $UserID, $plant_id)->delete();
+        $this->findModel($id, $user_id, $plant_id)->delete();
 
         return $this->redirect(['index']);
     }
@@ -119,14 +119,14 @@ class ProfileOldController extends Controller
      * Finds the Profile model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @param integer $UserID
+     * @param integer $user_id
      * @param integer $plant_id
      * @return Profile the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id, $UserID, $plant_id)
+    protected function findModel($id, $user_id, $plant_id)
     {
-        if (($model = Profile::findOne(['id' => $id, 'UserID' => $UserID, 'plant_id' => $plant_id])) !== null) {
+        if (($model = Profile::findOne(['id' => $id, 'user_id' => $user_id, 'plant_id' => $plant_id])) !== null) {
             return $model;
         }
 

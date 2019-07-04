@@ -258,7 +258,7 @@ use yii\helpers\Html;
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="/dss/profile?id=1&UserID=1&plant_id=0" class="btn btn-default btn-flat">Profile</a>
+                                <a href="/dss/profile?id=1&user_id=1&plant_id=0" class="btn btn-default btn-flat">Profile</a>
                             </div>
                             <div class="pull-right">
                                 <?= Html::a(

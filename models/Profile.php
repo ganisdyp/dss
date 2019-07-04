@@ -11,7 +11,7 @@ use Yii;
  * @property string $Name First Name
  * @property string $date_created
  * @property string $Status
- * @property int $UserID
+ * @property int $user_id
  * @property string $Username
  * @property string $Password
  * @property int $Inactive
@@ -37,16 +37,16 @@ class Profile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'Name', 'UserID', 'Username', 'Password', 'plant_id'], 'required'],
-            [['id', 'UserID', 'Inactive', 'plant_id'], 'integer'],
+            [['id', 'Name', 'user_id', 'Username', 'Password', 'plant_id'], 'required'],
+            [['id', 'user_id', 'Inactive', 'plant_id'], 'integer'],
             [['date_created', 'last_accessed'], 'safe'],
             [['Status'], 'string'],
             [['Name'], 'string', 'max' => 100],
             [['Username', 'Password'], 'string', 'max' => 20],
             [['Username'], 'unique'],
-            [['id', 'UserID', 'plant_id'], 'unique', 'targetAttribute' => ['id', 'UserID', 'plant_id']],
+            [['id', 'user_id', 'plant_id'], 'unique', 'targetAttribute' => ['id', 'user_id', 'plant_id']],
             [['plant_id'], 'exist', 'skipOnError' => true, 'targetClass' => Plant::className(), 'targetAttribute' => ['plant_id' => 'id']],
-            [['UserID'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['UserID' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -60,7 +60,7 @@ class Profile extends \yii\db\ActiveRecord
             'Name' => 'Name',
             'date_created' => 'Date Created',
             'Status' => 'Status',
-            'UserID' => 'User ID',
+            'user_id' => 'User ID',
             'Username' => 'Username',
             'Password' => 'Password',
             'Inactive' => 'Inactive',
@@ -82,6 +82,6 @@ class Profile extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'UserID']);
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 }

@@ -9,7 +9,6 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\User;
-use yii\web\UploadedFile;
 
 /**
  * ProfileController implements the CRUD actions for Profile model.
@@ -70,20 +69,29 @@ class ProfileController extends Controller
         $user = new User();
 
         if ($model->load(Yii::$app->request->post()) && $user->load(Yii::$app->request->post())) {
+            $password = $user->password_hash;
             $user->password_hash = Yii::$app->security->generatePasswordHash($user->password_hash);
             $user->auth_key = Yii::$app->security->generateRandomString();
             if ($user->save()) {
-                $file = UploadedFile::getInstance($model, 'profile_img');
+               /* $file = UploadedFile::getInstance($model, 'profile_img');
                 if ($file->size != 0) {
                     $model->profile_photo = $user->id . '.' . $file->extension;
                     $file->saveAs('uploads/profile/' . $user->id . '.' . $file->extension);
+                }*/
+                $model->Password = $password;
+                $model->user_id = $user->id;
+                if($user->role == 1){
+                    $model->Status = 'USER';
+                }else if($user->role == 5){
+                    $model->Status = 'ADMIN';
+                }else if($user->role == 9){
+                    $model->Status = 'ADMIN';
                 }
-                $model->UserID = $user->id;
                 $model->save();
             }
             //  var_dump($model);
             //  var_dump($user);
-            return $this->redirect(['view', 'id' => $model->UserID, 'user_id' => $user->id]);
+            return $this->redirect(['view', 'id' => $model->user_id, 'user_id' => $user->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -106,18 +114,20 @@ class ProfileController extends Controller
         $oldPass = $user->password_hash;
         if ($model->load(Yii::$app->request->post()) && $user->load(Yii::$app->request->post())) {
             if ($oldPass != $user->password_hash) {
+                $newPass = $user->password_hash;
                 $user->password_hash = Yii::$app->security->generatePasswordHash($user->password_hash);
             }
             if ($user->save()) {
-                $file = UploadedFile::getInstance($model, 'profile_img');
+               /* $file = UploadedFile::getInstance($model, 'profile_img');
 
                 if (isset($file->size) && $file->size !== 0) {
                     $file->saveAs('uploads/profile/' . $user->id . '.' . $file->extension);
-                }
+                }*/
+                $model->Password = $newPass;
                 $model->save();
             }
 
-            return $this->redirect(['view', 'id' => $model->id, 'user_id' => $model->UserID]);
+            return $this->redirect(['view', 'id' => $model->id, 'user_id' => $model->user_id]);
         } else {
             return $this->render('update', [
                 'model' => $model,

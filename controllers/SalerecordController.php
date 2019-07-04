@@ -23,7 +23,36 @@ class SalerecordController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['post'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                // We will override the default rule config with the new AccessRule class
+                'ruleConfig' => [
+                    'class' => BinapileRule::className(),
+                ],
+                'only' => ['index', 'create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        // Allow plant admin, moderators and admins to create
+                        'roles' => [
+                            User::ROLE_PLANTADMIN,
+                            User::ROLE_HQADMIN,
+                            User::ROLE_MANAGEMENT
+                        ],
+                    ],
+                    [
+                        'actions' => ['update','create','delete'],
+                        'allow' => true,
+                        // Allow moderators and admins to update
+                        'roles' => [
+                            User::ROLE_PLANTADMIN,
+                            User::ROLE_MANAGEMENT
+                        ],
+                    ],
                 ],
             ],
         ];
