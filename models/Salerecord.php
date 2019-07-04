@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "sale_record".
+ * This is the model class for table "salerecord".
  *
  * @property int $id
  * @property string $batch_no
@@ -20,22 +20,25 @@ use Yii;
  * @property string $remark
  * @property int $deleted
  * @property int $truck_id
- * @property int $location_id
+ * @property int $driver_id
+ * @property string $display_date
+ * @property int $project_id
  *
  * @property Customer $customer
+ * @property Driver $driver
  * @property Grade $grade
- * @property Location $location
  * @property Plant $plant
+ * @property Project $project
  * @property Truck $truck
  */
-class SaleRecord extends \yii\db\ActiveRecord
+class Salerecord extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'sale_record';
+        return 'salerecord';
     }
 
     /**
@@ -44,15 +47,16 @@ class SaleRecord extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['batch_no', 'delivery_order_no', 'plant_id', 'customer_id', 'grade_id', 'truck_id', 'location_id'], 'required'],
-            [['batch_no', 'delivery_order_no', 'plant_id', 'customer_id', 'grade_id', 'deleted', 'truck_id', 'location_id'], 'integer'],
+            [['batch_no', 'delivery_order_no', 'plant_id', 'customer_id', 'grade_id', 'truck_id', 'driver_id', 'display_date', 'project_id'], 'required'],
+            [['batch_no', 'delivery_order_no', 'plant_id', 'customer_id', 'grade_id', 'deleted', 'truck_id', 'driver_id', 'project_id'], 'integer'],
             [['m3'], 'number'],
             [['summary_status', 'special_condition', 'remark'], 'string'],
-            [['date_created'], 'safe'],
+            [['date_created', 'display_date'], 'safe'],
             [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['customer_id' => 'id']],
+            [['driver_id'], 'exist', 'skipOnError' => true, 'targetClass' => Driver::className(), 'targetAttribute' => ['driver_id' => 'id']],
             [['grade_id'], 'exist', 'skipOnError' => true, 'targetClass' => Grade::className(), 'targetAttribute' => ['grade_id' => 'id']],
-            [['location_id'], 'exist', 'skipOnError' => true, 'targetClass' => Location::className(), 'targetAttribute' => ['location_id' => 'id']],
             [['plant_id'], 'exist', 'skipOnError' => true, 'targetClass' => Plant::className(), 'targetAttribute' => ['plant_id' => 'id']],
+            [['project_id'], 'exist', 'skipOnError' => true, 'targetClass' => Project::className(), 'targetAttribute' => ['project_id' => 'id']],
             [['truck_id'], 'exist', 'skipOnError' => true, 'targetClass' => Truck::className(), 'targetAttribute' => ['truck_id' => 'id']],
         ];
     }
@@ -76,7 +80,9 @@ class SaleRecord extends \yii\db\ActiveRecord
             'remark' => 'Remark',
             'deleted' => 'Deleted',
             'truck_id' => 'Truck ID',
-            'location_id' => 'Location ID',
+            'driver_id' => 'Driver ID',
+            'display_date' => 'Display Date',
+            'project_id' => 'Project ID',
         ];
     }
 
@@ -91,17 +97,17 @@ class SaleRecord extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getGrade()
+    public function getDriver()
     {
-        return $this->hasOne(Grade::className(), ['id' => 'grade_id']);
+        return $this->hasOne(Driver::className(), ['id' => 'driver_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getLocation()
+    public function getGrade()
     {
-        return $this->hasOne(Location::className(), ['id' => 'location_id']);
+        return $this->hasOne(Grade::className(), ['id' => 'grade_id']);
     }
 
     /**
@@ -115,6 +121,14 @@ class SaleRecord extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getProject()
+    {
+        return $this->hasOne(Project::className(), ['id' => 'project_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getTruck()
     {
         return $this->hasOne(Truck::className(), ['id' => 'truck_id']);
@@ -122,10 +136,10 @@ class SaleRecord extends \yii\db\ActiveRecord
 
     /**
      * {@inheritdoc}
-     * @return SaleRecordQuery the active query used by this AR class.
+     * @return SalerecordQuery the active query used by this AR class.
      */
     public static function find()
     {
-        return new SaleRecordQuery(get_called_class());
+        return new SalerecordQuery(get_called_class());
     }
 }

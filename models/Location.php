@@ -10,9 +10,9 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string $description
+ * @property string $rate_prefix
+ * @property string $rate_number
  * @property int $deleted
- *
- * @property SaleRecord[] $saleRecords
  */
 class Location extends \yii\db\ActiveRecord
 {
@@ -33,7 +33,9 @@ class Location extends \yii\db\ActiveRecord
             [['id', 'name'], 'required'],
             [['id', 'deleted'], 'integer'],
             [['description'], 'string'],
+            [['rate_number'], 'number'],
             [['name'], 'string', 'max' => 255],
+            [['rate_prefix'], 'string', 'max' => 10],
             [['id'], 'unique'],
         ];
     }
@@ -47,15 +49,9 @@ class Location extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
             'description' => 'Description',
+            'rate_prefix' => 'Rate Prefix',
+            'rate_number' => 'Rate Number',
             'deleted' => 'Deleted',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSaleRecords()
-    {
-        return $this->hasMany(SaleRecord::className(), ['location_id' => 'id']);
     }
 }

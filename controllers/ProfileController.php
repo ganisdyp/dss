@@ -8,6 +8,8 @@ use app\models\ProfileSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\User;
+use yii\web\UploadedFile;
 
 /**
  * ProfileController implements the CRUD actions for Profile model.
@@ -15,7 +17,7 @@ use yii\filters\VerbFilter;
 class ProfileController extends Controller
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function behaviors()
     {
@@ -47,15 +49,13 @@ class ProfileController extends Controller
     /**
      * Displays a single Profile model.
      * @param integer $id
-     * @param integer $UserID
-     * @param integer $plant_id
+     * @param integer $user_id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id, $UserID, $plant_id)
+    public function actionView($id, $user_id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id, $UserID, $plant_id),
+            'model' => $this->findModel($id, $user_id),
         ]);
     }
 
@@ -67,50 +67,75 @@ class ProfileController extends Controller
     public function actionCreate()
     {
         $model = new Profile();
+        $user = new User();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id, 'UserID' => $model->UserID, 'plant_id' => $model->plant_id]);
+        if ($model->load(Yii::$app->request->post()) && $user->load(Yii::$app->request->post())) {
+            $user->password_hash = Yii::$app->security->generatePasswordHash($user->password_hash);
+            $user->auth_key = Yii::$app->security->generateRandomString();
+            if ($user->save()) {
+                $file = UploadedFile::getInstance($model, 'profile_img');
+                if ($file->size != 0) {
+                    $model->profile_photo = $user->id . '.' . $file->extension;
+                    $file->saveAs('uploads/profile/' . $user->id . '.' . $file->extension);
+                }
+                $model->UserID = $user->id;
+                $model->save();
+            }
+            //  var_dump($model);
+            //  var_dump($user);
+            return $this->redirect(['view', 'id' => $model->UserID, 'user_id' => $user->id]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+                'user' => $user,
+            ]);
         }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
     }
 
     /**
      * Updates an existing Profile model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
-     * @param integer $UserID
-     * @param integer $plant_id
+     * @param integer $user_id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id, $UserID, $plant_id)
+    public function actionUpdate($id, $user_id)
     {
-        $model = $this->findModel($id, $UserID, $plant_id);
+        $model = $this->findModel($id, $user_id);
+        $user = $model->user;
+        $oldPass = $user->password_hash;
+        if ($model->load(Yii::$app->request->post()) && $user->load(Yii::$app->request->post())) {
+            if ($oldPass != $user->password_hash) {
+                $user->password_hash = Yii::$app->security->generatePasswordHash($user->password_hash);
+            }
+            if ($user->save()) {
+                $file = UploadedFile::getInstance($model, 'profile_img');
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id, 'UserID' => $model->UserID, 'plant_id' => $model->plant_id]);
+                if (isset($file->size) && $file->size !== 0) {
+                    $file->saveAs('uploads/profile/' . $user->id . '.' . $file->extension);
+                }
+                $model->save();
+            }
+
+            return $this->redirect(['view', 'id' => $model->id, 'user_id' => $model->UserID]);
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+                'user' => $user,
+            ]);
         }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
     }
 
     /**
      * Deletes an existing Profile model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
-     * @param integer $UserID
-     * @param integer $plant_id
+     * @param integer $user_id
      * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id, $UserID, $plant_id)
+    public function actionDelete($id, $user_id)
     {
-        $this->findModel($id, $UserID, $plant_id)->delete();
+        $this->findModel($id, $user_id)->delete();
 
         return $this->redirect(['index']);
     }
@@ -119,17 +144,16 @@ class ProfileController extends Controller
      * Finds the Profile model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @param integer $UserID
-     * @param integer $plant_id
+     * @param integer $user_id
      * @return Profile the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id, $UserID, $plant_id)
+    protected function findModel($id, $user_id)
     {
-        if (($model = Profile::findOne(['id' => $id, 'UserID' => $UserID, 'plant_id' => $plant_id])) !== null) {
+        if (($model = Profile::findOne(['id' => $id, 'user_id' => $user_id])) !== null) {
             return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
         }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }

@@ -50,7 +50,7 @@ class Grade extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Grade',
             'charac_strength28' => 'Charac Strength28',
             'cement_type' => 'Cement Type',
             'specified_slump' => 'Specified Slump',

@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "truck_expense".
+ * This is the model class for table "truckexpense".
  *
  * @property int $id
  * @property string $date_reported
@@ -15,14 +15,14 @@ use Yii;
  *
  * @property Truck $truck
  */
-class TruckExpense extends \yii\db\ActiveRecord
+class Truckexpense extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'truck_expense';
+        return 'truckexpense';
     }
 
     /**

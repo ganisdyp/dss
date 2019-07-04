@@ -5,7 +5,9 @@ use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\FileHelper;
 use yii\web\IdentityInterface;
+use yii\web\UploadedFile;
 
 /**
  * User model
@@ -20,11 +22,23 @@ use yii\web\IdentityInterface;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ * @property integer $role
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+
+
     const STATUS_DELETED = 0;
+    const STATUS_NOT_ACTIVE = 5;
     const STATUS_ACTIVE = 10;
+
+    const ROLE_MANAGEMENT = 9;
+    const ROLE_PLANTADMIN = 1;
+    const ROLE_HQADMIN = 5;
+
+   /* public $password;
+    public $password_confirm;
+    public $is_change_password;*/
 
 
     /**
@@ -34,12 +48,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return '{{%user}}';
     }
-    public function attributeLabels()
-    {
-        return [
-            'password_hash' => 'Password',
-        ];
-    }
+
     /**
      * @inheritdoc
      */
@@ -56,9 +65,17 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'password_hash', 'email'], 'required'],
+            [['email', 'username', 'password_hash'], 'required'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_NOT_ACTIVE, self::STATUS_DELETED]],
+            [['username', 'email', 'auth_key'], 'unique'],
+            [['password_hash', 'password_reset_token', 'email', 'username'], 'string', 'max' => 255],
+            [['auth_key'], 'string', 'max' => 32],
+            ['username', 'unique', 'targetAttribute' => ['username' => 'username']],
+            ['email', 'unique', 'targetAttribute' => ['email' => 'email']],
+            [['username', 'password_hash', 'email'], 'required', 'on' => 'update_account'],
+            ['role', 'default', 'value' => self::ROLE_PLANTADMIN],
+            ['role', 'in', 'range' => [self::ROLE_PLANTADMIN, self::ROLE_HQADMIN, self::ROLE_MANAGEMENT]]
         ];
     }
 
@@ -139,13 +156,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->auth_key;
     }
-    /**
-     * @inheritdoc
-     */
-    public function getCreatedAt()
-    {
-        return $this->created_at;
-    }
+
     /**
      * @inheritdoc
      */
@@ -197,5 +208,25 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public function getProfile()
+    {
+        return $this->hasOne(Profile::className(), ['user_id' => 'id']);
+    }
+
+
+    public function attributeLabels()
+    {
+        return [
+            'password_hash' => 'Password',
+        ];
+    }
+
+    public function attributeHints()
+    {
+        return [
+            'is_change_password' => 'If you selected this checkbox, please insert new password in Password Hash.'
+        ];
     }
 }

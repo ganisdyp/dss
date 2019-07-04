@@ -2,28 +2,29 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Profile;
 
 /**
- * ProfileSearch represents the model behind the search form of `app\models\Profile`.
+ * ProfileSearch represents the model behind the search form about `common\models\Profile`.
  */
 class ProfileSearch extends Profile
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'UserID', 'Inactive', 'plant_id'], 'integer'],
-            [['Name', 'date_created', 'Status', 'Username', 'Password', 'last_accessed'], 'safe'],
+            [['id', 'user_id'], 'integer'],
+            [['profile_photo', 'first_name', 'last_name'], 'safe'],
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function scenarios()
     {
@@ -59,17 +60,12 @@ class ProfileSearch extends Profile
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'date_created' => $this->date_created,
-            'UserID' => $this->UserID,
-            'Inactive' => $this->Inactive,
-            'last_accessed' => $this->last_accessed,
-            'plant_id' => $this->plant_id,
+            'user_id' => $this->user_id,
         ]);
 
-        $query->andFilterWhere(['like', 'Name', $this->Name])
-            ->andFilterWhere(['like', 'Status', $this->Status])
-            ->andFilterWhere(['like', 'Username', $this->Username])
-            ->andFilterWhere(['like', 'Password', $this->Password]);
+        $query->andFilterWhere(['like', 'profile_photo', $this->profile_photo])
+            ->andFilterWhere(['like', 'first_name', $this->first_name])
+            ->andFilterWhere(['like', 'last_name', $this->last_name]);
 
         return $dataProvider;
     }

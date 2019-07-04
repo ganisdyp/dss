@@ -57,7 +57,7 @@ class Profile extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'Name' => 'First Name',
+            'Name' => 'Name',
             'date_created' => 'Date Created',
             'Status' => 'Status',
             'UserID' => 'User ID',

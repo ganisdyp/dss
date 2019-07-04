@@ -3,11 +3,11 @@
 namespace app\models;
 
 /**
- * This is the ActiveQuery class for [[SaleRecord]].
+ * This is the ActiveQuery class for [[Salerecord]].
  *
- * @see SaleRecord
+ * @see Salerecord
  */
-class SaleRecordQuery extends \yii\db\ActiveQuery
+class SalerecordQuery extends \yii\db\ActiveQuery
 {
     /*public function active()
     {
@@ -16,7 +16,7 @@ class SaleRecordQuery extends \yii\db\ActiveQuery
 
     /**
      * {@inheritdoc}
-     * @return SaleRecord[]|array
+     * @return Salerecord[]|array
      */
     public function all($db = null)
     {
@@ -25,7 +25,7 @@ class SaleRecordQuery extends \yii\db\ActiveQuery
 
     /**
      * {@inheritdoc}
-     * @return SaleRecord|array|null
+     * @return Salerecord|array|null
      */
     public function one($db = null)
     {

@@ -43,7 +43,7 @@ class Truck extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'truck_no' => 'Truck No',
+            'truck_no' => 'Truck',
             'remark' => 'Remark',
         ];
     }

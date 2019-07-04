@@ -21,7 +21,8 @@
         "dmstr/yii2-adminlte-asset": "2.*",
         "ramosisw/yii2-material-dashboard": "dev-master",
         "dektrium/yii2-user": "0.9.*@dev",
-        "fedemotta/yii2-widget-datatables": "*"
+        "fedemotta/yii2-widget-datatables": "*",
+        "mdmsoft/yii2-admin": "^3.2"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
