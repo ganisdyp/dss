@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+          //  'id',
             'name',
             'charac_strength28',
             'cement_type',
@@ -33,11 +33,34 @@ $this->params['breadcrumbs'][] = $this->title;
             //'coarse_agg_type',
             //'fine_agg_type',
             //'admixture',
-            //'mix_design_for_cal',
+            'mix_design_for_cal',
             //'deleted',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                            'title' => Yii::t('app', 'grade-view'),
+                        ]);
+                    },
+                    'update' => function ($url, $model) {
+                        $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
+                            'title' => Yii::t('app', 'grade-update'),
+                        ]);
+                    },
+                    'delete' => function ($url, $model) {
+                        $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                            'title' => Yii::t('app', 'grade-delete'),
+                        ]);
+                    }
+
+                ],
+                ],
         ],
+
     ]); ?>
 
     <?php Pjax::end(); ?>

@@ -155,6 +155,15 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->auth_key;
     }
 
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
+    public function getRole()
+    {
+        return $this->role;
+    }
     /**
      * @inheritdoc
      */

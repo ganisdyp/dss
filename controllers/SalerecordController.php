@@ -11,6 +11,9 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\components\BinapileRule;
 use app\models\User;
+use app\models\Profile;
+use app\models\EntryForm;
+
 /**
  * SalerecordController implements the CRUD actions for Salerecord model.
  */
@@ -47,7 +50,7 @@ class SalerecordController extends Controller
                         ],
                     ],
                     [
-                        'actions' => ['update','create','delete'],
+                        'actions' => ['update', 'create', 'delete'],
                         'allow' => true,
                         // Allow moderators and admins to update
                         'roles' => [
@@ -64,23 +67,28 @@ class SalerecordController extends Controller
      * Lists all Salerecord models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($plant_id = null,$date = null)
     {
+
+
+
         $searchModel = new SalerecordSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$plant_id,$date);
 
         $model = new Salerecord();
 
+
         if ($model->load(Yii::$app->request->post())) {
 
-            $model->display_date=(date('Y-m-d'));
+            $model->plant_id = Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id;
+            $model->display_date = (date('Y-m-d'));
             $model->save();
             //   return $this->redirect(['view', 'id' => $model->id, 'plant_id' => $model->plant_id, 'customer_id' => $model->customer_id, 'grade_id' => $model->grade_id]);
-           /* return $this->render('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-                'model' => $model,
-            ]);*/
+            /* return $this->render('index', [
+                 'searchModel' => $searchModel,
+                 'dataProvider' => $dataProvider,
+                 'model' => $model,
+             ]);*/
             return $this->redirect(['index']);
         }
 
@@ -88,8 +96,11 @@ class SalerecordController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
             'model' => $model,
+            'filter_plant' => $plant_id,
+            'filter_date' => $date,
         ]);
     }
+
 
     /**
      * Displays a single Salerecord model.
@@ -118,9 +129,9 @@ class SalerecordController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
 
-            $model->display_date=(date('Y-m-d'));
+            $model->display_date = (date('Y-m-d'));
             $model->save();
-         //   return $this->redirect(['view', 'id' => $model->id, 'plant_id' => $model->plant_id, 'customer_id' => $model->customer_id, 'grade_id' => $model->grade_id]);
+            //   return $this->redirect(['view', 'id' => $model->id, 'plant_id' => $model->plant_id, 'customer_id' => $model->customer_id, 'grade_id' => $model->grade_id]);
             return $this->redirect(['index']);
         }
 
@@ -186,5 +197,21 @@ class SalerecordController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionEntry()
+    {
+        $model = new EntryForm();
+
+        if ($model->load(Yii::$app->request->post())) {
+            // valid data received in $model
+            //   echo $model->plant;
+            // do something meaningful here about $model ...
+
+            return $this->redirect(['index', 'plant' => $model->plant, 'date' => $model->date]);
+        } else {
+            // either the page is initially displayed or there is some validation error
+            // return $this->render('index', ['model' => $model]);
+        }
     }
 }

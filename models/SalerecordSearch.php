@@ -2,10 +2,11 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Salerecord;
-
+use app\models\Profile;
 /**
  * SalerecordSearch represents the model behind the search form of `app\models\Salerecord`.
  */
@@ -39,10 +40,29 @@ class SalerecordSearch extends Salerecord
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params,$plant = null,$date = null)
     {
-      //  $query = Salerecord::find()->where(['display_date'=>date('Y-m-d'),'deleted'=>0])->orderBy(['plant_id'=>'asc','customer_id'=>'asc','grade_id'=>'asc','location_id'=>'asc','batch_no'=>'asc']);
-        $query = Salerecord::find()->where(['display_date'=>date('Y-m-d'),'deleted'=>0])->orderBy(['batch_no'=>'asc','plant_id'=>'asc','customer_id'=>'asc','grade_id'=>'asc','project_id'=>'asc']);
+        $this->load($params);
+        $profile = new Profile();
+
+
+        if($plant != null){
+            $plant_id = $plant;
+        }else {
+            $plant_id = $profile->findByUserId(Yii::$app->user->identity->getId())->plant_id;
+        }
+
+        if(Yii::$app->user->identity->getRole() == 1){ // If Plant Admin
+            $plant_id = $profile->findByUserId(Yii::$app->user->identity->getId())->plant_id;
+        }
+
+        if($date != null){
+
+        }else {
+            $date = date('Y-m-d');
+        }
+        //  $query = Salerecord::find()->where(['display_date'=>date('Y-m-d'),'deleted'=>0])->orderBy(['plant_id'=>'asc','customer_id'=>'asc','grade_id'=>'asc','location_id'=>'asc','batch_no'=>'asc']);
+        $query = Salerecord::find()->where(['display_date'=>$date,'deleted'=>0,'plant_id'=>$plant_id])->orderBy(['batch_no'=>'asc','plant_id'=>'asc','customer_id'=>'asc','grade_id'=>'asc','project_id'=>'asc']);
 
         // add conditions that should always apply here
 
@@ -53,7 +73,7 @@ class SalerecordSearch extends Salerecord
             ],
         ]);
 
-        $this->load($params);
+
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

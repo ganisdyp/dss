@@ -69,7 +69,7 @@ class Salerecord extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'batch_no' => 'Batch No',
-            'delivery_order_no' => 'Delivery Order No',
+            'delivery_order_no' => 'D/O No',
             'm3' => 'M3',
             'summary_status' => 'Summary Status',
             'date_created' => 'Date Created',

@@ -1,3 +1,20 @@
+<?php
+use app\models\Profile;
+if(Yii::$app->user->isGuest){
+    $user_name = 'NO INFORMATION';
+    $user_plant = 'NO INFORMATION';
+    $date = "NO INFORMATION";
+}else{
+    $user_name = Profile::findByUserId(Yii::$app->user->identity->getId())->Name;
+    $user_plant_id = Profile::findByUserId(Yii::$app->user->identity->getId())->plant->id;
+    $user_plant = Profile::findByUserId(Yii::$app->user->identity->getId())->plant->name;
+    $date = date('M.Y', Yii::$app->user->identity->getCreatedAt());
+
+    $default_filter = 'plant_id='.$user_plant_id.'&filter='.date('Y-M');
+    $default_filter_monthly_report = 'plant_id=0&filter='.date('Y-M');
+    $default_filter_driver_report = 'plant_id=0&driver_id=9999&filter='.date('Y-M');
+}
+?>
 <aside class="main-sidebar">
 
     <section class="sidebar">
@@ -8,9 +25,9 @@
                 <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
             </div>
             <div class="pull-left info">
-                <p>{User Name}</p>
+                <p><?= strtoupper($user_name) ?></p>
 
-                <a href="#"><i class="fa fa-circle text-success"></i> {Plant Info}</a>
+                <a href="#"><i class="fa fa-circle text-success"></i> <?= strtoupper($user_plant) ?></a>
             </div>
         </div>
 
@@ -33,6 +50,9 @@
                 'items' => [
                     ['label' => 'Menu DSS', 'options' => ['class' => 'header']],
                     ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
+                    ['label' => 'Dashboard', 'icon' => 'dashboard', 'url' => ['/site/dashboard?'.$default_filter]],
+                    ['label' => 'Driver Trip Report', 'icon' => 'user', 'url' => ['/site/driver?'.$default_filter_driver_report]],
+                    ['label' => 'Monthly Report', 'icon' => 'file-o', 'url' => ['/site/report?'.$default_filter_monthly_report]],
                     [
                         'label' => 'Daily Sales Summary',
                         'icon' => 'share',

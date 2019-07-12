@@ -12,6 +12,17 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
+        'authManager' => [
+            'class' => 'yii\rbac\PhpManager',
+        ],
+        'as access' => [
+            'class' => 'mdm\admin\components\AccessControl',
+            'allowActions' => [
+                'site/*',
+                'admin/*', //ใช้งานครั้งแรกในการตั้งค่าต่างๆ (ห้ามใช้ใน production)
+
+            ]
+        ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'TSkjbBih8QcVc-_UMg0sjZY22iEGh_sa',
@@ -79,6 +90,7 @@ $config = [
             'enableStrictParsing' => true,
             'rules' => array(
                 '' => 'site/index',
+                'admin/index' => 'admin/index',
                 '<module:\w+>/<controller:\w+>/<action:\w+>' => '<module>/<controller>/<action>',
                 '<controller:\w+>/<id:\d+>' => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
@@ -106,16 +118,12 @@ $config = [
         ],
 
     ],
-    /*'modules' => [
-        'user' => [
-            'class' => 'dektrium\user\Module',
-            'enableUnconfirmedLogin' => true,
-            'confirmWithin' => 21600,
-            'cost' => 12,
-            'admins' => ['admin']
+    'modules' => [
+        'admin' => [
+            'class' => 'mdm\admin\Module',
         ],
         //...
-    ],*/
+    ],
     'params' => $params,
 ];
 
