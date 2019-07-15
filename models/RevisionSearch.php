@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Salerecord;
+use app\models\Revision;
 use app\models\Profile;
 /**
- * SalerecordSearch represents the model behind the search form of `app\models\Salerecord`.
+ * RevisionSearch represents the model behind the search form of `app\models\Revision`.
  */
-class SalerecordSearch extends Salerecord
+class RevisionSearch extends Revision
 {
     /**
      * {@inheritdoc}
@@ -64,9 +64,9 @@ class SalerecordSearch extends Salerecord
         //  $query = Salerecord::find()->where(['display_date'=>date('Y-m-d'),'deleted'=>0])->orderBy(['plant_id'=>'asc','customer_id'=>'asc','grade_id'=>'asc','location_id'=>'asc','batch_no'=>'asc']);
 
       if($summary_status == null) {
-          $query = Salerecord::find()->where(['display_date' => $date, 'deleted' => 0, 'plant_id' => $plant_id])->orderBy(['batch_no' => 'asc', 'plant_id' => 'asc', 'customer_id' => 'asc', 'grade_id' => 'asc', 'project_id' => 'asc']);
+          $query = Revision::find()->where(['display_date' => $date, 'deleted' => 0, 'plant_id' => $plant_id])->orderBy(['batch_no' => 'asc', 'plant_id' => 'asc', 'customer_id' => 'asc', 'grade_id' => 'asc', 'project_id' => 'asc']);
       }else{
-          $query = Salerecord::find()->where(['display_date'=>$date,'deleted'=>0,'plant_id'=>$plant_id,'summary_status'=>$summary_status])->orderBy(['batch_no'=>'asc','plant_id'=>'asc','customer_id'=>'asc','grade_id'=>'asc','project_id'=>'asc']);
+          $query = Revision::find()->where(['display_date'=>$date,'deleted'=>0,'plant_id'=>$plant_id,'summary_status'=>$summary_status])->orderBy(['batch_no'=>'asc','plant_id'=>'asc','customer_id'=>'asc','grade_id'=>'asc','project_id'=>'asc']);
 
       }
         // add conditions that should always apply here

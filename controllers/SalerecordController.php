@@ -2,9 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\Cementintake;
+use app\models\Materialending;
+use app\models\Materialaudit;
+use app\models\Revision;
 use Yii;
 use app\models\Salerecord;
 use app\models\SalerecordSearch;
+use app\models\GradeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -28,7 +33,7 @@ class SalerecordController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['post'],
+                    'delete' => ['get'],
                 ],
             ],
             'access' => [
@@ -67,29 +72,192 @@ class SalerecordController extends Controller
      * Lists all Salerecord models.
      * @return mixed
      */
-    public function actionIndex($plant_id = null,$date = null)
+    public function actionIndex($plant_id = null, $date = null)
     {
-
-
-
         $searchModel = new SalerecordSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$plant_id,$date);
-
+        if ($date == date('Y-m-d')) {
+            // $summary_status = 'pending';
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $plant_id, $date);
+        } else {
+            //    $summary_status = 'submitted';
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $plant_id, $date);
+        }
         $model = new Salerecord();
+        $materialending = new Materialending();
+        $cementintake = new Cementintake();
 
+        if ($plant_id == null) {
+            $plant_id = Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id;
+        }
 
         if ($model->load(Yii::$app->request->post())) {
+            if ($materialending->load(Yii::$app->request->post()) && $cementintake->load(Yii::$app->request->post())) {
+                $is_holiday = $cementintake->is_holiday;
+                if ($is_holiday == 1) {
+                    $materialending->is_holiday = 1;
+                }else{
+                    $materialending->is_holiday = 0;
+                }
+                $checkforupdate = Materialending::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
+                if (isset($checkforupdate)) {
+                    $checkforupdate->silo1 = $materialending->silo1;
+                    $checkforupdate->silo2 = $materialending->silo2;
+                    $checkforupdate->silo3 = $materialending->silo3;
+                    $checkforupdate->is_holiday = $materialending->is_holiday;
+                    $checkforupdate->save();
 
-            $model->plant_id = Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id;
-            $model->display_date = (date('Y-m-d'));
-            $model->save();
-            //   return $this->redirect(['view', 'id' => $model->id, 'plant_id' => $model->plant_id, 'customer_id' => $model->customer_id, 'grade_id' => $model->grade_id]);
-            /* return $this->render('index', [
-                 'searchModel' => $searchModel,
-                 'dataProvider' => $dataProvider,
-                 'model' => $model,
-             ]);*/
-            return $this->redirect(['index']);
+                } else {
+                    $materialending->plant_id = $plant_id;
+                    $materialending->display_date = $date;
+                    $materialending->summary_status = 'pending';
+                    $materialending->date_created = date('Y-m-d H:i:s');
+                    $materialending->save();
+                }
+
+                $checkforupdate2 = Cementintake::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
+                if (isset($checkforupdate2)) {
+                    $checkforupdate2->silo1 = $cementintake->silo1;
+                    $checkforupdate2->silo2 = $cementintake->silo2;
+                    $checkforupdate2->silo3 = $cementintake->silo3;
+                    $checkforupdate2->is_holiday = $cementintake->is_holiday;
+                    $checkforupdate2->save();
+
+                } else {
+                    $cementintake->plant_id = $plant_id;
+                    $cementintake->display_date = $date;
+                    $cementintake->summary_status = 'pending';
+                    $cementintake->date_created = date('Y-m-d H:i:s');
+                    $cementintake->save();
+                }
+
+            }
+            if ($model->summary_status == 'submitted') {
+
+
+                $searchModel = new SalerecordSearch();
+                $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $model->plant_id, $model->display_date);
+                $salerecords = $dataProvider->getModels();
+                $total_opc = 0;
+                $total_m3 = 0;
+                foreach ($salerecords as $salerecord) {
+                    $salerecord->summary_status = 'submitted';
+                    $salerecord->save();
+
+                    $opc = ($salerecord->grade->mix_design_for_cal) * ($salerecord->m3);
+                    $total_m3 += $salerecord->m3;
+                    $total_opc += $opc;
+                }
+                // get weekday, from 0 (sunday) to 6 (saturday)
+                $lastWorkingDay = $this->findLastWorkingDay($model->display_date);
+               /* $currentWeekDay = date("w", strtotime($model->display_date));
+
+                switch ($currentWeekDay) {
+                    case "1": {  // monday
+
+                        $d = date_create($model->display_date);
+                        date_sub($d, date_interval_create_from_date_string("2 days"));
+                        $lastWorkingDay = date_format($d, "Y-m-d");
+
+                        break;
+                    }
+                    //  case "0": {  // sunday
+                    //    $lastWorkingDay = date("d", strtotime("-2 day"));
+                    //  break;
+                    // }
+                    default: {  //all other days
+                        $d = date_create($model->display_date);
+                        date_sub($d, date_interval_create_from_date_string("1 days"));
+                        $lastWorkingDay = date_format($d, "Y-m-d");
+                        break;
+                    }
+                }*/
+                if ($cementintake->is_holiday == 1) { // Select date = holiday
+
+                } else {
+                    // Material Audit Calculation
+                    //----Calculate
+                    $material_need = $total_opc;
+                    if ($material_need == 0) {
+
+                    } else {
+                        $previous_day_total = 0;
+                        $today_balance = 0;
+                        $today_pumped_in = 0;
+                        $previous_day_materialending = Materialending::findOne(['display_date' => $lastWorkingDay, 'plant_id' => $plant_id]);
+                        if (isset($previous_day_materialending)) {
+
+                            
+                            if($previous_day_materialending->is_holiday){
+                                $lastWorkingDay = $this->findLastWorkingDay($lastWorkingDay);
+                                $previous_day_materialending = Materialending::findOne(['display_date' => $lastWorkingDay, 'plant_id' => $plant_id]);
+
+                            }else{
+                                $previous_day_total = $previous_day_materialending->silo1 + $previous_day_materialending->silo2 + $previous_day_materialending->silo3;
+                            }
+
+                        }
+
+                        $today_materialending = Materialending::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
+                        if (isset($today_materialending)) {
+                            $today_balance = $today_materialending->silo1 + $today_materialending->silo2 + $today_materialending->silo3;
+                        }
+
+                        $today_cementintake = Cementintake::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
+                        if (isset($today_cementintake)) {
+                            $today_pumped_in = $today_cementintake->silo1 + $today_cementintake->silo2 + $today_cementintake->silo3;
+                        }
+
+                        $actual_use = $previous_day_total + $today_pumped_in - $today_balance;
+
+                        $checkforupdate3 = Materialaudit::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
+
+                        if (isset($checkforupdate3)) { // Update
+                            $checkforupdate3->volume = $total_m3;
+                            $checkforupdate3->material_need = $material_need;
+                            $checkforupdate3->actual_use = $actual_use;
+                            $checkforupdate3->difference_kg = $actual_use - $material_need;
+                            $checkforupdate3->difference_percent = ($checkforupdate3->difference_kg / $material_need) * 100;
+                            $checkforupdate3->date_calculated = date('Y-m-d H:i:s');
+                            $checkforupdate3->save();
+                        } else { // Create
+                            $material_audit = new Materialaudit();
+                            $material_audit->plant_id = $plant_id;
+                            $material_audit->display_date = $date;
+                            $material_audit->volume = $total_m3;
+                            $material_audit->material_need = $material_need;
+                            $material_audit->actual_use = $actual_use;
+                            $material_audit->difference_kg = $actual_use - $material_need;
+                            $material_audit->difference_percent = ($material_audit->difference_kg / $material_need) * 100;
+                            $material_audit->date_calculated = date('Y-m-d H:i:s');
+                            $material_audit->save();
+                        }
+                    }
+                }
+
+                if (Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id == 0) {
+                    return $this->redirect(['index?plant_id=' . $plant_id . '&date=' . $model->display_date]);
+                } else {
+                    return $this->redirect(['index?date=' . $model->display_date]);
+                }
+
+
+            } else {
+
+
+                $model->plant_id = Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id;
+                //     $model->display_date = (date('Y-m-d'));
+                $model->display_date = $date;
+                $model->save();
+                // return $this->redirect(['view', 'id' => $model->id, 'plant_id' => $model->plant_id, 'customer_id' => $model->customer_id, 'grade_id' => $model->grade_id]);
+                /* return $this->render('index', [
+                     'searchModel' => $searchModel,
+                     'dataProvider' => $dataProvider,
+                     'model' => $model,
+                 ]);
+                */
+                return $this->redirect(['index?date=' . $date]);
+            }
+
         }
 
         return $this->render('index', [
@@ -98,6 +266,7 @@ class SalerecordController extends Controller
             'model' => $model,
             'filter_plant' => $plant_id,
             'filter_date' => $date,
+            // 'materialending' => $materialending,
         ]);
     }
 
@@ -175,9 +344,14 @@ class SalerecordController extends Controller
      */
     public function actionDelete($id, $plant_id, $customer_id, $grade_id)
     {
+        $display_date = Salerecord::findOne($id)->display_date;
         $this->findModel($id, $plant_id, $customer_id, $grade_id)->delete();
 
-        return $this->redirect(['index']);
+        if (Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id == 0) {
+            return $this->redirect(['index?plant_id=' . $plant_id . '&date=' . $display_date]);
+        } else {
+            return $this->redirect(['index?date=' . $display_date]);
+        }
     }
 
     /**
@@ -213,5 +387,79 @@ class SalerecordController extends Controller
             // either the page is initially displayed or there is some validation error
             // return $this->render('index', ['model' => $model]);
         }
+    }
+
+    public function actionRevision()
+    {
+        $model = new Salerecord();
+        if ($model->load(Yii::$app->request->post())) {
+            $searchModel = new SalerecordSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $model->plant_id, $model->display_date, 'submitted');
+            $salerecords = $dataProvider->getModels();
+            foreach ($salerecords as $salerecord) {
+                $revision_model = new Revision();
+                $existing_revision = Revision::findOne(['batch_no' => $salerecord->batch_no]);
+                if (isset($existing_revision)) {
+                    $existing_revision->delete();
+                }
+                $revision_model->batch_no = $salerecord->batch_no;
+                $revision_model->delivery_order_no = $salerecord->delivery_order_no;
+                $revision_model->summary_status = 'history';
+                $revision_model->display_date = $salerecord->display_date;
+                $revision_model->plant_id = $salerecord->plant_id;
+                $revision_model->grade_id = $salerecord->grade_id;
+                $revision_model->customer_id = $salerecord->customer_id;
+                $revision_model->project_id = $salerecord->project_id;
+                $revision_model->m3 = $salerecord->m3;
+                $revision_model->driver_id = $salerecord->driver_id;
+                $revision_model->truck_id = $salerecord->truck_id;
+                $revision_model->special_condition = $salerecord->special_condition;
+                $revision_model->remark = $salerecord->remark;
+                $revision_model->deleted = $salerecord->deleted;
+                /*  echo 'Revision model';
+                  print_r($revision_model);*/
+                $revision_model->save();
+                $salerecord->summary_status = 'pending';
+                $salerecord->save();
+            }
+            if (Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id == 0) {
+                return $this->redirect(['index?plant_id=' . $salerecord->plant_id . '&date=' . $salerecord->display_date]);
+            } else {
+                return $this->redirect(['index?date=' . $model->display_date]);
+            }
+
+        }
+    }
+
+    function findLastWorkingDay($date){
+        $currentWeekDay = date("w", strtotime($date));
+
+        switch ($currentWeekDay) {
+            case "1": {  // monday
+
+                $d = date_create($date);
+                date_sub($d, date_interval_create_from_date_string("2 days"));
+                $lastWorkingDay = date_format($d, "Y-m-d");
+
+                break;
+            }
+            //  case "0": {  // sunday
+            //    $lastWorkingDay = date("d", strtotime("-2 day"));
+            //  break;
+            // }
+            default: {  //all other days
+                $d = date_create($date);
+                date_sub($d, date_interval_create_from_date_string("1 days"));
+                $lastWorkingDay = date_format($d, "Y-m-d");
+                break;
+            }
+        }
+        return $lastWorkingDay;
+    }
+
+    function recursiveCheck(){
+
+        return $this->recursiveCheck();
+
     }
 }

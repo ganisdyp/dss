@@ -237,7 +237,8 @@ $this->title = 'MONTHLY SALES REPORT (' . strtoupper(Plant::findOne($plant_id)->
                 'startView' => 'year',
                 'minViewMode' => 'months',
                 'format' => 'yyyy-M',
-                'todayHighlight' => true
+                'todayHighlight' => true,
+                'endDate' => "0d"
             ]
         ]);
         ?>
@@ -283,34 +284,39 @@ $this->title = 'MONTHLY SALES REPORT (' . strtoupper(Plant::findOne($plant_id)->
                 $total_m3 = 0;
 
                 foreach ($customers as $customer) {
+                    $total_m3_by_customer = getTotalM3ByCustomer($year_month_str, $customer->id, $plant_id);
+                    if($total_m3_by_customer==0){
 
-                    ?>
-                    <tr>
-                        <td><?php echo $index; ?></td>
-                        <td><?php echo $customer->name; ?></td>
-                        <?php
-
-                        for ($date = 1; $date < $days_in_month + 1; $date++) {
-
-                            $date_str = $year . "-" . $format_month . "-" . $date;
-                            if (isThisDayAWeekend($date_str)) {
-                                ?>
-                                <td style="background-color: #b041ff;text-align: center;"><?php echo getM3ByDate($date_str, $customer->id, $plant_id); ?></td>
-                                <?php
-                            } else {
-                                ?>
-                                <td style="text-align: center;"><?php echo getM3ByDate($date_str, $customer->id, $plant_id); ?></td>
-                                <?php
-                            }
-                        }
-$total_m3_by_customer = getTotalM3ByCustomer($year_month_str, $customer->id, $plant_id);
+                    } else {
                         ?>
-                        <td style="background-color: #808080;color:#ffffff;font-weight: 500;"><?php echo $total_m3_by_customer ?></td>
-                        <td><?php echo round(($total_m3_by_customer/getTotalM3($year_month_str, $plant_id))*100,2).'%' ?></td>
-                    </tr>
-                    <?php
-                    $total_m3 += getTotalM3ByCustomer($year_month_str, $customer->id, $plant_id);
-                    $index++;
+                        <tr>
+                            <td><?php echo $index; ?></td>
+                            <td><?php echo $customer->name; ?></td>
+                            <?php
+
+                            for ($date = 1; $date < $days_in_month + 1; $date++) {
+
+                                $date_str = $year . "-" . $format_month . "-" . $date;
+                                if (isThisDayAWeekend($date_str)) {
+                                    ?>
+                                    <td style="background-color: #b041ff;text-align: center;"><?php echo getM3ByDate($date_str, $customer->id, $plant_id); ?></td>
+                                    <?php
+                                } else {
+                                    ?>
+                                    <td style="text-align: center;"><?php echo getM3ByDate($date_str, $customer->id, $plant_id); ?></td>
+                                    <?php
+                                }
+                            }
+
+                            ?>
+                            <td style="background-color: #808080;color:#ffffff;font-weight: 500;"><?php echo $total_m3_by_customer ?></td>
+                            <td><?php echo round(($total_m3_by_customer / getTotalM3($year_month_str, $plant_id)) * 100, 2) . '%' ?></td>
+                        </tr>
+
+                        <?php
+                        $total_m3 += getTotalM3ByCustomer($year_month_str, $customer->id, $plant_id);
+                        $index++;
+                    }
                 }
 
 
@@ -376,37 +382,38 @@ $total_m3_by_customer = getTotalM3ByCustomer($year_month_str, $customer->id, $pl
                 $total_m3 = 0;
 
                 foreach ($grades as $grade) {
-
-                    ?>
-                    <tr>
-                        <td><?php echo $index; ?></td>
-                        <td><?php echo $grade->charac_strength28; ?></td>
-                        <?php
-
-                        for ($date = 1; $date < $days_in_month + 1; $date++) {
-
-                            $date_str = $year . "-" . $format_month . "-" . $date;
-                            if (isThisDayAWeekend($date_str)) {
-                                ?>
-                                <td style="background-color: #b041ff;text-align: center;"><?php echo getM3ByDateGrade($date_str, $grade->id, $plant_id); ?></td>
-                                <?php
-                            } else {
-                                ?>
-                                <td style="text-align: center;"><?php echo getM3ByDateGrade($date_str, $grade->id, $plant_id); ?></td>
-                                <?php
-                            }
-                        }
-                        $total_m3_by_grade = getTotalM3ByGrade($year_month_str, $grade->id, $plant_id);
+                    $total_m3_by_grade = getTotalM3ByGrade($year_month_str, $grade->id, $plant_id);
+                    if ($total_m3_by_grade == 0) {
+                    } else {
                         ?>
-                        <td style="background-color: #808080;color:#ffffff;font-weight: 500;"><?php echo $total_m3_by_grade ?></td>
-                        <td><?php echo round(($total_m3_by_grade/getTotalM3($year_month_str, $plant_id))*100,2).'%' ?></td>
-                    </tr>
-                    <?php
-                    $total_m3 += getTotalM3ByGrade($year_month_str, $grade->id, $plant_id);
-                    $index++;
+                        <tr>
+                            <td><?php echo $index; ?></td>
+                            <td><?php echo $grade->charac_strength28; ?></td>
+                            <?php
+
+                            for ($date = 1; $date < $days_in_month + 1; $date++) {
+
+                                $date_str = $year . "-" . $format_month . "-" . $date;
+                                if (isThisDayAWeekend($date_str)) {
+                                    ?>
+                                    <td style="background-color: #b041ff;text-align: center;"><?php echo getM3ByDateGrade($date_str, $grade->id, $plant_id); ?></td>
+                                    <?php
+                                } else {
+                                    ?>
+                                    <td style="text-align: center;"><?php echo getM3ByDateGrade($date_str, $grade->id, $plant_id); ?></td>
+                                    <?php
+                                }
+                            }
+                            $total_m3_by_grade = getTotalM3ByGrade($year_month_str, $grade->id, $plant_id);
+                            ?>
+                            <td style="background-color: #808080;color:#ffffff;font-weight: 500;"><?php echo $total_m3_by_grade ?></td>
+                            <td><?php echo round(($total_m3_by_grade / getTotalM3($year_month_str, $plant_id)) * 100, 2) . '%' ?></td>
+                        </tr>
+                        <?php
+                        $total_m3 += getTotalM3ByGrade($year_month_str, $grade->id, $plant_id);
+                        $index++;
+                    }
                 }
-
-
                 ?>
                 <tr style="background-color: #808080;color:#ffffff;font-weight: 500;">
                     <td colspan="2"></td>

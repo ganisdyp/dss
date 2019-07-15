@@ -94,7 +94,7 @@ if($numItems2 != 0) {
     <?= Html::beginTag('td',['colspan'=>'10']) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td',['colspan'=>'1']) ?>
-    <?= Html::submitButton('Save and continue', ['class' => 'btn btn-success']) ?>
+    <?= Html::submitButton('Save and continue later', ['class' => 'btn btn-success']) ?>
     <?= Html::endTag('td') ?>
     <?= Html::endTag('tr') ?>
     <?= Html::endTag('table') ?>

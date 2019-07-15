@@ -13,6 +13,12 @@ if(Yii::$app->user->isGuest){
     $default_filter = 'plant_id='.$user_plant_id.'&filter='.date('Y-M');
     $default_filter_monthly_report = 'plant_id=0&filter='.date('Y-M');
     $default_filter_driver_report = 'plant_id=0&driver_id=9999&filter='.date('Y-M');
+    if($user_plant_id == 0){
+        $default_filter_daily_salerecord = 'plant_id=0&date='.date('Y-m-d');
+    }else{
+        $default_filter_daily_salerecord = 'date='.date('Y-m-d');
+    }
+
 }
 ?>
 <aside class="main-sidebar">
@@ -58,7 +64,7 @@ if(Yii::$app->user->isGuest){
                         'icon' => 'share',
                         'url' => '#',
                         'items' => [
-                            ['label' => 'Today Sales', 'icon' => 'sale', 'url' => ['/salerecord/index'],],
+                            ['label' => 'Today Sales', 'icon' => 'sale', 'url' => ['/salerecord/index?'.$default_filter_daily_salerecord],],
 
                         ],
                     ],

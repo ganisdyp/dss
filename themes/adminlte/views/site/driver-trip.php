@@ -240,7 +240,8 @@ $this->title = 'DRIVER TRIP REPORT (' . strtoupper(Plant::findOne($plant_id)->na
                 'startView' => 'year',
                 'minViewMode' => 'months',
                 'format' => 'yyyy-M',
-                'todayHighlight' => true
+                'todayHighlight' => true,
+                'endDate' => "0d"
             ]
         ]);
 echo '<br>';
