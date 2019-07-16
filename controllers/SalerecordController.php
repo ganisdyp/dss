@@ -183,10 +183,12 @@ class SalerecordController extends Controller
                         $previous_day_total = 0;
                         $today_balance = 0;
                         $today_pumped_in = 0;
-                        $previous_day_materialending = Materialending::findOne(['display_date' => $lastWorkingDay, 'plant_id' => $plant_id]);
+
+                        $previous_day_total = $this->recursiveCheck($lastWorkingDay,$plant_id);
+                      /*  $previous_day_materialending = Materialending::findOne(['display_date' => $lastWorkingDay, 'plant_id' => $plant_id]);
                         if (isset($previous_day_materialending)) {
 
-                            
+
                             if($previous_day_materialending->is_holiday){
                                 $lastWorkingDay = $this->findLastWorkingDay($lastWorkingDay);
                                 $previous_day_materialending = Materialending::findOne(['display_date' => $lastWorkingDay, 'plant_id' => $plant_id]);
@@ -195,7 +197,7 @@ class SalerecordController extends Controller
                                 $previous_day_total = $previous_day_materialending->silo1 + $previous_day_materialending->silo2 + $previous_day_materialending->silo3;
                             }
 
-                        }
+                        }*/
 
                         $today_materialending = Materialending::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
                         if (isset($today_materialending)) {
@@ -457,9 +459,17 @@ class SalerecordController extends Controller
         return $lastWorkingDay;
     }
 
-    function recursiveCheck(){
-
-        return $this->recursiveCheck();
-
+    function recursiveCheck($date,$plant_id){
+        $previous_day_materialending = Materialending::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
+        if (isset($previous_day_materialending)) {
+            if ($previous_day_materialending->is_holiday) {
+                $lastWorkingDay = $this->findLastWorkingDay($date);
+                return $this->recursiveCheck($lastWorkingDay,$plant_id);
+            }else{
+                return $previous_day_materialending->silo1 + $previous_day_materialending->silo2 + $previous_day_materialending->silo3;
+            }
+        }else{
+            return false;
+        }
     }
 }
