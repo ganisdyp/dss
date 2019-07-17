@@ -8,6 +8,10 @@ use app\models\CustprojrelSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use app\components\BinapileRule;
+use app\models\User;
+use app\models\Project;
 
 /**
  * CustprojrelController implements the CRUD actions for Custprojrel model.
@@ -23,7 +27,37 @@ class CustprojrelController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['get'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                // We will override the default rule config with the new AccessRule class
+                'ruleConfig' => [
+                    'class' => BinapileRule::className(),
+                ],
+                'only' => ['index', 'create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        // Allow plant admin, moderators and admins to create
+                        'roles' => [
+                            User::ROLE_PLANTADMIN,
+                            User::ROLE_HQADMIN,
+                            User::ROLE_MANAGEMENT
+                        ],
+                    ],
+                    [
+                        'actions' => ['update', 'create', 'delete'],
+                        'allow' => true,
+                        // Allow moderators and admins to update
+                        'roles' => [
+                            User::ROLE_PLANTADMIN,
+                            User::ROLE_HQADMIN,
+                            User::ROLE_MANAGEMENT
+                        ],
+                    ],
                 ],
             ],
         ];
@@ -132,4 +166,27 @@ class CustprojrelController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    function actionLoadproject()
+    {
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();;
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            $out = [];
+            if (isset($data['customer_id'])) {
+                $customer_id = $data['customer_id'];
+                $projects = Project::find()->select('project.id as id, project.name as name')
+                    ->innerJoin('cust_proj_rel', 'cust_proj_rel.project_id = project.id AND cust_proj_rel.deleted=0')
+                    ->where(['cust_proj_rel.customer_id' => $customer_id, 'project.deleted' => 0])->all();
+                if (isset($projects)) {
+
+                } else {
+                    $projects = null;
+                }
+foreach($projects as $project){
+                $out[] = $project->name;}
+            }
+            return $out;
+        }
+     }
 }

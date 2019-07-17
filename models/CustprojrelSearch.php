@@ -40,7 +40,10 @@ class CustprojrelSearch extends Custprojrel
      */
     public function search($params)
     {
-        $query = Custprojrel::find();
+        $query = Custprojrel::find()->innerJoin('project','cust_proj_rel.project_id = project.id')
+            ->innerJoin('customer','cust_proj_rel.customer_id = customer.id')
+            ->where(['project.deleted'=>0,'customer.deleted'=>0,'cust_proj_rel.deleted'=>0])
+        ->orderBy('customer.name');
 
         // add conditions that should always apply here
 

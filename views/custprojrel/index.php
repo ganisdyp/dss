@@ -8,15 +8,13 @@ use fedemotta\datatables\DataTables;
 /* @var $searchModel app\models\CustprojrelSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Custprojrels';
+$this->title = 'Customer-Project Relationship';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="custprojrel-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
-        <?= Html::a('Create Custprojrel', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Customer-Project Relationship', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php Pjax::begin(); ?>
@@ -31,9 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
           //  'rel_id',
             'date_assigned',
           //  'deleted',
-            'project.name',
             'customer.name',
-
+            'project.name',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

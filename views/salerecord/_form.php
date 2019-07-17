@@ -10,6 +10,8 @@ use app\models\Truck;
 use app\models\Driver;
 use app\models\Salerecord;
 use yii\helpers\ArrayHelper;
+use kartik\depdrop\DepDrop;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Salerecord */
@@ -63,7 +65,7 @@ if($numItems2 != 0) {
     <?= $form->field($model, 'delivery_order_no')->textInput(['maxlength' => true,'value'=>$next_do_no])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'18%']) ?>
-    <?= $form->field($model, 'customer_id')->dropDownList(ArrayHelper::map(Customer::find()->where(['deleted' => 0])->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Customer Name', 'readonly' => !$model->isNewRecord])->label(false) ?>
+    <?= $form->field($model, 'customer_id')->dropDownList(ArrayHelper::map(Customer::find()->where(['deleted' => 0])->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Customer Name', 'readonly' => !$model->isNewRecord, 'id'=>'customer-id'])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'7%']) ?>
     <?= $form->field($model, 'grade_id')->dropDownList(ArrayHelper::map(Grade::find()->where(['deleted' => 0])->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Grade', 'readonly' => !$model->isNewRecord])->label(false) ?>
@@ -79,7 +81,14 @@ if($numItems2 != 0) {
     <?= $form->field($model, 'driver_id')->dropDownList(ArrayHelper::map(Driver::find()->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Driver', 'readonly' => !$model->isNewRecord])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'14%']) ?>
-    <?= $form->field($model, 'project_id')->dropDownList(ArrayHelper::map(Project::find()->where(['deleted' => 0])->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Project', 'readonly' => !$model->isNewRecord])->label(false) ?>
+    <?= $form->field($model, 'project_id')->widget(DepDrop::classname(), [
+        'options' => ['id'=>'project-id'],
+        'pluginOptions'=>[
+            'depends'=>['customer-id'],
+            'placeholder' => 'Project',
+            'url' => Url::to(['loadproject'])
+        ]
+    ])->label(false); ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'10%']) ?>
     <?= $form->field($model, 'special_condition')->dropDownList([ 'cancelled' => 'Cancelled', 'trial mix' => 'Trial mix', 'rejected' => 'Rejected', ]

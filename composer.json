@@ -24,7 +24,9 @@
         "fedemotta/yii2-widget-datatables": "*",
         "mdmsoft/yii2-admin": "~2.0",
         "kartik-v/yii2-widget-datepicker": "@dev",
-        "miloschuman/yii2-highcharts-widget": "^7.0"
+        "miloschuman/yii2-highcharts-widget": "^7.0",
+        "kartik-v/dependent-dropdown": "dev-master",
+        "kartik-v/yii2-widget-depdrop": "@dev"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

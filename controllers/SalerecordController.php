@@ -3,9 +3,11 @@
 namespace app\controllers;
 
 use app\models\Cementintake;
+use app\models\Custprojrel;
 use app\models\Materialending;
 use app\models\Materialaudit;
 use app\models\Revision;
+use app\models\Project;
 use Yii;
 use app\models\Salerecord;
 use app\models\SalerecordSearch;
@@ -95,7 +97,7 @@ class SalerecordController extends Controller
                 $is_holiday = $cementintake->is_holiday;
                 if ($is_holiday == 1) {
                     $materialending->is_holiday = 1;
-                }else{
+                } else {
                     $materialending->is_holiday = 0;
                 }
                 $checkforupdate = Materialending::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
@@ -149,92 +151,76 @@ class SalerecordController extends Controller
                 }
                 // get weekday, from 0 (sunday) to 6 (saturday)
                 $lastWorkingDay = $this->findLastWorkingDay($model->display_date);
-               /* $currentWeekDay = date("w", strtotime($model->display_date));
 
-                switch ($currentWeekDay) {
-                    case "1": {  // monday
-
-                        $d = date_create($model->display_date);
-                        date_sub($d, date_interval_create_from_date_string("2 days"));
-                        $lastWorkingDay = date_format($d, "Y-m-d");
-
-                        break;
-                    }
-                    //  case "0": {  // sunday
-                    //    $lastWorkingDay = date("d", strtotime("-2 day"));
-                    //  break;
-                    // }
-                    default: {  //all other days
-                        $d = date_create($model->display_date);
-                        date_sub($d, date_interval_create_from_date_string("1 days"));
-                        $lastWorkingDay = date_format($d, "Y-m-d");
-                        break;
-                    }
-                }*/
-                if ($cementintake->is_holiday == 1) { // Select date = holiday
-
+                if ($is_holiday == 1) { // Select date = holiday
+                    //      $previous_day_total = 3;
                 } else {
                     // Material Audit Calculation
                     //----Calculate
                     $material_need = $total_opc;
-                    if ($material_need == 0) {
-
+                    if ($total_opc == 0) {
+                        $material_need_division = 0.0001;
                     } else {
-                        $previous_day_total = 0;
-                        $today_balance = 0;
-                        $today_pumped_in = 0;
+                        $material_need_division = $material_need;
+                    }
+                    //  if ($material_need == 0) {
+                    //  } else {
+                    $previous_day_total = 0;
+                    $today_balance = 0;
+                    $today_pumped_in = 0;
 
-                        $previous_day_total = $this->recursiveCheck($lastWorkingDay,$plant_id);
-                      /*  $previous_day_materialending = Materialending::findOne(['display_date' => $lastWorkingDay, 'plant_id' => $plant_id]);
-                        if (isset($previous_day_materialending)) {
+                    $previous_day_total = $this->recursiveCheck($lastWorkingDay, $plant_id);
+
+                    /*  $previous_day_materialending = Materialending::findOne(['display_date' => $lastWorkingDay, 'plant_id' => $plant_id]);
+                      if (isset($previous_day_materialending)) {
 
 
-                            if($previous_day_materialending->is_holiday){
-                                $lastWorkingDay = $this->findLastWorkingDay($lastWorkingDay);
-                                $previous_day_materialending = Materialending::findOne(['display_date' => $lastWorkingDay, 'plant_id' => $plant_id]);
+                          if($previous_day_materialending->is_holiday){
+                              $lastWorkingDay = $this->findLastWorkingDay($lastWorkingDay);
+                              $previous_day_materialending = Materialending::findOne(['display_date' => $lastWorkingDay, 'plant_id' => $plant_id]);
 
-                            }else{
-                                $previous_day_total = $previous_day_materialending->silo1 + $previous_day_materialending->silo2 + $previous_day_materialending->silo3;
-                            }
+                          }else{
+                              $previous_day_total = $previous_day_materialending->silo1 + $previous_day_materialending->silo2 + $previous_day_materialending->silo3;
+                          }
 
-                        }*/
+                      }*/
 
-                        $today_materialending = Materialending::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
-                        if (isset($today_materialending)) {
-                            $today_balance = $today_materialending->silo1 + $today_materialending->silo2 + $today_materialending->silo3;
-                        }
+                    $today_materialending = Materialending::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
+                    if (isset($today_materialending)) {
+                        $today_balance = $today_materialending->silo1 + $today_materialending->silo2 + $today_materialending->silo3;
+                    }
 
-                        $today_cementintake = Cementintake::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
-                        if (isset($today_cementintake)) {
-                            $today_pumped_in = $today_cementintake->silo1 + $today_cementintake->silo2 + $today_cementintake->silo3;
-                        }
+                    $today_cementintake = Cementintake::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
+                    if (isset($today_cementintake)) {
+                        $today_pumped_in = $today_cementintake->silo1 + $today_cementintake->silo2 + $today_cementintake->silo3;
+                    }
 
-                        $actual_use = $previous_day_total + $today_pumped_in - $today_balance;
+                    $actual_use = $previous_day_total + $today_pumped_in - $today_balance;
 
-                        $checkforupdate3 = Materialaudit::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
+                    $checkforupdate3 = Materialaudit::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
 
-                        if (isset($checkforupdate3)) { // Update
-                            $checkforupdate3->volume = $total_m3;
-                            $checkforupdate3->material_need = $material_need;
-                            $checkforupdate3->actual_use = $actual_use;
-                            $checkforupdate3->difference_kg = $actual_use - $material_need;
-                            $checkforupdate3->difference_percent = ($checkforupdate3->difference_kg / $material_need) * 100;
-                            $checkforupdate3->date_calculated = date('Y-m-d H:i:s');
-                            $checkforupdate3->save();
-                        } else { // Create
-                            $material_audit = new Materialaudit();
-                            $material_audit->plant_id = $plant_id;
-                            $material_audit->display_date = $date;
-                            $material_audit->volume = $total_m3;
-                            $material_audit->material_need = $material_need;
-                            $material_audit->actual_use = $actual_use;
-                            $material_audit->difference_kg = $actual_use - $material_need;
-                            $material_audit->difference_percent = ($material_audit->difference_kg / $material_need) * 100;
-                            $material_audit->date_calculated = date('Y-m-d H:i:s');
-                            $material_audit->save();
-                        }
+                    if (isset($checkforupdate3)) { // Update
+                        $checkforupdate3->volume = $total_m3;
+                        $checkforupdate3->material_need = $material_need;
+                        $checkforupdate3->actual_use = $actual_use;
+                        $checkforupdate3->difference_kg = $actual_use - $material_need;
+                        $checkforupdate3->difference_percent = ($checkforupdate3->difference_kg / $material_need_division) * 100;
+                        $checkforupdate3->date_calculated = date('Y-m-d H:i:s');
+                        $checkforupdate3->save();
+                    } else { // Create
+                        $material_audit = new Materialaudit();
+                        $material_audit->plant_id = $plant_id;
+                        $material_audit->display_date = $date;
+                        $material_audit->volume = $total_m3;
+                        $material_audit->material_need = $material_need;
+                        $material_audit->actual_use = $actual_use;
+                        $material_audit->difference_kg = $actual_use - $material_need;
+                        $material_audit->difference_percent = ($material_audit->difference_kg / $material_need_division) * 100;
+                        $material_audit->date_calculated = date('Y-m-d H:i:s');
+                        $material_audit->save();
                     }
                 }
+                //   }
 
                 if (Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id == 0) {
                     return $this->redirect(['index?plant_id=' . $plant_id . '&date=' . $model->display_date]);
@@ -246,7 +232,7 @@ class SalerecordController extends Controller
             } else {
 
 
-                $model->plant_id = Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id;
+                $model->plant_id = $plant_id;
                 //     $model->display_date = (date('Y-m-d'));
                 $model->display_date = $date;
                 $model->save();
@@ -398,12 +384,17 @@ class SalerecordController extends Controller
             $searchModel = new SalerecordSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $model->plant_id, $model->display_date, 'submitted');
             $salerecords = $dataProvider->getModels();
+
             foreach ($salerecords as $salerecord) {
                 $revision_model = new Revision();
                 $existing_revision = Revision::findOne(['batch_no' => $salerecord->batch_no]);
+
+
                 if (isset($existing_revision)) {
                     $existing_revision->delete();
                 }
+
+
                 $revision_model->batch_no = $salerecord->batch_no;
                 $revision_model->delivery_order_no = $salerecord->delivery_order_no;
                 $revision_model->summary_status = 'history';
@@ -418,14 +409,14 @@ class SalerecordController extends Controller
                 $revision_model->special_condition = $salerecord->special_condition;
                 $revision_model->remark = $salerecord->remark;
                 $revision_model->deleted = $salerecord->deleted;
-                /*  echo 'Revision model';
-                  print_r($revision_model);*/
+
+
                 $revision_model->save();
                 $salerecord->summary_status = 'pending';
                 $salerecord->save();
             }
             if (Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id == 0) {
-                return $this->redirect(['index?plant_id=' . $salerecord->plant_id . '&date=' . $salerecord->display_date]);
+                return $this->redirect(['index?plant_id=' . $model->plant_id . '&date=' . $model->display_date]);
             } else {
                 return $this->redirect(['index?date=' . $model->display_date]);
             }
@@ -433,7 +424,52 @@ class SalerecordController extends Controller
         }
     }
 
-    function findLastWorkingDay($date){
+    public function actionLoadproject()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $out = [];
+        if (isset($_POST['depdrop_parents'])) {
+       // $parents[0] = 3;
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $customer_id = $parents[0];
+                $out = self::getProjectList($customer_id);
+                // the getSubCatList function will query the database based on the
+                // cat_id and return an array like below:
+                // [
+                //    ['id'=>'<sub-cat-id-1>', 'name'=>'<sub-cat-name1>'],
+                //    ['id'=>'<sub-cat_id_2>', 'name'=>'<sub-cat-name2>']
+                // ]
+                return ['output' => $out, 'selected' => ''];
+            }
+        }
+        return ['output' => '', 'selected' => ''];
+    }
+
+    function getProjectList($customer_id)
+    {
+        $projects = Project::find()->select('project.id as id, project.name as name')
+            ->innerJoin('cust_proj_rel', 'cust_proj_rel.project_id = project.id AND cust_proj_rel.deleted=0')
+            ->where(['cust_proj_rel.customer_id'=>$customer_id,'project.deleted'=>0])->all();
+      if(isset($projects)){
+
+      }else{
+          $projects = Project::find()->where(['deleted'=>0])->all();
+      }
+
+        return $this->MapData($projects,'id','name');
+    }
+
+    protected function MapData($datas,$fieldId,$fieldName){
+        $obj = [];
+        foreach ($datas as $key => $value) {
+            array_push($obj, ['id'=>$value->{$fieldId},'name'=>$value->{$fieldName}]);
+        }
+        return $obj;
+    }
+
+    function findLastWorkingDay($date)
+    {
         $currentWeekDay = date("w", strtotime($date));
 
         switch ($currentWeekDay) {
@@ -459,17 +495,20 @@ class SalerecordController extends Controller
         return $lastWorkingDay;
     }
 
-    function recursiveCheck($date,$plant_id){
+    function recursiveCheck($date, $plant_id)
+    {
+        //  return 9999;
         $previous_day_materialending = Materialending::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
         if (isset($previous_day_materialending)) {
-            if ($previous_day_materialending->is_holiday) {
+            if ($previous_day_materialending->is_holiday == 1) {
                 $lastWorkingDay = $this->findLastWorkingDay($date);
-                return $this->recursiveCheck($lastWorkingDay,$plant_id);
-            }else{
+                //  return 9000;
+                return $this->recursiveCheck($lastWorkingDay, $plant_id);
+            } else {
                 return $previous_day_materialending->silo1 + $previous_day_materialending->silo2 + $previous_day_materialending->silo3;
             }
-        }else{
-            return false;
+        } else {
+            return 0;
         }
     }
 }
