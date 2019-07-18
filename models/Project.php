@@ -32,7 +32,7 @@ class Project extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description', 'date_created', 'location_id'], 'required'],
+            [['name', 'location_id'], 'required'],
             [['date_created'], 'safe'],
             [['deleted', 'location_id'], 'integer'],
             [['name', 'description'], 'string', 'max' => 255],

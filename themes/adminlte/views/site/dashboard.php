@@ -128,6 +128,7 @@ for ($i = 1; $i < ($days_in_month + 1); $i++) {
     $days_for_chart[] = $i;
 }
 
+
 ?>
 <style>
 

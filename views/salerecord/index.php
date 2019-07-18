@@ -60,7 +60,21 @@ $this->params['breadcrumbs'][] = $this->title;
     //print_r($query);
 
     // ADD MORE COLORS
-    $color_code = array('#FFC300', '#DAF7A6', '#FF5733', '#C70039', '#99CFF7', '#DDBCF5', '#ffffff');
+    $color_code = array('#FFC300',
+        '#DAF7A6',
+        '#FF5733',
+        '#C70039',
+        '#99CFF7',
+        '#DDBCF5',
+        '#ffffff',
+        '#BCE1F5',
+        '#BCF5C0',
+        '#ED90CF',
+        '#EDBC90',
+        '#DAED90',
+        '#5C71FE',
+        '#5CCCFE',
+        '#EC4581');
 
 
     for ($i = 0; $i < count($query); $i++) {
@@ -192,6 +206,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <tbody>
         <?php
         $total_m3 = 0;
+        $count = 1;
         foreach ($salerecords as $record) {
 
             for ($i = 0; $i < count($query); $i++) {
@@ -199,25 +214,31 @@ $this->params['breadcrumbs'][] = $this->title;
                 if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
                     ${'progressive_m3' . $i} += $record->m3;
                     echo '<tr style="background-color:' . $query[$i]["color_code"] . ';">';
-                    echo '<td>' . $record->id . '</td>';
+                    echo '<td>' . $count . '</td>';
                     echo '<td>' . $record->batch_no . '</td>';
                     echo '<td>' . $record->delivery_order_no . '</td>';
                     echo '<td>' . $record->customer->name . '</td>';
                     echo '<td>' . $record->grade->charac_strength28 . '</td>';
-                    echo '<td>' . (int)$record->m3 . '</td>';
+                    echo '<td>' . round($record->m3,1) . '</td>';
                     echo '<td>' . ${'progressive_m3' . $i} . '</td>';
                     echo '<td>' . $record->truck->truck_no . '</td>';
                     echo '<td>' . $record->driver->name . '</td>';
                     echo '<td>' . $record->project->name . '</td>';
                     echo '<td>' . $record->special_condition . '</td>';
                     echo '<td>' . $record->remark . '</td>';
-                    echo '<td><a href="delete?id=' . $record->id . '&plant_id=' . $record->plant_id . '&customer_id=' . $record->customer_id . '&grade_id=' . $record->grade_id . '"><i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
+                    echo '<td><a href="delete?id=' . $record->id . '&plant_id=' . $record->plant_id . '&customer_id=' . $record->customer_id . '&grade_id=' . $record->grade_id . '">
+<i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
+                    echo '<td><a 
+onclick="copyThisRowData('.$record->customer->id.','.$record->grade->id.','.$record->truck->id.','.$record->driver->id.','.$record->project->id.')" href="#">
+<i class="fa fa-refresh" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
                     echo '</tr>';
-                    $total_m3 += (int)$record->m3;
+                    $total_m3 += round($record->m3,2);
                 } else {
 
                 }
+
             }
+            $count++;
         }
         ?>
         <tr style="font-weight:bold;">
@@ -380,8 +401,17 @@ $script = <<< JS
     return document.location=baseUrl + params;
 }
 
-function markHoliday(val){
-    alert(val);
+function copyThisRowData(customer_id,grade_id,truck_id,driver_id,project_id){
+    $('#customer-id').val(customer_id).change();
+    $('#grade-id').val(grade_id).change();
+    $('#truck-id').val(truck_id).change();
+    $('#driver-id').val(driver_id).change();
+    setTimeout(function(){
+   $('#project-id').val(project_id).change();
+}, 3000);
+   
+    
+    
 }
 JS;
 

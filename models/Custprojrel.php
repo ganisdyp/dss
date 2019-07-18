@@ -29,7 +29,7 @@ class Custprojrel extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['date_assigned', 'project_id', 'customer_id'], 'required'],
+            [['project_id', 'customer_id'], 'required'],
             [['date_assigned'], 'safe'],
             [['deleted', 'project_id', 'customer_id'], 'integer'],
         ];

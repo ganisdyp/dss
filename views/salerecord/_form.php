@@ -68,17 +68,17 @@ if($numItems2 != 0) {
     <?= $form->field($model, 'customer_id')->dropDownList(ArrayHelper::map(Customer::find()->where(['deleted' => 0])->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Customer Name', 'readonly' => !$model->isNewRecord, 'id'=>'customer-id'])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'7%']) ?>
-    <?= $form->field($model, 'grade_id')->dropDownList(ArrayHelper::map(Grade::find()->where(['deleted' => 0])->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Grade', 'readonly' => !$model->isNewRecord])->label(false) ?>
+    <?= $form->field($model, 'grade_id')->dropDownList(ArrayHelper::map(Grade::find()->where(['deleted' => 0])->orderBy(['name' => 'ASC'])->all(), 'id', 'charac_strength28'), ['prompt' => 'Grade', 'readonly' => !$model->isNewRecord,'id'=>'grade-id'])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'5.5%']) ?>
     <?= $form->field($model, 'm3')->textInput(['maxlength' => true,'placeholder'=>'M3'])->label(false) ?>
     <?= Html::endTag('td') ?>
 
     <?= Html::beginTag('td', ['width'=>'8%']) ?>
-    <?= $form->field($model, 'truck_id')->dropDownList(ArrayHelper::map(Truck::find()->orderBy(['truck_no' => 'ASC'])->all(), 'id', 'truck_no'), ['prompt' => 'Truck', 'readonly' => !$model->isNewRecord])->label(false) ?>
+    <?= $form->field($model, 'truck_id')->dropDownList(ArrayHelper::map(Truck::find()->orderBy(['truck_no' => 'ASC'])->all(), 'id', 'truck_no'), ['prompt' => 'Truck', 'readonly' => !$model->isNewRecord,'id'=>'truck-id'])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'8%']) ?>
-    <?= $form->field($model, 'driver_id')->dropDownList(ArrayHelper::map(Driver::find()->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Driver', 'readonly' => !$model->isNewRecord])->label(false) ?>
+    <?= $form->field($model, 'driver_id')->dropDownList(ArrayHelper::map(Driver::find()->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Driver', 'readonly' => !$model->isNewRecord,'id'=>'driver-id'])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'14%']) ?>
     <?= $form->field($model, 'project_id')->widget(DepDrop::classname(), [

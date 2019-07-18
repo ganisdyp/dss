@@ -90,7 +90,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex($plant_id = null,$filter = null)
+    public function actionIndex($plant_id = null, $filter = null)
     {
 
         /* $searchModel = new SalerecordSearch();
@@ -98,13 +98,13 @@ class SiteController extends Controller
         $model = new Salerecord();
         $searchModel = new CustomerSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>','id',9999])->orderBy(['name' => 'asc']);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
         $dataProvider->setPagination(['pageSize' => 100]);
         $customers = $dataProvider->getModels();
 
         $searchModel = new GradeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>','id',9999])->orderBy(['name' => 'asc']);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
         $dataProvider->setPagination(['pageSize' => 100]);
         $grades = $dataProvider->getModels();
         // print_r($dataProvider->getModels());
@@ -124,7 +124,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionReport($plant_id = null,$filter = null)
+    public function actionReport($plant_id = null, $filter = null)
     {
 
         /* $searchModel = new SalerecordSearch();
@@ -132,13 +132,13 @@ class SiteController extends Controller
         $model = new Salerecord();
         $searchModel = new CustomerSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>','id',9999])->orderBy(['name' => 'asc']);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
         $dataProvider->setPagination(['pageSize' => 100]);
         $customers = $dataProvider->getModels();
 
         $searchModel = new GradeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>','id',9999])->orderBy(['name' => 'asc']);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
         $dataProvider->setPagination(['pageSize' => 100]);
         $grades = $dataProvider->getModels();
         // print_r($dataProvider->getModels());
@@ -158,7 +158,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionDashboard($plant_id = null,$filter = null)
+    public function actionDashboard($plant_id = null, $filter = null)
     {
 
         /* $searchModel = new SalerecordSearch();
@@ -166,175 +166,189 @@ class SiteController extends Controller
         $model = new Salerecord();
         $searchModel = new CustomerSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>','id',9999])->orderBy(['name' => 'asc']);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 0])->orderBy(['name' => 'asc']);
         $dataProvider->setPagination(['pageSize' => 100]);
         $customers = $dataProvider->getModels();
 
         $searchModel = new GradeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>','id',9999])->orderBy(['name' => 'asc']);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 0])->orderBy(['name' => 'asc']);
         $dataProvider->setPagination(['pageSize' => 100]);
         $grades = $dataProvider->getModels();
         // print_r($dataProvider->getModels());
 
         // Generate grapht data set
-       if($plant_id==0) {
-           $format_month = date("m");
-           $year = date("Y");
-           // loops according to month date count + query inside each loop
-           $days_in_month = cal_days_in_month(CAL_GREGORIAN, $format_month, $year);
-           $year_lastmonth_str = date('Y-m', strtotime('last month'));
+        if ($plant_id == 0) {
+            $format_month = date("m");
+            $year = date("Y");
+            // loops according to month date count + query inside each loop
+            $days_in_month = cal_days_in_month(CAL_GREGORIAN, $format_month, $year);
+            $year_lastmonth_str = date('Y-m', strtotime('last month'));
 
-           $year_lastmonth = explode("-", $year_lastmonth_str)[0];
-           $format_lastmonth = explode("-", $year_lastmonth_str)[1];
+            $year_lastmonth = explode("-", $year_lastmonth_str)[0];
+            $format_lastmonth = explode("-", $year_lastmonth_str)[1];
 
-           $day_in_lastmonth = cal_days_in_month(CAL_GREGORIAN, $format_lastmonth, $year_lastmonth);
+            $day_in_lastmonth = cal_days_in_month(CAL_GREGORIAN, $format_lastmonth, $year_lastmonth);
 
-           $graph_data = [];
-           for ($i = 1; $i < ($days_in_month + 1); $i++) {
-               $timestamp = strtotime($year . "-" . $format_month . "-" . $i);
-               $format_date = date("Y-m-d", $timestamp);
+            $graph_data = [];
+            for ($i = 1; $i < ($days_in_month + 1); $i++) {
+                $timestamp = strtotime($year . "-" . $format_month . "-" . $i);
+                $format_date = date("Y-m-d", $timestamp);
 
-               if (date("Y-m-d", $timestamp) > date("Y-m-d")) {
-                   $show = false;
-               } else {
-                   $show = true;
-               }
+                // echo "FORMAT DATE:".$format_date;
+                if (date("Y-m", $timestamp) != date("Y-m")) {
+                    $show = true;
+                } else {
+                    if (date("Y-m-d", $timestamp) > date("Y-m-d")) {
+                        $show = false;
+                    } else {
+                        $show = true;
+                    }
+                }
 
-               $first_date = strtotime($year . "-" . $format_month . "-1");
-               $format_first_date = date("Y-m-d", $first_date);
+                $first_date = strtotime($year . "-" . $format_month . "-1");
+                $format_first_date = date("Y-m-d", $first_date);
 
-               $sql = "SELECT SUM(m3) as m3, DATE_FORMAT(display_date,'%d') as name FROM salerecord WHERE DATE_FORMAT(display_date,'%Y-%m-%d')>='" . $format_first_date . "' AND DATE_FORMAT(display_date,'%Y-%m-%d')<='" . $format_date . "'";
-               $data = \Yii::$app->db->createCommand($sql)->queryAll();
-               $exist = \Yii::$app->db->createCommand($sql)->execute();
+                $sql = "SELECT SUM(m3) as m3, DATE_FORMAT(display_date,'%d') as name FROM salerecord WHERE DATE_FORMAT(display_date,'%Y-%m-%d')>='" . $format_first_date . "' AND DATE_FORMAT(display_date,'%Y-%m-%d')<='" . $format_date . "'";
+                $data = \Yii::$app->db->createCommand($sql)->queryAll();
+                $exist = \Yii::$app->db->createCommand($sql)->execute();
 
-               if ($exist != 0 && $show == true) {
-                   foreach ($data as $d) {
+                if ($exist != 0 && $show == true) {
+                    foreach ($data as $d) {
 
-                       $graph_data[] = [
-                           intval($d["m3"])
-                       ];
-                   }
-               } else {
-                   $graph_data[] = [
-                       null
-                   ];
-               }
+                        $graph_data[] = [
+                            intval($d["m3"])
+                        ];
+                    }
+                } else {
+                    $graph_data[] = [
+                        null
+                    ];
+                }
 
-           }
-
-// LAST MONTH
-           $graph_data2 = [];
-           // $year_lastmonth_str = date('Y-m', strtotime('-1 months'));
-
-
-           for ($i = 1; $i < ($day_in_lastmonth + 1); $i++) {
-               $timestamp2 = strtotime($year_lastmonth_str . "-" . $i);
-               $format_date2 = date("Y-m-d", $timestamp2);
-
-               $show2 = true;
-
-
-               $first_date2 = strtotime($year_lastmonth_str . "-1");
-               $format_first_date2 = date("Y-m-d", $first_date2);
-
-               $sql = "SELECT SUM(m3) as m3 FROM salerecord WHERE DATE_FORMAT(display_date,'%Y-%m-%d')>='" . $format_first_date2 . "' AND DATE_FORMAT(display_date,'%Y-%m-%d')<='" . $format_date2 . "'";
-               $data2 = \Yii::$app->db->createCommand($sql)->queryAll();
-               $exist2 = \Yii::$app->db->createCommand($sql)->execute();
-
-               if ($exist2 != 0 && $show2 == true) {
-                   foreach ($data2 as $d) {
-
-                       $graph_data2[] = [
-                           intval($d["m3"])
-                       ];
-                   }
-               } else {
-                   $graph_data2[] = [
-                       null
-                   ];
-               }
-
-           }
-       }else{
-           $format_month = date("m");
-           $year = date("Y");
-           // loops according to month date count + query inside each loop
-           $days_in_month = cal_days_in_month(CAL_GREGORIAN, $format_month, $year);
-           $year_lastmonth_str = date('Y-m', strtotime('last month'));
-
-           $year_lastmonth = explode("-", $year_lastmonth_str)[0];
-           $format_lastmonth = explode("-", $year_lastmonth_str)[1];
-
-           $day_in_lastmonth = cal_days_in_month(CAL_GREGORIAN, $format_lastmonth, $year_lastmonth);
-
-           $graph_data = [];
-           for ($i = 1; $i < ($days_in_month + 1); $i++) {
-               $timestamp = strtotime($year . "-" . $format_month . "-" . $i);
-               $format_date = date("Y-m-d", $timestamp);
-
-               if (date("Y-m-d", $timestamp) > date("Y-m-d")) {
-                   $show = false;
-               } else {
-                   $show = true;
-               }
-
-               $first_date = strtotime($year . "-" . $format_month . "-1");
-               $format_first_date = date("Y-m-d", $first_date);
-
-               $sql = "SELECT SUM(m3) as m3, DATE_FORMAT(display_date,'%d') as name FROM salerecord WHERE plant_id= ".$plant_id." AND DATE_FORMAT(display_date,'%Y-%m-%d')>='" . $format_first_date . "' AND DATE_FORMAT(display_date,'%Y-%m-%d')<='" . $format_date . "'";
-               $data = \Yii::$app->db->createCommand($sql)->queryAll();
-               $exist = \Yii::$app->db->createCommand($sql)->execute();
-
-               if ($exist != 0 && $show == true) {
-                   foreach ($data as $d) {
-
-                       $graph_data[] = [
-                           intval($d["m3"])
-                       ];
-                   }
-               } else {
-                   $graph_data[] = [
-                       null
-                   ];
-               }
-
-           }
+            }
 
 // LAST MONTH
-           $graph_data2 = [];
-           // $year_lastmonth_str = date('Y-m', strtotime('-1 months'));
+            $graph_data2 = [];
+            // $year_lastmonth_str = date('Y-m', strtotime('-1 months'));
 
 
-           for ($i = 1; $i < ($day_in_lastmonth + 1); $i++) {
-               $timestamp2 = strtotime($year_lastmonth_str . "-" . $i);
-               $format_date2 = date("Y-m-d", $timestamp2);
+            for ($i = 1; $i < ($day_in_lastmonth + 1); $i++) {
+                $timestamp2 = strtotime($year_lastmonth_str . "-" . $i);
+                $format_date2 = date("Y-m-d", $timestamp2);
 
-               $show2 = true;
+                $show2 = true;
 
 
-               $first_date2 = strtotime($year_lastmonth_str . "-1");
-               $format_first_date2 = date("Y-m-d", $first_date2);
+                $first_date2 = strtotime($year_lastmonth_str . "-1");
+                $format_first_date2 = date("Y-m-d", $first_date2);
 
-               $sql = "SELECT SUM(m3) as m3 FROM salerecord WHERE plant_id= ".$plant_id." AND DATE_FORMAT(display_date,'%Y-%m-%d')>='" . $format_first_date2 . "' AND DATE_FORMAT(display_date,'%Y-%m-%d')<='" . $format_date2 . "'";
-               $data2 = \Yii::$app->db->createCommand($sql)->queryAll();
-               $exist2 = \Yii::$app->db->createCommand($sql)->execute();
+                $sql = "SELECT SUM(m3) as m3 FROM salerecord WHERE DATE_FORMAT(display_date,'%Y-%m-%d')>='" . $format_first_date2 . "' AND DATE_FORMAT(display_date,'%Y-%m-%d')<='" . $format_date2 . "'";
+                $data2 = \Yii::$app->db->createCommand($sql)->queryAll();
+                $exist2 = \Yii::$app->db->createCommand($sql)->execute();
 
-               if ($exist2 != 0 && $show2 == true) {
-                   foreach ($data2 as $d) {
+                if ($exist2 != 0 && $show2 == true) {
+                    foreach ($data2 as $d) {
 
-                       $graph_data2[] = [
-                           intval($d["m3"])
-                       ];
-                   }
-               } else {
-                   $graph_data2[] = [
-                       null
-                   ];
-               }
+                        $graph_data2[] = [
+                            intval($d["m3"])
+                        ];
+                    }
+                } else {
+                    $graph_data2[] = [
+                        null
+                    ];
+                }
 
-           }
-       }
+            }
+        } else {
+
+            $tst = strtotime($filter."-1");
+            $format_month = date("m",$tst);
+            $year = date("Y",$tst);
+
+            // loops according to month date count + query inside each loop
+            $days_in_month = cal_days_in_month(CAL_GREGORIAN, $format_month, $year);
+
+            $year_lastmonth = date('Y', strtotime('-1 day', strtotime(date($year.'-'.$format_month.'-01'))));
+            $format_lastmonth = date('m', strtotime('-1 day', strtotime(date($year.'-'.$format_month.'-01'))));
+$year_lastmonth_str = date($year_lastmonth.'-'.$format_lastmonth);
+        /*    $year_lastmonth_str = date('Y-m', strtotime('last month'));
+
+            $year_lastmonth = explode("-", $year_lastmonth_str)[0];
+            $format_lastmonth = explode("-", $year_lastmonth_str)[1];*/
+
+            $day_in_lastmonth = cal_days_in_month(CAL_GREGORIAN, $format_lastmonth, $year_lastmonth);
+
+            $graph_data = [];
+            for ($i = 1; $i < ($days_in_month + 1); $i++) {
+                $timestamp = strtotime($year . "-" . $format_month . "-" . $i);
+                $format_date = date("Y-m-d", $timestamp);
+
+                if (date("Y-m", $timestamp) != date("Y-m")) {
+                    $show = true;
+                } else {
+                    if (date("Y-m-d", $timestamp) > date("Y-m-d")) {
+                        $show = false;
+                    } else {
+                        $show = true;
+                    }
+                 }
+
+
+                $first_date = strtotime($year . "-" . $format_month . "-1");
+                $format_first_date = date("Y-m-d", $first_date);
+
+                $sql = "SELECT SUM(m3) as m3, DATE_FORMAT(display_date,'%d') as name FROM salerecord WHERE plant_id= " . $plant_id . " AND DATE_FORMAT(display_date,'%Y-%m-%d')>='" . $format_first_date . "' AND DATE_FORMAT(display_date,'%Y-%m-%d')<='" . $format_date . "'";
+                $data = \Yii::$app->db->createCommand($sql)->queryAll();
+                $exist = \Yii::$app->db->createCommand($sql)->execute();
+
+                if ($exist != 0 && $show == true) {
+                    foreach ($data as $d) {
+
+                        $graph_data[] = [
+                            intval($d["m3"])
+                        ];
+                    }
+                } else {
+                    $graph_data[] = [
+                        null
+                    ];
+                }
+
+            }
+
+// LAST MONTH
+            $graph_data2 = [];
+            // $year_lastmonth_str = date('Y-m', strtotime('-1 months'));
+
+
+            for ($i = 1; $i < ($day_in_lastmonth + 1); $i++) {
+                $timestamp2 = strtotime($year_lastmonth_str . "-" . $i);
+                $format_date2 = date("Y-m-d", $timestamp2);
+                $show2 = true;
+                $first_date2 = strtotime($year_lastmonth_str . "-1");
+                $format_first_date2 = date("Y-m-d", $first_date2);
+
+                $sql = "SELECT SUM(m3) as m3 FROM salerecord WHERE plant_id= " . $plant_id . " AND DATE_FORMAT(display_date,'%Y-%m-%d')>='" . $format_first_date2 . "' AND DATE_FORMAT(display_date,'%Y-%m-%d')<='" . $format_date2 . "'";
+                $data2 = \Yii::$app->db->createCommand($sql)->queryAll();
+                $exist2 = \Yii::$app->db->createCommand($sql)->execute();
+
+                if ($exist2 != 0 && $show2 == true) {
+                    foreach ($data2 as $d) {
+
+                        $graph_data2[] = [
+                            intval($d["m3"])
+                        ];
+                    }
+                } else {
+                    $graph_data2[] = [
+                        null
+                    ];
+                }
+
+            }
+        }
         return $this->render('dashboard', [
             /*'searchModel' => $searchModel, */
             'customers' => $customers,
@@ -346,12 +360,13 @@ class SiteController extends Controller
             'data2' => $graph_data2,
         ]);
     }
+
     /**
      * Displays monthly report.
      *
      * @return string
      */
-    public function actionDriver($plant_id = null,$filter = null, $driver_id = null)
+    public function actionDriver($plant_id = null, $filter = null, $driver_id = null)
     {
 
         /* $searchModel = new SalerecordSearch();
@@ -360,13 +375,13 @@ class SiteController extends Controller
         $model = new Salerecord();
         $searchModel = new CustomerSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>','id',9999])->orderBy(['name' => 'asc']);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
         $dataProvider->setPagination(['pageSize' => 100]);
         $customers = $dataProvider->getModels();
 
         $searchModel = new GradeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>','id',9999])->orderBy(['name' => 'asc']);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
         $dataProvider->setPagination(['pageSize' => 100]);
         $grades = $dataProvider->getModels();
 
@@ -404,9 +419,9 @@ class SiteController extends Controller
 
         $searchModel = new SalerecordSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        if($plant_id==0) {
+        if ($plant_id == 0) {
             $dataProvider->query->where(['deleted' => 0, 'driver_id' => $driver_id, 'DATE_FORMAT(display_date,"%Y-%m")' => $year_month_str])->orderBy(['display_date' => 'asc', 'batch_no' => 'asc']);
-        }else {
+        } else {
             $dataProvider->query->where(['deleted' => 0, 'driver_id' => $driver_id, 'DATE_FORMAT(display_date,"%Y-%m")' => $year_month_str, 'plant_id' => $plant_id])->orderBy(['display_date' => 'asc', 'batch_no' => 'asc']);
         }
         $dataProvider->setPagination(['pageSize' => 100]);
@@ -424,6 +439,7 @@ class SiteController extends Controller
             'filter_driver' => $driver_id,
         ]);
     }
+
     /**
      * Login action.
      *
@@ -440,10 +456,10 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-           /* $user_role = Yii::$app->user->identity->getRole();
-            $user_plant = Profile::findByUserId(Yii::$app->user->identity->getId())->plant->name;
-            $user_plant_id = Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id;
-            return $this->redirect('index?plant_id='.$user_plant_id.'&'.'filter='.(date('Y-M'))); */
+            /* $user_role = Yii::$app->user->identity->getRole();
+             $user_plant = Profile::findByUserId(Yii::$app->user->identity->getId())->plant->name;
+             $user_plant_id = Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id;
+             return $this->redirect('index?plant_id='.$user_plant_id.'&'.'filter='.(date('Y-M'))); */
             return $this->goBack();
         }
 
