@@ -179,14 +179,20 @@ class SiteController extends Controller
 
         // Generate grapht data set
         if ($plant_id == 0) {
-            $format_month = date("m");
-            $year = date("Y");
+            $tst = strtotime($filter."-1");
+            $format_month = date("m",$tst);
+            $year = date("Y",$tst);
+
             // loops according to month date count + query inside each loop
             $days_in_month = cal_days_in_month(CAL_GREGORIAN, $format_month, $year);
-            $year_lastmonth_str = date('Y-m', strtotime('last month'));
+
+            $year_lastmonth = date('Y', strtotime('-1 day', strtotime(date($year.'-'.$format_month.'-01'))));
+            $format_lastmonth = date('m', strtotime('-1 day', strtotime(date($year.'-'.$format_month.'-01'))));
+            $year_lastmonth_str = date($year_lastmonth.'-'.$format_lastmonth);
+         /*   $year_lastmonth_str = date('Y-m', strtotime('last month'));
 
             $year_lastmonth = explode("-", $year_lastmonth_str)[0];
-            $format_lastmonth = explode("-", $year_lastmonth_str)[1];
+            $format_lastmonth = explode("-", $year_lastmonth_str)[1];*/
 
             $day_in_lastmonth = cal_days_in_month(CAL_GREGORIAN, $format_lastmonth, $year_lastmonth);
 
@@ -236,10 +242,7 @@ class SiteController extends Controller
             for ($i = 1; $i < ($day_in_lastmonth + 1); $i++) {
                 $timestamp2 = strtotime($year_lastmonth_str . "-" . $i);
                 $format_date2 = date("Y-m-d", $timestamp2);
-
                 $show2 = true;
-
-
                 $first_date2 = strtotime($year_lastmonth_str . "-1");
                 $format_first_date2 = date("Y-m-d", $first_date2);
 
