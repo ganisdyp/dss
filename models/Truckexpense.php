@@ -9,11 +9,14 @@ use Yii;
  *
  * @property int $id
  * @property string $date_reported
- * @property string $expenditure
- * @property string $reason
- * @property int $truck_id
- *
- * @property Truck $truck
+ * @property string $display_date DATE
+ * @property string $spare_part_service SPARE PART & SERVICE
+ * @property string $cost RM
+ * @property string $series_no SERIES NO.
+ * @property string $reason REASON / DETAIL
+ * @property string $warranty WARRANTY
+ * @property string $remark REMARKS
+ * @property int $truck_id TRUCK NO.
  */
 class Truckexpense extends \yii\db\ActiveRecord
 {
@@ -31,12 +34,12 @@ class Truckexpense extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['date_reported'], 'safe'],
-            [['expenditure', 'reason', 'truck_id'], 'required'],
-            [['expenditure'], 'number'],
-            [['reason'], 'string'],
-            [['truck_id'], 'integer'],
-            [['truck_id'], 'exist', 'skipOnError' => true, 'targetClass' => Truck::className(), 'targetAttribute' => ['truck_id' => 'id']],
+            [['display_date', 'cost', 'reason', 'truck_id'], 'required'],
+            [['id', 'truck_id'], 'integer'],
+            [['date_reported', 'display_date'], 'safe'],
+            [['spare_part_service', 'series_no', 'reason', 'warranty', 'remark'], 'string'],
+            [['cost'], 'number'],
+            [['id', 'truck_id'], 'unique', 'targetAttribute' => ['id', 'truck_id']],
         ];
     }
 
@@ -48,17 +51,23 @@ class Truckexpense extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'date_reported' => 'Date Reported',
-            'expenditure' => 'Expenditure',
-            'reason' => 'Reason',
-            'truck_id' => 'Truck ID',
+            'display_date' => 'DATE',
+            'spare_part_service' => 'SPARE PART & SERVICE',
+            'cost' => 'RM',
+            'series_no' => 'SERIES NO.',
+            'reason' => 'REASON / DETAIL',
+            'warranty' => 'WARRANTY',
+            'remark' => 'REMARKS',
+            'truck_id' => 'TRUCK NO.',
         ];
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * {@inheritdoc}
+     * @return TruckexpenseQuery the active query used by this AR class.
      */
-    public function getTruck()
+    public static function find()
     {
-        return $this->hasOne(Truck::className(), ['id' => 'truck_id']);
+        return new TruckexpenseQuery(get_called_class());
     }
 }

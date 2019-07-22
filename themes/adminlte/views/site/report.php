@@ -102,7 +102,6 @@ function getTotalM3ByCustomer($date, $customer, $plant_id)
     }
     return $count;
 
-
 }
 function getTotalM3ByGrade($date, $grade, $plant_id)
 {

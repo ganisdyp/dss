@@ -12,7 +12,8 @@ if(Yii::$app->user->isGuest){
 
     $default_filter = 'plant_id='.$user_plant_id.'&filter='.date('Y-M');
     $default_filter_monthly_report = 'plant_id=0&filter='.date('Y-M');
-    $default_filter_driver_report = 'plant_id=0&driver_id=9999&filter='.date('Y-M');
+    $default_filter_driver_report = 'plant_id=0&driver_id=0&filter='.date('Y-M');
+    $default_filter_truckexpense_report = 'plant_id=0&truck_id=0&month='.date('Y-M');
     if($user_plant_id == 0){
         $default_filter_daily_salerecord = 'plant_id=0&date='.date('Y-m-d');
     }else{
@@ -87,7 +88,7 @@ if(Yii::$app->user->isGuest){
                         'url' => '#',
                         'items' => [
                             ['label' => 'Truck', 'icon' => 'truck', 'url' => ['/truck/index'],],
-                            ['label' => 'Truck expense', 'icon' => 'file', 'url' => ['/truckexpense/index'],],
+                            ['label' => 'Truck expense', 'icon' => 'file', 'url' => ['/truckexpense/index?'.$default_filter_truckexpense_report],],
                         ],
                     ],
                     ['label' => 'User Management', 'icon' => 'group', 'url' => ['/profile/index']],

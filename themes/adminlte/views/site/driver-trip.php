@@ -284,8 +284,8 @@ echo '<br>';
                     ?>
                     <tr>
                         <td><?= date("j-M-Y",strtotime($drivertrip->display_date)); ?></td>
-                        <td><?= $drivertrip->batch_no; ?></td>
-                        <td><?= $drivertrip->delivery_order_no; ?></td>
+                        <td><?= $drivertrip->plant->plant_prefix.' '.$drivertrip->batch_no; ?></td>
+                        <td><?= $drivertrip->plant->plant_prefix.' '.$drivertrip->delivery_order_no; ?></td>
                         <td><?= $drivertrip->grade->name; ?></td>
                         <td><?= $drivertrip->m3; ?></td>
                         <td><?= $drivertrip->truck->truck_no; ?></td>

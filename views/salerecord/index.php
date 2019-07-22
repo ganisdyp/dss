@@ -13,20 +13,19 @@ use yii\widgets\ActiveForm;
 use app\models\Plant;
 use yii\helpers\ArrayHelper;
 use kartik\date\DatePicker;
-use kartik\depdrop\DepDrop;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\SalerecordSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Salerecords';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Sale records';
+//$this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="salerecord-index">
 
-    <?php Pjax::begin(); ?>
+
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php
@@ -83,6 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
     }
 
     $salerecords = $dataProvider->getModels();
+    $cashsalerecords = $dataProvider2->getModels();
 
     if (count($salerecords) == 0) { // pending only
         $display_button = true;
@@ -112,13 +112,13 @@ $this->params['breadcrumbs'][] = $this->title;
     $ci_silo3 = 0;
     $me_is_holiday = false;
     $ci_is_holiday = false;
-    if($plant_id != 0) {
+    if ($plant_id != 0) {
         $me_record = Materialending::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
         if (isset($me_record)) {
             $me_silo1 = $me_record->silo1;
             $me_silo2 = $me_record->silo2;
             $me_silo3 = $me_record->silo3;
-            if($me_record->is_holiday==1){
+            if ($me_record->is_holiday == 1) {
                 $me_is_holiday = true;
             }
         }
@@ -127,13 +127,12 @@ $this->params['breadcrumbs'][] = $this->title;
             $ci_silo1 = $ci_record->silo1;
             $ci_silo2 = $ci_record->silo2;
             $ci_silo3 = $ci_record->silo3;
-            if($ci_record->is_holiday==1){
+            if ($ci_record->is_holiday == 1) {
                 $ci_is_holiday = true;
             }
         }
     }
     ?>
-
     <table class="table">
         <thead class="thead-dark">
         <tr>
@@ -187,6 +186,10 @@ $this->params['breadcrumbs'][] = $this->title;
             <td colspan="10"></td>
             <td colspan="2"><b>PRAPARED BY: </b>PLANT ADMIN ( USER )</td>
         </tr>
+        </thead>
+    </table>
+    <table class="table">
+        <thead class="thead-dark">
         <tr>
             <th>#</th>
             <th>Batch No.</th>
@@ -219,7 +222,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     echo '<td>' . $record->delivery_order_no . '</td>';
                     echo '<td>' . $record->customer->name . '</td>';
                     echo '<td>' . $record->grade->charac_strength28 . '</td>';
-                    echo '<td>' . round($record->m3,1) . '</td>';
+                    echo '<td>' . round($record->m3, 1) . '</td>';
                     echo '<td>' . ${'progressive_m3' . $i} . '</td>';
                     echo '<td>' . $record->truck->truck_no . '</td>';
                     echo '<td>' . $record->driver->name . '</td>';
@@ -229,10 +232,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     echo '<td><a href="delete?id=' . $record->id . '&plant_id=' . $record->plant_id . '&customer_id=' . $record->customer_id . '&grade_id=' . $record->grade_id . '">
 <i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
                     echo '<td><a 
-onclick="copyThisRowData('.$record->customer->id.','.$record->grade->id.','.$record->truck->id.','.$record->driver->id.','.$record->project->id.')" href="#">
+onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . ',' . $record->truck->id . ',' . $record->driver->id . ',' . $record->project->id . ')" href="#">
 <i class="fa fa-refresh" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
                     echo '</tr>';
-                    $total_m3 += round($record->m3,2);
+                    $total_m3 += round($record->m3, 2);
                 } else {
 
                 }
@@ -249,21 +252,95 @@ onclick="copyThisRowData('.$record->customer->id.','.$record->grade->id.','.$rec
         </tr>
         </tbody>
     </table>
+    <?php if ($user_role != 5) {
+        if ($display_button == true) { ?>
+            <div class="salerecord-create">
+                <?= $this->render('create', [
+                    'model' => $model,
+                ]) ?>
+            </div>
+            <?php
+        }
+    } ?>
 
-    <?php Pjax::end(); ?>
+    <table class="table">
+        <thead class="thead-dark">
+        <tr><th colspan="13">
+                <h4>Cash Sale Summary</h4>
+            </th>
+        </tr>
+        <tr>
+            <th>#</th>
+            <th>Batch No.</th>
+            <th>D/O No.</th>
+            <th>Customer Name</th>
+            <th>Grade</th>
+            <th>M3</th>
+            <th>Progressive M3</th>
+            <th>Truck</th>
+            <th>Driver</th>
+            <th>Location</th>
+            <th>Special Condition</th>
+            <th>Remark</th>
+            <th>Action</th>
+        </tr></thead>
+        <tbody>
+        <?php
+        $total_m3_cashsale = 0;
+        $count_cashsale = 1;
+        foreach ($cashsalerecords as $record) {
 
+            for ($i = 0; $i < count($query); $i++) {
+
+                if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
+                    ${'progressive_m3' . $i} += $record->m3;
+                    echo '<tr style="background-color:' . $query[$i]["color_code"] . ';">';
+                    echo '<td>' . $count_cashsale . '</td>';
+                    echo '<td>' . $record->batch_no . '</td>';
+                    echo '<td>' . $record->delivery_order_no . '</td>';
+                    echo '<td>' . $record->customer->name . '</td>';
+                    echo '<td>' . $record->grade->charac_strength28 . '</td>';
+                    echo '<td>' . round($record->m3, 1) . '</td>';
+                    echo '<td>' . ${'progressive_m3' . $i} . '</td>';
+                    echo '<td>' . $record->truck->truck_no . '</td>';
+                    echo '<td>' . $record->driver->name . '</td>';
+                    echo '<td>' . $record->project->name . '</td>';
+                    echo '<td>' . $record->special_condition . '</td>';
+                    echo '<td>' . $record->remark . '</td>';
+                    echo '<td><a href="delete?id=' . $record->id . '&plant_id=' . $record->plant_id . '&customer_id=' . $record->customer_id . '&grade_id=' . $record->grade_id . '">
+<i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
+                    echo '<td><a 
+onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . ',' . $record->truck->id . ',' . $record->driver->id . ',' . $record->project->id . ')" href="#">
+<i class="fa fa-refresh" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
+                    echo '</tr>';
+                    $total_m3_cashsale += round($record->m3, 2);
+                } else {
+
+                }
+
+            }
+            $count++;
+        }
+        ?>
+        <tr style="font-weight:bold;">
+            <td colspan="3"></td>
+            <td colspan="1" style="text-align:center;">TOTAL</td>
+            <td colspan="1"><?= $total_m3_cashsale; ?></td>
+            <td>M3</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 <?php
 
-if ($user_role != 5) { ?>
-
-    <?php
+if ($user_role != 5) {
     if ($display_button == true) { ?>
-        <div class="salerecord-create">
 
-            <?= $this->render('create', [
-                'model' => $model,
+        <div class="cashsalerecord-create">
+
+            <?= $this->render('/cashsalerecord/create', [
+                'model2' => $model2,
             ]) ?>
 
         </div>
@@ -335,7 +412,7 @@ if ($user_role != 5) { ?>
                 <?php
 
                 ?>
-                <?= $form->field($cementintake, 'is_holiday')->checkbox(['checked'=>$ci_is_holiday,'value'=>1,'style'=>'transform: scale(1.5);'])->label(false) ?>
+                <?= $form->field($cementintake, 'is_holiday')->checkbox(['checked' => $ci_is_holiday, 'value' => 1, 'style' => 'transform: scale(1.5);'])->label(false) ?>
             </div>
         </div>
         <div class="row" style="text-align:center;">

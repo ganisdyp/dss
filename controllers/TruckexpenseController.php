@@ -2,12 +2,18 @@
 
 namespace app\controllers;
 
+use app\models\Fuelefficiency;
 use Yii;
 use app\models\Truckexpense;
+use app\models\Dieselexpense;
 use app\models\TruckexpenseSearch;
+use app\models\DieselexpenseSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\User;
+use yii\filters\AccessControl;
+use app\components\BinapileRule;
 
 /**
  * TruckexpenseController implements the CRUD actions for Truckexpense model.
@@ -23,7 +29,36 @@ class TruckexpenseController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['get'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                // We will override the default rule config with the new AccessRule class
+                'ruleConfig' => [
+                    'class' => BinapileRule::className(),
+                ],
+                'only' => ['index', 'create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        // Allow plant admin, moderators and admins to create
+                        'roles' => [
+                            User::ROLE_PLANTADMIN,
+                            User::ROLE_HQADMIN,
+                            User::ROLE_MANAGEMENT
+                        ],
+                    ],
+                    [
+                        'actions' => ['update', 'create', 'delete'],
+                        'allow' => true,
+                        // Allow moderators and admins to update
+                        'roles' => [
+                            User::ROLE_PLANTADMIN,
+                            User::ROLE_MANAGEMENT
+                        ],
+                    ],
                 ],
             ],
         ];
@@ -33,16 +68,82 @@ class TruckexpenseController extends Controller
      * Lists all Truckexpense models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($truck_id = null, $month = null)
     {
+        $original_month = $month;
+        $month = $this->getFormatMonth($month);
+
         $searchModel = new TruckexpenseSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel2 = new DieselexpenseSearch();
+        // $summary_status = 'pending';
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $truck_id, $month);
+        $dataProvider2 = $searchModel2->search(Yii::$app->request->queryParams, $truck_id, $month);
+
+        $model = new Truckexpense();
+        $model2 = new Dieselexpense();
+        $fuelefficiency = new Fuelefficiency();
+
+        if ($fuelefficiency->load(Yii::$app->request->post())) {
+            $checkforupdate = Fuelefficiency::findOne(['display_month' => $month . '-01', 'truck_id' => $truck_id]);
+            if (isset($checkforupdate)) {
+                $checkforupdate->litre_per_m3 = $fuelefficiency->litre_per_m3;
+                $checkforupdate->rm_per_m3 = $fuelefficiency->rm_per_m3;
+                $checkforupdate->save();
+
+            } else {
+                // $fuelefficiency->truck_id = $truck_id;
+                $fuelefficiency->display_month = $month . '-01';
+                $fuelefficiency->date_reported = date('Y-m-d H:i:s');
+                $fuelefficiency->save();
+            }
+
+        }
+        if ($model->load(Yii::$app->request->post())) {
+
+            $model->truck_id = $truck_id;
+            $model->save();
+
+            return $this->redirect(['index?truck_id=' . $truck_id . '&month=' . $original_month]);
+        }
+
+        if ($model2->load(Yii::$app->request->post())) {
+
+            $model2->truck_id = $truck_id;
+            $model2->save();
+
+            return $this->redirect(['index?truck_id=' . $truck_id . '&month=' . $original_month]);
+        }
+
+        // }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'searchModel2' => $searchModel2,
             'dataProvider' => $dataProvider,
+            'dataProvider2' => $dataProvider2,
+            'model' => $model,
+            'model2' => $model2,
+            'filter_truck' => $truck_id,
+            'filter_date' => $original_month,
+            'month' => $month,
+            // 'materialending' => $materialending,
         ]);
     }
+
+    /**
+     * Lists all Truckexpense models.
+     * @return mixed
+     */
+    /*  public function actionIndex()
+      {
+          $searchModel = new TruckexpenseSearch();
+          $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+          return $this->render('index', [
+              'searchModel' => $searchModel,
+              'dataProvider' => $dataProvider,
+          ]);
+      }*/
 
     /**
      * Displays a single Truckexpense model.
@@ -127,5 +228,38 @@ class TruckexpenseController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function getFormatMonth($month)
+    {
+        $date_arr = explode("-", $month);
+        $year = $date_arr[0];
+        $month = $date_arr[1];
+        if ($month == 'Jan') {
+            $format_month = '01';
+        } else if ($month == 'Feb') {
+            $format_month = '02';
+        } else if ($month == 'Mar') {
+            $format_month = '03';
+        } else if ($month == 'Apr') {
+            $format_month = '04';
+        } else if ($month == 'May') {
+            $format_month = '05';
+        } else if ($month == 'Jun') {
+            $format_month = '06';
+        } else if ($month == 'Jul') {
+            $format_month = '07';
+        } else if ($month == 'Aug') {
+            $format_month = '08';
+        } else if ($month == 'Sep') {
+            $format_month = '09';
+        } else if ($month == 'Oct') {
+            $format_month = '10';
+        } else if ($month == 'Nov') {
+            $format_month = '11';
+        } else if ($month == 'Dec') {
+            $format_month = '12';
+        }
+        return $year . '-' . $format_month;
     }
 }

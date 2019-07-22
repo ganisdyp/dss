@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Truckexpense */
+/* @var $model app\models\Dieselexpense */
 
 $this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Truckexpenses', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Dieselexpenses', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="truckexpense-view">
+<div class="dieselexpense-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -30,15 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'date_reported',
-            'display_date',
-            'spare_part_service:ntext',
+            'litre',
             'cost',
-            'series_no:ntext',
-            'reason:ntext',
-            'warranty:ntext',
+            'date_reported',
             'remark:ntext',
+            'deleted',
             'truck_id',
+            'display_date',
         ],
     ]) ?>
 

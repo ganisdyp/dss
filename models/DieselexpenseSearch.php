@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Truckexpense;
+use app\models\Dieselexpense;
 
 /**
- * TruckexpenseSearch represents the model behind the search form of `app\models\Truckexpense`.
+ * DieselexpenseSearch represents the model behind the search form of `app\models\Dieselexpense`.
  */
-class TruckexpenseSearch extends Truckexpense
+class DieselexpenseSearch extends Dieselexpense
 {
     /**
      * {@inheritdoc}
@@ -18,8 +18,8 @@ class TruckexpenseSearch extends Truckexpense
     {
         return [
             [['id', 'truck_id'], 'integer'],
-            [['date_reported', 'display_date', 'spare_part_service', 'series_no', 'reason', 'warranty', 'remark'], 'safe'],
-            [['cost'], 'number'],
+            [['litre', 'cost'], 'number'],
+            [['date_reported', 'remark', 'display_date'], 'safe'],
         ];
     }
 
@@ -41,7 +41,8 @@ class TruckexpenseSearch extends Truckexpense
      */
     public function search($params, $truck = null,$month = null)
     {
-        $query = Truckexpense::find()->where(['DATE_FORMAT(display_date,"%Y-%m")' => $month, 'truck_id'=>$truck])->orderBy(['display_date'=>'asc','id'=>'asc']);
+
+        $query = Dieselexpense::find()->where(['DATE_FORMAT(display_date,"%Y-%m")' => $month, 'truck_id'=>$truck])->orderBy(['display_date'=>'asc','id'=>'asc']);
 
         // add conditions that should always apply here
 
@@ -60,17 +61,14 @@ class TruckexpenseSearch extends Truckexpense
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'date_reported' => $this->date_reported,
-            'display_date' => $this->display_date,
+            'litre' => $this->litre,
             'cost' => $this->cost,
+            'date_reported' => $this->date_reported,
             'truck_id' => $this->truck_id,
+            'display_date' => $this->display_date,
         ]);
 
-        $query->andFilterWhere(['like', 'spare_part_service', $this->spare_part_service])
-            ->andFilterWhere(['like', 'series_no', $this->series_no])
-            ->andFilterWhere(['like', 'reason', $this->reason])
-            ->andFilterWhere(['like', 'warranty', $this->warranty])
-            ->andFilterWhere(['like', 'remark', $this->remark]);
+        $query->andFilterWhere(['like', 'remark', $this->remark]);
 
         return $dataProvider;
     }

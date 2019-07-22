@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\TruckexpenseSearch */
+/* @var $model app\models\FuelefficiencySearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="truckexpense-search">
+<div class="fuelefficiency-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -20,21 +20,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
+    <?= $form->field($model, 'display_month') ?>
+
     <?= $form->field($model, 'date_reported') ?>
 
-    <?= $form->field($model, 'display_date') ?>
+    <?= $form->field($model, 'litre_per_m3') ?>
 
-    <?= $form->field($model, 'spare_part_service') ?>
+    <?= $form->field($model, 'rm_per_m3') ?>
 
-    <?= $form->field($model, 'cost') ?>
-
-    <?php // echo $form->field($model, 'series_no') ?>
-
-    <?php // echo $form->field($model, 'reason') ?>
-
-    <?php // echo $form->field($model, 'warranty') ?>
-
-    <?php // echo $form->field($model, 'remark') ?>
+    <?php // echo $form->field($model, 'summary_status') ?>
 
     <?php // echo $form->field($model, 'truck_id') ?>
 

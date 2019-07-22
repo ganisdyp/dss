@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Truckexpense */
 
-$this->title = 'Create Truckexpense';
+$this->title = 'Monthly Truck Expense';
 $this->params['breadcrumbs'][] = ['label' => 'Truckexpenses', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -13,6 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'month' => $month,
     ]) ?>
 
 </div>

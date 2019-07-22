@@ -11,6 +11,8 @@ use app\models\Project;
 use Yii;
 use app\models\Salerecord;
 use app\models\SalerecordSearch;
+use app\models\Cashsalerecord;
+use app\models\CashsalerecordSearch;
 use app\models\GradeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -84,7 +86,18 @@ class SalerecordController extends Controller
             //    $summary_status = 'submitted';
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $plant_id, $date);
         }
+
+        $searchModel2 = new CashsalerecordSearch();
+        if ($date == date('Y-m-d')) {
+            // $summary_status = 'pending';
+            $dataProvider2 = $searchModel2->search(Yii::$app->request->queryParams, $plant_id, $date);
+        } else {
+            //    $summary_status = 'submitted';
+            $dataProvider2 = $searchModel2->search(Yii::$app->request->queryParams, $plant_id, $date);
+        }
+
         $model = new Salerecord();
+        $model2 = new Cashsalerecord();
         $materialending = new Materialending();
         $cementintake = new Cementintake();
 
@@ -250,8 +263,11 @@ class SalerecordController extends Controller
 
         return $this->render('index', [
             'searchModel' => $searchModel,
+            'searchModel2' => $searchModel2,
             'dataProvider' => $dataProvider,
+            'dataProvider2' => $dataProvider2,
             'model' => $model,
+            'model2' => $model2,
             'filter_plant' => $plant_id,
             'filter_date' => $date,
             // 'materialending' => $materialending,
