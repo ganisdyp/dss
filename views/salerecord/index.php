@@ -5,6 +5,7 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 use fedemotta\datatables\DataTables;
 use app\models\Salerecord;
+use app\models\Cashsalerecord;
 use app\models\Revision;
 use app\models\Cementintake;
 use app\models\Materialending;
@@ -55,30 +56,37 @@ $this->title = 'Sale records';
     // ADD WHERE RECORD PLANT = PLANT OF LOGIN USER
 
     $query = Salerecord::find()->select(['COUNT(*) AS cnt,customer_id,grade_id,project_id'])->where(['display_date' => $date, 'deleted' => 0, 'plant_id' => $plant_id])->groupBy(['customer_id', 'grade_id', 'project_id'])->createCommand()->queryAll();
+    $query2 = Cashsalerecord::find()->select(['COUNT(*) AS cnt,customer_id,grade_id,project_id'])->where(['display_date' => $date, 'deleted' => 0, 'plant_id' => $plant_id])->groupBy(['customer_id', 'grade_id', 'project_id'])->createCommand()->queryAll();
 
     //print_r($query);
 
     // ADD MORE COLORS
-    $color_code = array('#FFC300',
-        '#DAF7A6',
-        '#FF5733',
-        '#C70039',
-        '#99CFF7',
-        '#DDBCF5',
-        '#ffffff',
-        '#BCE1F5',
-        '#BCF5C0',
-        '#ED90CF',
-        '#EDBC90',
-        '#DAED90',
-        '#5C71FE',
-        '#5CCCFE',
-        '#EC4581');
+    $color_code = array('#5D2E8C',
+        '#FFFBBD',
+        '#CCFF66',
+        '#FF6666',
+        '#FF8C42',
+        '#2EC4B6',
+        '#94C9A9',
+        '#FFF275',
+        '#A89B9D',
+        '#CFCFEA',
+        '#FCD581',
+        '#FFF8E8',
+        '#990D35',
+        '#8EDCE6',
+        '#D5DCF9');
 
 
     for ($i = 0; $i < count($query); $i++) {
         ${'progressive_m3' . $i} = 0;
         $query[$i]["color_code"] = $color_code[$i];
+    }
+
+    for ($i = 0; $i < count($query2); $i++) {
+        ${'progressive_m3_cs' . $i} = 0;
+        $query2[$i]["color_code"] = $color_code[$i];
+        $color[$i]["color_code"] = $color_code[count($query)+$i];
     }
 
     $salerecords = $dataProvider->getModels();
@@ -215,8 +223,13 @@ $this->title = 'Sale records';
             for ($i = 0; $i < count($query); $i++) {
 
                 if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
+                    if($query[$i]["color_code"]=='#5D2E8C'){
+                        $text_color = '#eee';
+                    }else{
+                        $text_color = '#000000';
+                    }
                     ${'progressive_m3' . $i} += $record->m3;
-                    echo '<tr style="background-color:' . $query[$i]["color_code"] . ';">';
+                    echo '<tr style="background-color:' . $query[$i]["color_code"] . ';color:'.$text_color.';">';
                     echo '<td>' . $count . '</td>';
                     echo '<td>' . $record->batch_no . '</td>';
                     echo '<td>' . $record->delivery_order_no . '</td>';
@@ -288,20 +301,32 @@ onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . 
         <?php
         $total_m3_cashsale = 0;
         $count_cashsale = 1;
-        foreach ($cashsalerecords as $record) {
+       // print_r($cashsalerecords);
+       foreach ($cashsalerecords as $record) {
 
-            for ($i = 0; $i < count($query); $i++) {
+            for ($i = 0; $i < count($query2); $i++) {
 
-                if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
-                    ${'progressive_m3' . $i} += $record->m3;
-                    echo '<tr style="background-color:' . $query[$i]["color_code"] . ';">';
+                if (($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) || ($query2[$i]["customer_id"] == $record->customer_id && $query2[$i]["grade_id"] == $record->grade_id && $query2[$i]["project_id"] == $record->project_id)) {
+
+                if($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id){
+                    $color = $query2[$i]["color_code"];
+                }else{
+                    $color = $color[$i]["color_code"];
+                }
+                    if($color=='#5D2E8C'){
+                        $text_color = '#eee';
+                    }else{
+                        $text_color = '#000000';
+                    }
+                    ${'progressive_m3_cs' . $i} += $record->m3;
+                    echo '<tr style="background-color:' . $color . ';color:'.$text_color.';">';
                     echo '<td>' . $count_cashsale . '</td>';
                     echo '<td>' . $record->batch_no . '</td>';
                     echo '<td>' . $record->delivery_order_no . '</td>';
                     echo '<td>' . $record->customer->name . '</td>';
                     echo '<td>' . $record->grade->charac_strength28 . '</td>';
                     echo '<td>' . round($record->m3, 1) . '</td>';
-                    echo '<td>' . ${'progressive_m3' . $i} . '</td>';
+                    echo '<td>' . ${'progressive_m3_cs' . $i} . '</td>';
                     echo '<td>' . $record->truck->truck_no . '</td>';
                     echo '<td>' . $record->driver->name . '</td>';
                     echo '<td>' . $record->project->name . '</td>';

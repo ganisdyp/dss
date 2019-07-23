@@ -81,6 +81,55 @@ class Cashsalerecord extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCustomer()
+    {
+        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDriver()
+    {
+        return $this->hasOne(Driver::className(), ['id' => 'driver_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getGrade()
+    {
+        return $this->hasOne(Grade::className(), ['id' => 'grade_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPlant()
+    {
+        return $this->hasOne(Plant::className(), ['id' => 'plant_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProject()
+    {
+        return $this->hasOne(Project::className(), ['id' => 'project_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTruck()
+    {
+        return $this->hasOne(Truck::className(), ['id' => 'truck_id']);
+    }
+
+
+    /**
      * {@inheritdoc}
      * @return CashsalerecordQuery the active query used by this AR class.
      */
