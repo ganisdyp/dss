@@ -16,21 +16,6 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $model app\models\Salerecord */
 /* @var $form yii\widgets\ActiveForm */
-$query = Cashsalerecord::find()->where(['display_date'=>date('Y-m-d'),'deleted'=>0])
-    ->orderBy(['batch_no'=>'asc','plant_id'=>'asc','customer_id'=>'asc','grade_id'=>'asc','project_id'=>'asc'])
-    ->createCommand()->queryAll();
-
-
-    $numItems = count($query);
-    if ($numItems != 0) {
-        $next_batch_no = $query[$numItems - 1]["batch_no"] + 1;
-    } else {
-        $query = Cashsalerecord::find()->where(['deleted' => 0])
-            ->orderBy(['batch_no' => 'asc', 'plant_id' => 'asc', 'customer_id' => 'asc', 'grade_id' => 'asc', 'project_id' => 'asc'])
-            ->createCommand()->queryAll();
-        $numItems = count($query);
-        $next_batch_no = $query[$numItems - 1]["batch_no"] + 1;
-    }
 
 
 ?>
@@ -47,7 +32,7 @@ $query = Cashsalerecord::find()->where(['display_date'=>date('Y-m-d'),'deleted'=
     <?= '#' ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'6%']) ?>
-    <?= $form->field($model2, 'batch_no')->textInput(['maxlength' => true,'value'=>$next_batch_no])->label(false) ?>
+    <?= $form->field($model2, 'batch_no')->textInput(['maxlength' => true])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'6%']) ?>
     <?= $form->field($model2, 'delivery_order_no')->textInput(['maxlength' => true])->label(false) ?>

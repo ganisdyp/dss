@@ -26,7 +26,11 @@
         "kartik-v/yii2-widget-datepicker": "@dev",
         "miloschuman/yii2-highcharts-widget": "^7.0",
         "kartik-v/dependent-dropdown": "dev-master",
-        "kartik-v/yii2-widget-depdrop": "@dev"
+        "kartik-v/yii2-widget-depdrop": "@dev",
+        "fxp/composer-asset-plugin": "*",
+        "bower-asset/moment":"2.24.0",
+        "edofre/yii2-fullcalendar": "V1.0.11",
+        "kartik-v/yii2-mpdf": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

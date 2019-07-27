@@ -14,6 +14,9 @@ use yii\widgets\ActiveForm;
 use app\models\Plant;
 use yii\helpers\ArrayHelper;
 use kartik\date\DatePicker;
+use app\models\Customer;
+use app\models\Grade;
+use app\models\Project;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -85,8 +88,8 @@ $this->title = 'Sale records';
 
     for ($i = 0; $i < count($query2); $i++) {
         ${'progressive_m3_cs' . $i} = 0;
-        $query2[$i]["color_code"] = $color_code[$i];
-        $color[$i]["color_code"] = $color_code[count($query)+$i];
+        // $query2[$i]["color_code"] = $color_code[$i]; // same color with salerecord
+        $query2[$i]["color_code"] = $color_code[count($query) + $i];
     }
 
     $salerecords = $dataProvider->getModels();
@@ -223,13 +226,13 @@ $this->title = 'Sale records';
             for ($i = 0; $i < count($query); $i++) {
 
                 if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
-                    if($query[$i]["color_code"]=='#5D2E8C'){
+                    if ($query[$i]["color_code"] == '#5D2E8C') {
                         $text_color = '#eee';
-                    }else{
+                    } else {
                         $text_color = '#000000';
                     }
                     ${'progressive_m3' . $i} += $record->m3;
-                    echo '<tr style="background-color:' . $query[$i]["color_code"] . ';color:'.$text_color.';">';
+                    echo '<tr style="background-color:' . $query[$i]["color_code"] . ';color:' . $text_color . ';">';
                     echo '<td>' . $count . '</td>';
                     echo '<td>' . $record->batch_no . '</td>';
                     echo '<td>' . $record->delivery_order_no . '</td>';
@@ -265,6 +268,52 @@ onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . 
         </tr>
         </tbody>
     </table>
+
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Customer Name</th>
+            <th>Grade</th>
+            <th>M3</th>
+            <th>Location</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+
+        $count = 1;
+
+            for ($i = 0; $i < count($query); $i++) {
+               // foreach ($salerecords as $record) {
+
+             //   if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
+                    if ($query[$i]["color_code"] == '#5D2E8C') {
+                        $text_color = '#eee';
+                    } else {
+                        $text_color = '#000000';
+                    }
+                    echo '<tr style="background-color:' . $query[$i]["color_code"] . ';color:' . $text_color . ';">';
+                    echo '<td>' . $count . '</td>';
+                    echo '<td>' . Customer::findOne(["id"=>$query[$i]["customer_id"]])->name . '</td>';
+                    echo '<td>' . Grade::findOne(["id"=>$query[$i]["grade_id"]])->name . '</td>';
+                    echo '<td>' . ${'progressive_m3' . $i} . '</td>';
+                    echo '<td>' . Project::findOne(["id"=>$query[$i]["project_id"]])->name . '</td>';
+                    echo '</tr>';
+
+           // }
+            $count++;
+        }
+        ?>
+        <tr style="font-weight:bold;">
+            <td colspan="1"></td>
+            <td colspan="1" style="text-align:center;">TOTAL</td>
+            <td colspan="1"><?= $total_m3; ?></td>
+            <td>M3</td>
+        </tr>
+        </tbody>
+    </table>
+
     <?php if ($user_role != 5) {
         if ($display_button == true) { ?>
             <div class="salerecord-create">
@@ -278,8 +327,9 @@ onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . 
 
     <table class="table">
         <thead class="thead-dark">
-        <tr><th colspan="13">
-                <h4>Cash Sale Summary</h4>
+        <tr>
+            <th colspan="13">
+                <h4><b>Cash Sale Summary</b></h4>
             </th>
         </tr>
         <tr>
@@ -296,55 +346,65 @@ onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . 
             <th>Special Condition</th>
             <th>Remark</th>
             <th>Action</th>
-        </tr></thead>
+        </tr>
+        </thead>
         <tbody>
         <?php
         $total_m3_cashsale = 0;
         $count_cashsale = 1;
-       // print_r($cashsalerecords);
-       foreach ($cashsalerecords as $record) {
+        // print_r($cashsalerecords);
+        foreach ($cashsalerecords as $record) {
+            for ($i = 0; $i < count($query2); $i++) {
+                if ($query2[$i]["customer_id"] == $record->customer_id && $query2[$i]["grade_id"] == $record->grade_id && $query2[$i]["project_id"] == $record->project_id) {
+                    $color = $query2[$i]["color_code"];
+                }
+            }
+            for ($i = 0; $i < count($query); $i++) {
+                if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
+                    $color = $query[$i]["color_code"];
+                    break;
+                }
+            }
+
 
             for ($i = 0; $i < count($query2); $i++) {
 
-                if (($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) || ($query2[$i]["customer_id"] == $record->customer_id && $query2[$i]["grade_id"] == $record->grade_id && $query2[$i]["project_id"] == $record->project_id)) {
+                //  if ($query2[$i]["customer_id"] == $record->customer_id && $query2[$i]["grade_id"] == $record->grade_id && $query2[$i]["project_id"] == $record->project_id) {
 
-                if($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id){
-                    $color = $query2[$i]["color_code"];
-                }else{
-                    $color = $color[$i]["color_code"];
+                //    $color = $color[$i]["color_code"];
+
+                if ($color == '#5D2E8C') {
+                    $text_color = '#eee';
+                } else {
+                    $text_color = '#000000';
                 }
-                    if($color=='#5D2E8C'){
-                        $text_color = '#eee';
-                    }else{
-                        $text_color = '#000000';
-                    }
-                    ${'progressive_m3_cs' . $i} += $record->m3;
-                    echo '<tr style="background-color:' . $color . ';color:'.$text_color.';">';
-                    echo '<td>' . $count_cashsale . '</td>';
-                    echo '<td>' . $record->batch_no . '</td>';
-                    echo '<td>' . $record->delivery_order_no . '</td>';
-                    echo '<td>' . $record->customer->name . '</td>';
-                    echo '<td>' . $record->grade->charac_strength28 . '</td>';
-                    echo '<td>' . round($record->m3, 1) . '</td>';
-                    echo '<td>' . ${'progressive_m3_cs' . $i} . '</td>';
-                    echo '<td>' . $record->truck->truck_no . '</td>';
-                    echo '<td>' . $record->driver->name . '</td>';
-                    echo '<td>' . $record->project->name . '</td>';
-                    echo '<td>' . $record->special_condition . '</td>';
-                    echo '<td>' . $record->remark . '</td>';
-                    echo '<td><a href="delete?id=' . $record->id . '&plant_id=' . $record->plant_id . '&customer_id=' . $record->customer_id . '&grade_id=' . $record->grade_id . '">
+                ${'progressive_m3_cs' . $i} += $record->m3;
+                echo '<tr style="background-color:' . $color . ';color:' . $text_color . ';">';
+                echo '<td>' . $count_cashsale . '</td>';
+                echo '<td>' . $record->batch_no . '</td>';
+                echo '<td>' . $record->delivery_order_no . '</td>';
+                echo '<td>' . $record->customer->name . '</td>';
+                echo '<td>' . $record->grade->charac_strength28 . '</td>';
+                echo '<td>' . round($record->m3, 1) . '</td>';
+                echo '<td>' . ${'progressive_m3_cs' . $i} . '</td>';
+                echo '<td>' . $record->truck->truck_no . '</td>';
+                echo '<td>' . $record->driver->name . '</td>';
+                echo '<td>' . $record->project->name . '</td>';
+                echo '<td>' . $record->special_condition . '</td>';
+                echo '<td>' . $record->remark . '</td>';
+                echo '<td><a href="delete?id=' . $record->id . '&plant_id=' . $record->plant_id . '&customer_id=' . $record->customer_id . '&grade_id=' . $record->grade_id . '">
 <i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
-                    echo '<td><a 
+                echo '<td><a 
 onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . ',' . $record->truck->id . ',' . $record->driver->id . ',' . $record->project->id . ')" href="#">
 <i class="fa fa-refresh" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
-                    echo '</tr>';
-                    $total_m3_cashsale += round($record->m3, 2);
-                } else {
+                echo '</tr>';
+                $total_m3_cashsale += round($record->m3, 2);
+                /* } else {*/
 
-                }
+//                }
 
             }
-            $count++;
+            $count_cashsale++;
         }
         ?>
         <tr style="font-weight:bold;">

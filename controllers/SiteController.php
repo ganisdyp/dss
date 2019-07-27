@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\CustomerSearch;
 use app\models\GradeSearch;
+use app\models\Materialending;
 use app\models\SalerecordSearch;
 use app\models\Salerecord;
 use app\models\Profile;
@@ -14,6 +15,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use edofre\fullcalendar\models\Event;
 
 class SiteController extends Controller
 {
@@ -179,20 +181,20 @@ class SiteController extends Controller
 
         // Generate grapht data set
         if ($plant_id == 0) {
-            $tst = strtotime($filter."-1");
-            $format_month = date("m",$tst);
-            $year = date("Y",$tst);
+            $tst = strtotime($filter . "-1");
+            $format_month = date("m", $tst);
+            $year = date("Y", $tst);
 
             // loops according to month date count + query inside each loop
             $days_in_month = cal_days_in_month(CAL_GREGORIAN, $format_month, $year);
 
-            $year_lastmonth = date('Y', strtotime('-1 day', strtotime(date($year.'-'.$format_month.'-01'))));
-            $format_lastmonth = date('m', strtotime('-1 day', strtotime(date($year.'-'.$format_month.'-01'))));
-            $year_lastmonth_str = date($year_lastmonth.'-'.$format_lastmonth);
-         /*   $year_lastmonth_str = date('Y-m', strtotime('last month'));
+            $year_lastmonth = date('Y', strtotime('-1 day', strtotime(date($year . '-' . $format_month . '-01'))));
+            $format_lastmonth = date('m', strtotime('-1 day', strtotime(date($year . '-' . $format_month . '-01'))));
+            $year_lastmonth_str = date($year_lastmonth . '-' . $format_lastmonth);
+            /*   $year_lastmonth_str = date('Y-m', strtotime('last month'));
 
-            $year_lastmonth = explode("-", $year_lastmonth_str)[0];
-            $format_lastmonth = explode("-", $year_lastmonth_str)[1];*/
+               $year_lastmonth = explode("-", $year_lastmonth_str)[0];
+               $format_lastmonth = explode("-", $year_lastmonth_str)[1];*/
 
             $day_in_lastmonth = cal_days_in_month(CAL_GREGORIAN, $format_lastmonth, $year_lastmonth);
 
@@ -266,20 +268,20 @@ class SiteController extends Controller
             }
         } else {
 
-            $tst = strtotime($filter."-1");
-            $format_month = date("m",$tst);
-            $year = date("Y",$tst);
+            $tst = strtotime($filter . "-1");
+            $format_month = date("m", $tst);
+            $year = date("Y", $tst);
 
             // loops according to month date count + query inside each loop
             $days_in_month = cal_days_in_month(CAL_GREGORIAN, $format_month, $year);
 
-            $year_lastmonth = date('Y', strtotime('-1 day', strtotime(date($year.'-'.$format_month.'-01'))));
-            $format_lastmonth = date('m', strtotime('-1 day', strtotime(date($year.'-'.$format_month.'-01'))));
-$year_lastmonth_str = date($year_lastmonth.'-'.$format_lastmonth);
-        /*    $year_lastmonth_str = date('Y-m', strtotime('last month'));
+            $year_lastmonth = date('Y', strtotime('-1 day', strtotime(date($year . '-' . $format_month . '-01'))));
+            $format_lastmonth = date('m', strtotime('-1 day', strtotime(date($year . '-' . $format_month . '-01'))));
+            $year_lastmonth_str = date($year_lastmonth . '-' . $format_lastmonth);
+            /*    $year_lastmonth_str = date('Y-m', strtotime('last month'));
 
-            $year_lastmonth = explode("-", $year_lastmonth_str)[0];
-            $format_lastmonth = explode("-", $year_lastmonth_str)[1];*/
+                $year_lastmonth = explode("-", $year_lastmonth_str)[0];
+                $format_lastmonth = explode("-", $year_lastmonth_str)[1];*/
 
             $day_in_lastmonth = cal_days_in_month(CAL_GREGORIAN, $format_lastmonth, $year_lastmonth);
 
@@ -296,7 +298,7 @@ $year_lastmonth_str = date($year_lastmonth.'-'.$format_lastmonth);
                     } else {
                         $show = true;
                     }
-                 }
+                }
 
 
                 $first_date = strtotime($year . "-" . $format_month . "-1");
@@ -441,6 +443,147 @@ $year_lastmonth_str = date($year_lastmonth.'-'.$format_lastmonth);
             'filter_plant' => $plant_id,
             'filter_driver' => $driver_id,
         ]);
+    }
+
+    public function actionEvents($plant_id = null, $start, $end)
+    {
+
+        $user_role = Yii::$app->user->identity->getRole();
+
+// Specify the start date. This date can be any English textual format
+        $date_from = $start;
+        $date_from = strtotime($date_from); // Convert date to a UNIX timestamp
+
+// Specify the end date. This date can be any English textual format
+        $date_to = $end;
+        $date_to = strtotime($date_to); // Convert date to a UNIX timestamp
+
+// Loop from the start date to end date and output all dates inbetween
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        for ($i = $date_from; $i <= $date_to; $i += 86400) {
+            $display_date = date("Y-m-d", $i);
+
+            $pending_exist = Salerecord::findOne(['plant_id' => $plant_id, 'display_date' => $display_date, 'summary_status' => 'pending']);
+            $submitted_exist = Salerecord::findOne(['plant_id' => $plant_id, 'display_date' => $display_date, 'summary_status' => 'submitted']);
+            $check_holiday = Materialending::findOne(['plant_id' => $plant_id, 'display_date' => $display_date]);
+
+            if (isset($check_holiday)) {
+                $is_holiday = $check_holiday->is_holiday;
+
+                if ($is_holiday == 1) {
+                    $img_src = 'holiday-icon.png';
+                    $events[] = new Event([
+                        'id' => uniqid(),
+                        'title' => $img_src,
+                        'start' => $display_date,
+                        'end' => $display_date,
+                        'editable' => false,
+                        'startEditable' => false,
+                        'durationEditable' => true,
+                        'url' => 'salerecord/index?plant_id=' . $plant_id . '&date=' . $display_date,
+                        'backgroundColor' => 'transparent',
+                        'borderColor' => 'transparent',
+                    ]);
+                } else {
+                    if (isset($pending_exist) || isset($submitted_exist)) {
+                        if (isset($pending_exist)) {
+                            $img_src = 'pending-icon-2.png';
+                            $events[] = new Event([
+                                'id' => uniqid(),
+                                'title' => $img_src,
+                                'start' => $display_date,
+                                'end' => $display_date,
+                                'editable' => false,
+                                'startEditable' => false,
+                                'durationEditable' => true,
+                                'url' => 'salerecord/index?plant_id=' . $plant_id . '&date=' . $display_date,
+                                'backgroundColor' => 'transparent',
+                                'borderColor' => 'transparent',
+                            ]);
+
+                        } else {
+                            $img_src = 'submitted-icon.png';
+
+                            if($user_role!=1){
+                                $events[] = new Event([
+                                    'id' => uniqid(),
+                                    'title' => $img_src,
+                                    'start' => $display_date.'T12:30:00',
+                                    'end' => $display_date.'T13:30:00',
+                                    'editable' => false,
+                                    'startEditable' => false,
+                                    'durationEditable' => true,
+                                    'url' => 'salerecord/index?plant_id=' . $plant_id . '&date=' . $display_date,
+                                    'backgroundColor' => 'transparent',
+                                    'borderColor' => 'transparent',
+                                ]);
+                                $events[] = new Event([
+                                    'id' => uniqid(),
+                                    'title' => 'pdf-icon-new.png',
+                                    'start' => $display_date.'T14:30:00',
+                                    'end' => $display_date.'T15:30:00',
+                                    'editable' => false,
+                                    'startEditable' => false,
+                                    'durationEditable' => true,
+                                    'url' => 'salerecord/pdf?plant_id=' . $plant_id . '&date=' . $display_date,
+                                    'backgroundColor' => 'transparent',
+                                    'borderColor' => 'transparent',
+                                ]);
+                            }else{
+                                $events[] = new Event([
+                                    'id' => uniqid(),
+                                    'title' => $img_src,
+                                    'start' => $display_date,
+                                    'end' => $display_date,
+                                    'editable' => false,
+                                    'startEditable' => false,
+                                    'durationEditable' => true,
+                                    'url' => 'salerecord/index?plant_id=' . $plant_id . '&date=' . $display_date,
+                                    'backgroundColor' => 'transparent',
+                                    'borderColor' => 'transparent',
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        return $events;
+
+
+//];
+
+
+        /* return [
+
+             new Event([
+                 'id'               => uniqid(),
+                 'title'            => 'submitted-icon.png',
+                 'start'            => $start,
+                 'end'              => $start,
+                 'editable'         => false,
+                 'startEditable'    => false,
+                 'durationEditable' => true,
+                 'url' => 'salerecord/index?plant_id='.$plant_id.'&date='.$start,
+                 'backgroundColor' => 'transparent',
+                 'borderColor' => 'transparent',
+             ]),
+
+             // Only duration editable
+             new Event([
+                 'id'               => uniqid(),
+                 'title'            => 'pending-icon.png',
+                 'start'            => '2019-07-03',
+                 'end'              => '2019-07-03',
+                 'startEditable'    => false,
+                 'durationEditable' => true,
+                 'url' => 'salerecord/index?plant_id='.$plant_id.'&date=2019-07-03',
+                 'backgroundColor' => 'transparent',
+                 'borderColor' => 'transparent',
+             ]),
+
+         ];*/
     }
 
     /**

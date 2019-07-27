@@ -21,7 +21,7 @@ use yii\filters\AccessControl;
 use app\components\BinapileRule;
 use app\models\User;
 use app\models\Profile;
-use app\models\EntryForm;
+use kartik\mpdf\Pdf;
 
 /**
  * SalerecordController implements the CRUD actions for Salerecord model.
@@ -269,7 +269,11 @@ class SalerecordController extends Controller
                          'model' => $model,
                      ]);
                     */
-                    return $this->redirect(['index?date=' . $date]);
+                    if (Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id == 0) {
+                        return $this->redirect(['index?plant_id=' . $plant_id . '&date=' . $model->display_date]);
+                    } else {
+                        return $this->redirect(['index?date=' . $model->display_date]);
+                    }
                 }
 
             }
@@ -279,7 +283,11 @@ class SalerecordController extends Controller
                     $model2->display_date = $date;
                     $model2->save();
 
-                    return $this->redirect(['index?date=' . $date]);
+                if (Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id == 0) {
+                    return $this->redirect(['index?plant_id=' . $plant_id . '&date=' . $model2->display_date]);
+                } else {
+                    return $this->redirect(['index?date=' . $model2->display_date]);
+                }
             }
         }
 
@@ -399,7 +407,7 @@ class SalerecordController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionEntry()
+  /*  public function actionEntry()
     {
         $model = new EntryForm();
 
@@ -413,6 +421,76 @@ class SalerecordController extends Controller
             // either the page is initially displayed or there is some validation error
             // return $this->render('index', ['model' => $model]);
         }
+    }*/
+    public function actionPdf($plant_id = null, $date = null)
+    {
+        $searchModel = new SalerecordSearch();
+        if ($date == date('Y-m-d')) {
+            // $summary_status = 'pending';
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $plant_id, $date);
+        } else {
+            //    $summary_status = 'submitted';
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $plant_id, $date);
+        }
+
+        $searchModel2 = new CashsalerecordSearch();
+        if ($date == date('Y-m-d')) {
+            // $summary_status = 'pending';
+            $dataProvider2 = $searchModel2->search(Yii::$app->request->queryParams, $plant_id, $date);
+        } else {
+            //    $summary_status = 'submitted';
+            $dataProvider2 = $searchModel2->search(Yii::$app->request->queryParams, $plant_id, $date);
+        }
+
+        $model = new Salerecord();
+        $model2 = new Cashsalerecord();
+        $materialending = new Materialending();
+        $cementintake = new Cementintake();
+
+        if ($plant_id == null) {
+            $plant_id = Profile::findByUserId(Yii::$app->user->identity->getId())->plant_id;
+        }
+
+
+        // get your HTML raw content without any layouts or scripts
+        $content = $this->renderPartial('_preview', [
+            'searchModel' => $searchModel,
+            'searchModel2' => $searchModel2,
+            'dataProvider' => $dataProvider,
+            'dataProvider2' => $dataProvider2,
+            'model' => $model,
+            'model2' => $model2,
+            'filter_plant' => $plant_id,
+            'filter_date' => $date,
+        ]);
+
+        // setup kartik\mpdf\Pdf component
+        $pdf = new Pdf([
+            'mode' => Pdf::MODE_UTF8,
+            // A4 paper format
+            'format' => Pdf::FORMAT_A4,
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting
+            'cssFile' => '@app/web/css/pdf.css',
+            // any css to be embedded if required
+            'cssInline' => 'table,tr,td{border:none !important;}',
+            // set mPDF properties on the fly
+            'options' => ['title' => 'Preview Salerecord: '.$plant_id],
+            // call mPDF methods on the fly
+            'methods' => [
+                //'SetHeader'=>[''],
+                //'SetFooter'=>['{PAGENO}'],
+            ]
+        ]);
+
+        // return the pdf output as per the destination setting
+        return $pdf->render();
     }
 
     public function actionRevision()
