@@ -16,6 +16,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use edofre\fullcalendar\models\Event;
+use kartik\mpdf\Pdf;
 
 class SiteController extends Controller
 {
@@ -584,6 +585,60 @@ class SiteController extends Controller
              ]),
 
          ];*/
+    }
+
+    public function actionPdf($plant_id = null, $filter = null)
+    {
+        $model = new Salerecord();
+        $searchModel = new CustomerSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
+        $dataProvider->setPagination(['pageSize' => 100]);
+        $customers = $dataProvider->getModels();
+
+        $searchModel = new GradeSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
+        $dataProvider->setPagination(['pageSize' => 100]);
+        $grades = $dataProvider->getModels();
+        // print_r($dataProvider->getModels());
+
+        // get your HTML raw content without any layouts or scripts
+        $content = $this->renderPartial('_report-pdf', [
+            'customers' => $customers,
+            'grades' => $grades,
+            'filter' => $filter,
+            'model' => $model,
+            'filter_plant' => $plant_id,
+        ]);
+
+        // setup kartik\mpdf\Pdf component
+        $pdf = new Pdf([
+            'mode' => Pdf::MODE_UTF8,
+            // A4 paper format
+            'format' => Pdf::FORMAT_A4,
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_LANDSCAPE,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting
+            'cssFile' => '@app/web/css/pdf.css',
+            // any css to be embedded if required
+            'cssInline' => 'table,tr,td{border:none !important;}',
+            // set mPDF properties on the fly
+            'options' => ['title' => 'Preview Salerecord: '.$plant_id],
+            // call mPDF methods on the fly
+            'methods' => [
+                //'SetHeader'=>[''],
+                //'SetFooter'=>['{PAGENO}'],
+            ]
+        ]);
+
+        // return the pdf output as per the destination setting
+        return $pdf->render();
     }
 
     /**

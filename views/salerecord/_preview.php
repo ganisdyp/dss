@@ -140,7 +140,7 @@ $this->title = 'Sale records';
     <table class="table" style="border:none;width:100%;">
         <tr>
             <td style="border:none;width:25%;"></td>
-            <td style="border:none;width:50%;"><h2>DAILY SALE SUMMARY REPORT</h2></td>
+            <td style="border:none;width:50%;text-align:center;"><h2>DAILY SALE SUMMARY REPORT</h2></td>
             <td style="border:none;width:25%;"></td>
         </tr>
 
