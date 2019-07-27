@@ -1,7 +1,7 @@
 <?php
 
 use kartik\date\DatePicker;
-use app\models\Salerecord;
+use app\models\Cashsalerecord;
 use app\models\Profile;
 use yii\widgets\ActiveForm;
 use app\models\Plant;
@@ -32,9 +32,9 @@ function getM3ByDate($date, $customer, $plant_id)
       $salerecord = $searchModel2->search(Yii::$app->request->queryParams);*/
 
     if ($plant_id == 0) {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0, 'customer_id' => $customer])->groupBy('customer_id', 'display_date')->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0, 'customer_id' => $customer])->groupBy('customer_id', 'display_date')->createCommand()->queryAll();
     } else {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0, 'customer_id' => $customer, 'plant_id' => $plant_id])->groupBy('customer_id', 'display_date')->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0, 'customer_id' => $customer, 'plant_id' => $plant_id])->groupBy('customer_id', 'display_date')->createCommand()->queryAll();
     }
     $count = '';
     for ($i = 0; $i < count($query); $i++) {
@@ -52,9 +52,9 @@ function getM3ByDateGrade($date, $grade, $plant_id)
       $salerecord = $searchModel2->search(Yii::$app->request->queryParams);*/
 
     if ($plant_id == 0) {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0, 'grade_id' => $grade])->groupBy('grade_id', 'display_date')->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0, 'grade_id' => $grade])->groupBy('grade_id', 'display_date')->createCommand()->queryAll();
     } else {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0, 'grade_id' => $grade, 'plant_id' => $plant_id])->groupBy('grade_id', 'display_date')->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0, 'grade_id' => $grade, 'plant_id' => $plant_id])->groupBy('grade_id', 'display_date')->createCommand()->queryAll();
     }
     $count = '';
     for ($i = 0; $i < count($query); $i++) {
@@ -71,9 +71,9 @@ function getTotalM3($date, $plant_id)
     /*  $searchModel2 = new SalerecordSearch();
       $salerecord = $searchModel2->search(Yii::$app->request->queryParams);*/
     if ($plant_id == 0) {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0])->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0])->createCommand()->queryAll();
     } else {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0, 'plant_id' => $plant_id])->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0, 'plant_id' => $plant_id])->createCommand()->queryAll();
     }
 
     $count = 0;
@@ -92,9 +92,9 @@ function getTotalM3ByCustomer($date, $customer, $plant_id)
     /*  $searchModel2 = new SalerecordSearch();
       $salerecord = $searchModel2->search(Yii::$app->request->queryParams);*/
     if ($plant_id == 0) {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0, 'customer_id' => $customer])->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0, 'customer_id' => $customer])->createCommand()->queryAll();
     } else {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0, 'customer_id' => $customer, 'plant_id' => $plant_id])->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0, 'customer_id' => $customer, 'plant_id' => $plant_id])->createCommand()->queryAll();
     }
     $count = 0;
     for ($i = 0; $i < count($query); $i++) {
@@ -110,9 +110,9 @@ function getTotalM3ByGrade($date, $grade, $plant_id)
     /*  $searchModel2 = new SalerecordSearch();
       $salerecord = $searchModel2->search(Yii::$app->request->queryParams);*/
     if ($plant_id == 0) {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0, 'grade_id' => $grade])->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0, 'grade_id' => $grade])->createCommand()->queryAll();
     } else {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0, 'grade_id' => $grade, 'plant_id' => $plant_id])->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $format_date, 'deleted' => 0, 'grade_id' => $grade, 'plant_id' => $plant_id])->createCommand()->queryAll();
     }
     $count = 0;
     for ($i = 0; $i < count($query); $i++) {
@@ -130,9 +130,9 @@ function getM3ByDateNoFilter($date, $plant_id)
     /*  $searchModel2 = new SalerecordSearch();
       $salerecord = $searchModel2->search(Yii::$app->request->queryParams);*/
     if ($plant_id == 0) {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0])->groupBy('display_date')->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0])->groupBy('display_date')->createCommand()->queryAll();
     } else {
-        $query = Salerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0, 'plant_id' => $plant_id])->groupBy('display_date')->createCommand()->queryAll();
+        $query = Cashsalerecord::find()->select(['SUM(m3) as sum'])->where(['display_date' => $format_date, 'deleted' => 0, 'plant_id' => $plant_id])->groupBy('display_date')->createCommand()->queryAll();
     }
     $count = '';
     for ($i = 0; $i < count($query); $i++) {
@@ -195,14 +195,13 @@ $this->title = 'MONTHLY SALES REPORT (' . strtoupper(Plant::findOne($plant_id)->
 
 ?>
 <div class="site-index">
-
     <div class="body-content">
 
         <div class="row">
             <table class="table" style="border:none;width:100%;">
                 <tr>
                     <td style="border:none;width:25%;"></td>
-                    <td style="border:none;width:50%;text-align:center;"><h2>MONTHLY SALE SUMMARY REPORT</h2></td>
+                    <td style="border:none;width:50%;text-align:center;"><h2>MONTHLY CASH SALE SUMMARY REPORT</h2></td>
                     <td style="border:none;width:25%;"></td>
                 </tr>
 
@@ -216,7 +215,7 @@ $this->title = 'MONTHLY SALES REPORT (' . strtoupper(Plant::findOne($plant_id)->
 
             </table>
             <h4>GROUP BY CUSTOMER</h4>
-            <table class="table table-responsive" id="monthly-pdf">
+            <table class="table table-responsive">
                 <thead class="thead-dark">
                 <tr>
                     <th colspan="1">NO.</th>
@@ -314,7 +313,7 @@ $this->title = 'MONTHLY SALES REPORT (' . strtoupper(Plant::findOne($plant_id)->
         </div>
         <div class="row">
             <h4>GROUP BY GRADE</h4>
-            <table class="table table-responsive" id="monthly-pdf">
+            <table class="table table-responsive">
                 <thead class="thead-dark">
                 <tr>
                     <th colspan="1">NO.</th>
