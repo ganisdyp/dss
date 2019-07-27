@@ -23,8 +23,6 @@ use yii\helpers\Url;
 $this->title = 'Truck Expense';
 $this->params['breadcrumbs'][] = $this->title;
 
-
-
 ?>
 
 <div class="truckexpense-index">
@@ -123,59 +121,31 @@ $this->params['breadcrumbs'][] = $this->title;
         }
     }*/
     ?>
-    <table class="table">
-        <thead class="thead-dark">
+    <table class="table" style="border:none;width:100%;">
         <tr>
-            <td colspan="1"></td>
-            <td colspan="2"><b>TRUCK NO.</b><?php
-                // if ($user_role != 1) { ?>
-                    <?php $form = ActiveForm::begin(); ?>
-                    <?= $form->field($model, 'truck_id')->dropDownList(ArrayHelper::map(Truck::find()->where(['<>', 'id', 0])->all(), 'id', 'truck_no'),
-                        ['prompt' => '-Truck-',
-                            'onchange' => 'updateQueryStringParam("truck_id",this.value);'])->label(false) ?>
-                    <?= $form->field($model, 'role_hidden')->hiddenInput(
-                        ['value' => $user_role
-                        ])->label(false) ?>
-                    <?php ActiveForm::end();
-                // }  ?>
-            </td>
-            <td colspan="3"><b>MONTH</b>
-                <?php
-                if (isset($filter_date)) { ?>
-                    <?php
-                    echo DatePicker::widget([
-                        'id' => 'filter_month',
-                        'name' => 'filter_month',
-                        'value' => date('Y-M'),
-                        'options' => ['placeholder' => 'Select month ...',
-                            'onchange' => "updateQueryStringParam(\"month\",this.value);"],
-                        'removeButton' => false,
-                        'pluginOptions' => [
-                            'autoclose' => true,
-                            'startView' => 'year',
-                            'minViewMode' => 'months',
-                            'format' => 'yyyy-M',
-                            'todayHighlight' => true,
-                            'endDate' => "0d"
-                        ]
-                    ]);
-
-                } else { ?>
-                    <b>DATE/DAY</b> <?php echo strtoupper(date("j / n / Y ( D )")); ?>
-                <?php } ?>
-            </td>
+            <td style="border:none;width:25%;"></td>
+            <td style="border:none;width:50%;text-align:center;"><h2>MONTHLY TRUCK EXPENSE REPORT</h2></td>
+            <td style="border:none;width:25%;"></td>
         </tr>
-        </thead>
+
+    </table>
+    <table class="table" style="border:none;width:100%;">
+        <tr>
+            <td style="border:none;"><h2>TRUCK: <?= strtoupper(Truck::findOne(['id'=>$filter_truck])->truck_no) ?></h2></td>
+            <td style="border:none;width:35%;"></td>
+            <td style="border:none;"><h2>DATE: <?= date("n / Y",strtotime($_GET["month"])); ?></h2></td>
+        </tr>
+
     </table>
     <?php
     $form = ActiveForm::begin(['id' => 'confirm-form']); ?>
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">
-            <table class="table table-striped">
+            <table class="table table-striped" id="monthly-pdf">
                 <thead>
                 <tr>
-                    <th colspan="3">FUEL EFFICIENCY</th>
+                    <th colspan="3" style="text-align:center;background-color: #f3e97a">FUEL EFFICIENCY</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -207,18 +177,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
     </div>
     <?php ActiveForm::end(); ?>
-    <table class="table">
+    <table class="table" id="monthly-pdf">
         <thead class="thead-dark">
 
-        <tr><td colspan="8"><h4>DIESEL EXPENSE</h4></td></tr>
-        <tr>
+        <tr><td colspan="6"><h4>DIESEL EXPENSE</h4></td></tr>
+        <tr style="background-color: #f3e97a;">
             <th>#</th>
             <th>DATE</th>
             <th>REMARKS</th>
             <th>LITRES</th>
             <th>COST (RM)</th>
             <th>PROG. TOTAL</th>
-            <th>Action</th>
+
         </tr>
         </thead>
         <tbody>
@@ -237,8 +207,6 @@ $this->params['breadcrumbs'][] = $this->title;
             echo '<td>' . $record->litre . '</td>';
             echo '<td>' . $record->cost . '</td>';
                echo '<td>' . $prosessive_total . '</td>';
-            echo '<td><a href="/dieselexpense/delete?id=' . $record->id . '&truck_id=' . $record->truck_id.'">
-<i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
 
             echo '</tr>';
             $total_cost_2 += $record->cost;
@@ -248,25 +216,18 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
         <tr style="font-weight:bold;">
             <td colspan="3"></td>
-            <td colspan="1" style="text-align:center;">TOTAL COST=</td>
-            <td colspan="1"><?= round($total_cost_2,2); ?></td>
-            <td>RM</td>
+            <td colspan="1" style="text-align:center;background-color: #f3e97a;font-weight:bold;">TOTAL COST=</td>
+            <td colspan="2" style="background-color: #f3e97a;font-weight:bold;"><?= round($total_cost_2,2); ?> RM</td>
+
         </tr>
         </tbody>
     </table>
-    <div class="dieselexpense-create">
 
-        <?= $this->render('/dieselexpense/create', [
-            'model2' => $model2,
-            'month' => $month,
-        ]) ?>
-
-    </div>
-    <table class="table">
+    <table class="table" id="monthly-pdf">
         <thead class="thead-dark">
 
         <tr><td colspan="8"><h4>OTHER EXPENSE</h4></td></tr>
-        <tr>
+        <tr style="background-color: #f57c00;">
             <th>#</th>
             <th>DATE</th>
             <th>SPARE PART & SERVICE</th>
@@ -275,7 +236,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <th>WARRANTY</th>
             <th>REMARKS</th>
             <th>COST (RM)</th>
-            <th>Action</th>
         </tr>
         </thead>
         <tbody>
@@ -296,8 +256,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     echo '<td>' . $record->remark . '</td>';
             echo '<td>' . $record->cost . '</td>';
             //   echo '<td>' . ${'progressive_total' . $count} . '</td>';
-                    echo '<td><a href="delete?id=' . $record->id . '&truck_id=' . $record->truck_id.'">
-<i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
+
 
                     echo '</tr>';
             $total_cost += $record->cost;
@@ -306,10 +265,9 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         ?>
         <tr style="font-weight:bold;">
-            <td colspan="6"></td>
-            <td colspan="1" style="text-align:center;">TOTAL COST=</td>
-            <td colspan="1"><?= round($total_cost,2); ?></td>
-            <td>RM</td>
+            <td colspan="4"></td>
+            <td colspan="1" style="background-color: #f57c00;text-align:center;font-weight:bold;">TOTAL COST=</td>
+            <td colspan="3" style="background-color: #f57c00;font-weight:bold;"><?= round($total_cost,2); ?>  RM</td>
         </tr>
         </tbody>
     </table>
@@ -323,17 +281,7 @@ $display_button = true;
  ?>
 
     <?php
-   // if ($display_button == true) { ?>
-
-        <div class="truckexpense-create">
-
-            <?= $this->render('create', [
-                'model' => $model,
-                'month' => $month,
-            ]) ?>
-
-        </div>
-      <?php
+   // if ($display_button == true) {
   //  }
 
 

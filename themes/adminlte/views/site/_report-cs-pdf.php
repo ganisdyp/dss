@@ -215,7 +215,7 @@ $this->title = 'MONTHLY SALES REPORT (' . strtoupper(Plant::findOne($plant_id)->
 
             </table>
             <h4>GROUP BY CUSTOMER</h4>
-            <table class="table table-responsive">
+            <table class="table table-responsive" id="monthly-pdf">
                 <thead class="thead-dark">
                 <tr>
                     <th colspan="1">NO.</th>
@@ -313,7 +313,7 @@ $this->title = 'MONTHLY SALES REPORT (' . strtoupper(Plant::findOne($plant_id)->
         </div>
         <div class="row">
             <h4>GROUP BY GRADE</h4>
-            <table class="table table-responsive">
+            <table class="table table-responsive" id="monthly-pdf">
                 <thead class="thead-dark">
                 <tr>
                     <th colspan="1">NO.</th>

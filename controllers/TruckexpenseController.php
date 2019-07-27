@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use app\models\Fuelefficiency;
 use Yii;
+use app\models\Salerecord;
+use app\models\Cashsalerecord;
 use app\models\Truckexpense;
 use app\models\Dieselexpense;
 use app\models\TruckexpenseSearch;
@@ -14,7 +16,7 @@ use yii\filters\VerbFilter;
 use app\models\User;
 use yii\filters\AccessControl;
 use app\components\BinapileRule;
-
+use kartik\mpdf\Pdf;
 /**
  * TruckexpenseController implements the CRUD actions for Truckexpense model.
  */
@@ -56,6 +58,7 @@ class TruckexpenseController extends Controller
                         // Allow moderators and admins to update
                         'roles' => [
                             User::ROLE_PLANTADMIN,
+                            User::ROLE_HQADMIN,
                             User::ROLE_MANAGEMENT
                         ],
                     ],
@@ -128,6 +131,109 @@ class TruckexpenseController extends Controller
             'month' => $month,
             // 'materialending' => $materialending,
         ]);
+    }
+    /**
+     * Lists all Truckexpense models.
+     * @return mixed
+     */
+    public function actionReport($truck_id = null, $month = null)
+    {
+        $original_month = $month;
+        $month = $this->getFormatMonth($month);
+
+     //   $searchModel2 = new DieselexpenseSearch();
+        // $summary_status = 'pending';
+    //    $dataProvider2 = $searchModel2->search(Yii::$app->request->queryParams, $truck_id, $month);
+        $dieselexpenses = Dieselexpense::find()->select('sum(cost) as total_cost,truck_id')->where(['DATE_FORMAT(display_date,"%Y-%m")' => $month])->orderBy(['display_date' => 'asc', 'id' => 'asc'])->groupBy('truck_id')->createCommand()->queryAll();
+       // print_r($dieselexpenses);
+        $volume_delivered = [];
+        for($i=0;$i<count($dieselexpenses);$i++){
+            $volume_delivered[] = Salerecord::find()->select('sum(m3) as volume_delivered')->where(['DATE_FORMAT(display_date,"%Y-%m")' => $month,'truck_id'=>$dieselexpenses[$i]["truck_id"]])->orderBy(['display_date' => 'asc', 'id' => 'asc'])->groupBy('truck_id')->createCommand()->queryOne();
+            $volume_delivered_cs[] = Cashsalerecord::find()->select('sum(m3) as volume_delivered')->where(['DATE_FORMAT(display_date,"%Y-%m")' => $month,'truck_id'=>$dieselexpenses[$i]["truck_id"]])->orderBy(['display_date' => 'asc', 'id' => 'asc'])->groupBy('truck_id')->createCommand()->queryOne();
+        }
+        for($i=0;$i<count($volume_delivered);$i++){
+            $cs_volume_delivered = 0;
+            if(isset($volume_delivered_cs[$i]["volume_delivered"])) {
+                $cs_volume_delivered = $volume_delivered_cs[$i]["volume_delivered"];
+            }
+
+            $dieselexpenses[$i]["volume_delivered"] = $volume_delivered[$i]["volume_delivered"]+$cs_volume_delivered;
+        }
+      // print_r($dieselexpenses);
+
+        // }
+
+        return $this->render('report', [
+
+            'filter_date' => $original_month,
+            'month' => $month,
+       'dieselexpenses'=>$dieselexpenses,
+
+            // 'materialending' => $materialending,
+        ]);
+    }
+    /**
+     * Lists all Truckexpense models.
+     * @return mixed
+     */
+    public function actionPdf($truck_id = null, $month = null)
+    {
+        $original_month = $month;
+        $month = $this->getFormatMonth($month);
+
+        $searchModel = new TruckexpenseSearch();
+        $searchModel2 = new DieselexpenseSearch();
+        // $summary_status = 'pending';
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $truck_id, $month);
+        $dataProvider2 = $searchModel2->search(Yii::$app->request->queryParams, $truck_id, $month);
+
+        $model = new Truckexpense();
+        $model2 = new Dieselexpense();
+        $fuelefficiency = new Fuelefficiency();
+
+        // }
+
+
+        // get your HTML raw content without any layouts or scripts
+        $content = $this->renderPartial('_pdf', [
+            'searchModel' => $searchModel,
+            'searchModel2' => $searchModel2,
+            'dataProvider' => $dataProvider,
+            'dataProvider2' => $dataProvider2,
+            'model' => $model,
+            'model2' => $model2,
+            'filter_truck' => $truck_id,
+            'filter_date' => $original_month,
+            'month' => $month,
+        ]);
+
+        // setup kartik\mpdf\Pdf component
+        $pdf = new Pdf([
+            'mode' => Pdf::MODE_UTF8,
+            // A4 paper format
+            'format' => Pdf::FORMAT_A4,
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting
+            'cssFile' => '@app/web/css/pdf.css',
+            // any css to be embedded if required
+            'cssInline' => 'table,tr,td{border:none !important;}',
+            // set mPDF properties on the fly
+            'options' => ['title' => 'Preview Truck Expense: '.$truck_id],
+            // call mPDF methods on the fly
+            'methods' => [
+                //'SetHeader'=>[''],
+                //'SetFooter'=>['{PAGENO}'],
+            ]
+        ]);
+
+        // return the pdf output as per the destination setting
+        return $pdf->render();
     }
 
     /**

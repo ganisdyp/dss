@@ -80,9 +80,9 @@ $this->params['breadcrumbs'][] = $this->title;
     $days_in_month = cal_days_in_month(CAL_GREGORIAN, $format_month, $year);
     $year_month_str = $year . "-" . $format_month;*/
 
-    $truckexpenses = $dataProvider->getModels();
-    $dieselexpenses = $dataProvider2->getModels();
-   $fuelefficiency = new Fuelefficiency();
+    //$truckexpenses = $dataProvider->getModels();
+    //$dieselexpenses = $dataProvider2->getModels();
+   //$fuelefficiency = new Fuelefficiency();
     /*  $checkexisting = Fuelefficiency::findOne(['display_month' => $month.'-01', 'truck_id' => $filter_truck]);
 
      if(isset($checkexisting)){
@@ -94,24 +94,6 @@ $this->params['breadcrumbs'][] = $this->title;
          $fe_rm_per_m3 = 0;
      }*/
 
-    $fe_litre_per_m3 = 0;
-
-        $fe_rm_per_m3 = 0;
-    $get_sum_m3 = Salerecord::find()->select(['SUM(m3) as sum'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $month, 'deleted' => 0, 'truck_id' => $filter_truck])->createCommand()->queryAll();
-    $total_m3 = 0;
-    for ($i = 0; $i < count($get_sum_m3); $i++) {
-        $total_m3 = $get_sum_m3[$i]["sum"];
-    }
-
-    $get_total_diesel = Dieselexpense::find()->select(['SUM(cost) as sum_rm,SUM(litre) as sum_litre'])->where(['DATE_FORMAT(display_date,"%Y-%m")' => $month, 'truck_id' => $filter_truck])->createCommand()->queryAll();
-    $total_diesel_litre = 0;
-    $total_diesel_rm = 0;
-    for ($i = 0; $i < count($get_total_diesel); $i++) {
-        $total_diesel_litre = $get_total_diesel[$i]["sum_litre"];
-        $total_diesel_rm = $get_total_diesel[$i]["sum_rm"];
-    }
-    $fe_litre_per_m3 = $total_diesel_litre/$total_m3;
-    $fe_rm_per_m3 = $total_diesel_rm/$total_m3;
 
 
  /*   if($plant_id != 0) {
@@ -127,18 +109,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <thead class="thead-dark">
         <tr>
             <td colspan="1"></td>
-            <td colspan="2"><b>TRUCK NO.</b><?php
-                // if ($user_role != 1) { ?>
-                    <?php $form = ActiveForm::begin(); ?>
-                    <?= $form->field($model, 'truck_id')->dropDownList(ArrayHelper::map(Truck::find()->where(['<>', 'id', 0])->all(), 'id', 'truck_no'),
-                        ['prompt' => '-Truck-',
-                            'onchange' => 'updateQueryStringParam("truck_id",this.value);'])->label(false) ?>
-                    <?= $form->field($model, 'role_hidden')->hiddenInput(
-                        ['value' => $user_role
-                        ])->label(false) ?>
-                    <?php ActiveForm::end();
-                // }  ?>
-            </td>
             <td colspan="3"><b>MONTH</b>
                 <?php
                 if (isset($filter_date)) { ?>
@@ -167,149 +137,43 @@ $this->params['breadcrumbs'][] = $this->title;
         </tr>
         </thead>
     </table>
-    <?php
-    $form = ActiveForm::begin(['id' => 'confirm-form']); ?>
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th colspan="3">FUEL EFFICIENCY</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>TOTAL M3</td>
-
-                    <td style="color:#ff0000;font-weight:bold;"><?= $total_m3; ?></td>
-                </tr>
-                <tr>
-                    <td>LITRE</td>
-                    <td><?= $form->field($fuelefficiency, 'litre_per_m3')->textInput(['maxlength' => true, 'value' => round($fe_litre_per_m3,2),'disabled'=>true])->label(false) ?>
-                        <?= $form->field($fuelefficiency, 'litre_per_m3')->hiddenInput(['maxlength' => true, 'value' => round($fe_litre_per_m3,2)])->label(false) ?> </td>
-                    <td>LITRE / M3</td>
-                </tr>
-                <tr>
-                    <td>RM</td>
-                    <td><?= $form->field($fuelefficiency, 'rm_per_m3')->textInput(['maxlength' => true, 'value' => round($fe_rm_per_m3,2),'disabled'=>true])->label(false) ?>
-                        <?= $form->field($fuelefficiency, 'rm_per_m3')->hiddenInput(['maxlength' => true, 'value' => round($fe_rm_per_m3,2)])->label(false) ?></td>
-                    </td>
-                    <td>RM / M3</td>
-                </tr>
-
-                </tbody>
-            </table>
-
-        </div>
-
-        <div class="col-md-3"></div>
-
-    </div>
-    <?php ActiveForm::end(); ?>
     <table class="table">
         <thead class="thead-dark">
-
-        <tr><td colspan="8"><h4>DIESEL EXPENSE</h4></td></tr>
-        <tr>
+        <tr><td colspan="8"><h4>TRUCK REPORT</h4></td></tr>
+        <tr style="background-color: #f3e97a;">
             <th>#</th>
-            <th>DATE</th>
-            <th>REMARKS</th>
-            <th>LITRES</th>
-            <th>COST (RM)</th>
-            <th>PROG. TOTAL</th>
-            <th>Action</th>
+            <th>TRUCK</th>
+            <th>VOLUME DELIVERED</th>
+            <th>FUEL COST (RM)</th>
+            <th>FUEL EFFICIENCY (RM/M3)</th>
         </tr>
         </thead>
         <tbody>
         <?php
 
         $total_cost_2 = 0.00;
-        $prosessive_total = 0.00;
+      //  $prosessive_total = 0.00;
         $count_2 = 1;
         foreach ($dieselexpenses as $record) {
 
-            $prosessive_total += $record->cost;
+
             echo '<tr>';
             echo '<td>' . $count_2 . '</td>';
-            echo '<td>' . $record->display_date . '</td>';
-            echo '<td>' . $record->remark . '</td>';
-            echo '<td>' . $record->litre . '</td>';
-            echo '<td>' . $record->cost . '</td>';
-               echo '<td>' . $prosessive_total . '</td>';
-            echo '<td><a href="/dieselexpense/delete?id=' . $record->id . '&truck_id=' . $record->truck_id.'">
-<i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
-
+            echo '<td>' . Truck::findOne($record["truck_id"])->truck_no . '</td>';
+            echo '<td>'.$record["volume_delivered"].'</td>';
+            echo '<td>'.$record["total_cost"].'</td>';
+            echo '<td>'.round($record["total_cost"]/$record["volume_delivered"],2).'</td>';
             echo '</tr>';
-            $total_cost_2 += $record->cost;
+            $total_cost_2 += $record["total_cost"];
 
             $count_2++;
         }
         ?>
         <tr style="font-weight:bold;">
-            <td colspan="3"></td>
+            <td colspan="2"></td>
             <td colspan="1" style="text-align:center;">TOTAL COST=</td>
             <td colspan="1"><?= round($total_cost_2,2); ?></td>
-            <td>RM</td>
-        </tr>
-        </tbody>
-    </table>
-    <div class="dieselexpense-create">
-
-        <?= $this->render('/dieselexpense/create', [
-            'model2' => $model2,
-            'month' => $month,
-        ]) ?>
-
-    </div>
-    <table class="table">
-        <thead class="thead-dark">
-
-        <tr><td colspan="8"><h4>OTHER EXPENSE</h4></td></tr>
-        <tr>
-            <th>#</th>
-            <th>DATE</th>
-            <th>SPARE PART & SERVICE</th>
-            <th>SERIES NO.</th>
-            <th>REASON / DETAIL</th>
-            <th>WARRANTY</th>
-            <th>REMARKS</th>
-            <th>COST (RM)</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php
-
-        $total_cost = 0.00;
-        $count = 1;
-        foreach ($truckexpenses as $record) {
-
-                 //   ${'progressive_total' . $count} += $record->cost;
-                    echo '<tr>';
-                    echo '<td>' . $count . '</td>';
-                    echo '<td>' . $record->display_date . '</td>';
-                    echo '<td>' . $record->spare_part_service . '</td>';
-                    echo '<td>' . $record->series_no . '</td>';
-                    echo '<td>' . $record->reason . '</td>';
-                    echo '<td>' . $record->warranty . '</td>';
-                    echo '<td>' . $record->remark . '</td>';
-            echo '<td>' . $record->cost . '</td>';
-            //   echo '<td>' . ${'progressive_total' . $count} . '</td>';
-                    echo '<td><a href="delete?id=' . $record->id . '&truck_id=' . $record->truck_id.'">
-<i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
-
-                    echo '</tr>';
-            $total_cost += $record->cost;
-
-            $count++;
-        }
-        ?>
-        <tr style="font-weight:bold;">
-            <td colspan="6"></td>
-            <td colspan="1" style="text-align:center;">TOTAL COST=</td>
-            <td colspan="1"><?= round($total_cost,2); ?></td>
-            <td>RM</td>
+            <td colspan="1">RM</td>
         </tr>
         </tbody>
     </table>
@@ -320,23 +184,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php
 $display_button = true;
- ?>
-
-    <?php
-   // if ($display_button == true) { ?>
-
-        <div class="truckexpense-create">
-
-            <?= $this->render('create', [
-                'model' => $model,
-                'month' => $month,
-            ]) ?>
-
-        </div>
-      <?php
-  //  }
-
-
 
 $script = <<< JS
 

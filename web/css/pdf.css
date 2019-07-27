@@ -21,6 +21,9 @@ body{
     cell-spacing:0;
     padding: 5px;
 }
+#monthly-pdf{
+    width:100%;
+}
 #monthly-pdf tr, th, td{
     border: 1pt solid #000 !important;
     cell-spacing:0;

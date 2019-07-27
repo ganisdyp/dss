@@ -41,9 +41,11 @@ class DieselexpenseSearch extends Dieselexpense
      */
     public function search($params, $truck = null,$month = null)
     {
-
-        $query = Dieselexpense::find()->where(['DATE_FORMAT(display_date,"%Y-%m")' => $month, 'truck_id'=>$truck])->orderBy(['display_date'=>'asc','id'=>'asc']);
-
+        if($truck==null) {
+            $query = Dieselexpense::find()->select('sum(cost) as total_cost,truck_id')->where(['DATE_FORMAT(display_date,"%Y-%m")' => $month])->orderBy(['display_date' => 'asc', 'id' => 'asc'])->groupBy('truck_id');
+        }else {
+            $query = Dieselexpense::find()->where(['DATE_FORMAT(display_date,"%Y-%m")' => $month, 'truck_id' => $truck])->orderBy(['display_date' => 'asc', 'id' => 'asc']);
+        }
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
