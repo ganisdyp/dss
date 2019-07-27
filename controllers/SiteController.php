@@ -7,6 +7,8 @@ use app\models\GradeSearch;
 use app\models\Materialending;
 use app\models\SalerecordSearch;
 use app\models\Salerecord;
+use app\models\Cashsalerecord;
+use app\models\CashsalerecordSearch;
 use app\models\Profile;
 use Yii;
 use yii\filters\AccessControl;
@@ -155,6 +157,41 @@ class SiteController extends Controller
             'filter_plant' => $plant_id,
         ]);
     }
+
+    /**
+     * Displays monthly report.
+     *
+     * @return string
+     */
+    public function actionReportcs($plant_id = null, $filter = null)
+    {
+
+        /* $searchModel = new SalerecordSearch();
+         $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$plant_id,$date);*/
+        $model = new Cashsalerecord();
+        $searchModel = new CustomerSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
+        $dataProvider->setPagination(['pageSize' => 100]);
+        $customers = $dataProvider->getModels();
+
+        $searchModel = new GradeSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
+        $dataProvider->setPagination(['pageSize' => 100]);
+        $grades = $dataProvider->getModels();
+        // print_r($dataProvider->getModels());
+
+        return $this->render('report-cs', [
+            /*'searchModel' => $searchModel, */
+            'customers' => $customers,
+            'grades' => $grades,
+            'filter' => $filter,
+            'model' => $model,
+            'filter_plant' => $plant_id,
+        ]);
+    }
+
 
     /**
      * Displays dashboard.
