@@ -146,59 +146,28 @@ $year_month_str = $year . "-" . $format_month;
 $this->title = 'MONTHLY MATERIAL AUDIT REPORT (' . strtoupper(Plant::findOne($plant_id)->name) . ' ' . strtoupper($month) . ' ' . strtoupper($year) . ')';
 
 ?>
-<style>
-
-    table, tr, th, td {
-        border: 1px solid #000000 !important;
-    }
-
-</style>
 <div class="site-index">
-
-    <div class="jumbotron">
-        <?php
-        if ($user_role != 1) { ?>
-            <?php
-            $form = ActiveForm::begin(); ?>
-            <?= $form->field($model, 'plant')->dropDownList(ArrayHelper::map(Plant::find()->all(), 'id', 'name'),
-                ['prompt' => '-Plant-',
-                    'onchange' => 'updateQueryStringParam("plant_id",this.value);'])->label(false) ?>
-
-            <?php ActiveForm::end();
-        } else {
-            $form = ActiveForm::begin(); ?>
-            <?= $form->field($model, 'plant')->dropDownList(ArrayHelper::map(Plant::find()->where(['id' => $user_plant_id])->all(), 'id', 'name'),
-                ['options' => [$user_plant_id => ['Selected' => true]]
-                    , 'disabled' => true])->label(false) ?>
-            <?= $form->field($model, 'role_hidden')->hiddenInput(
-                ['value' => $user_role
-                ])->label(false) ?>
-
-            <?php ActiveForm::end();
-        }
-        echo DatePicker::widget([
-
-            'name' => 'filter_month',
-            'value' => date('Y-M'),
-            'options' => ['placeholder' => 'Select month ...',
-                'onchange' => "updateQueryStringParam(\"filter\",this.value);"],
-            'removeButton' => false,
-            'pluginOptions' => [
-                'autoclose' => true,
-                'startView' => 'year',
-                'minViewMode' => 'months',
-                'format' => 'yyyy-M',
-                'todayHighlight' => true,
-                'endDate' => "0d"
-            ]
-        ]);
-        ?>
-    </div>
 
     <div class="body-content">
 
         <div class="row">
-            <table class="table table-responsive">
+            <table class="table" style="border:none;width:100%;">
+                <tr>
+                    <td style="border:none;width:25%;"></td>
+                    <td style="border:none;width:50%;text-align:center;"><h2>MONTHLY MATERIAL AUDIT REPORT</h2></td>
+                    <td style="border:none;width:25%;"></td>
+                </tr>
+
+            </table>
+            <table class="table" style="border:none;width:100%;">
+                <tr>
+                    <td style="border:none;"><h2>PLANT: <?= strtoupper(Plant::findOne(['id'=>$plant_id])->name) ?></h2></td>
+                    <td style="border:none;width:35%;"></td>
+                    <td style="border:none;"><h2>DATE: <?= date("n / Y",strtotime($_GET["filter"])); ?></h2></td>
+                </tr>
+
+            </table>
+            <table class="table table-responsive" id="monthly-pdf">
                 <thead class="thead-dark">
                 <tr>
                     <th colspan="1">DATE</th>

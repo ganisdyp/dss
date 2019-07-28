@@ -176,7 +176,7 @@ class SalerecordController extends Controller
                     }
 
                     // get weekday, from 0 (sunday) to 6 (saturday)
-                    $lastWorkingDay = $this->findLastWorkingDay($model->display_date);
+                    $lastWorkingDay = $this->findLastWorkingDay($model->display_date,$plant_id);
 
                     if ($is_holiday == 1) { // Select date = holiday
                         //      $previous_day_total = 3;
@@ -583,18 +583,30 @@ class SalerecordController extends Controller
         }
         return $obj;
     }
-
-    function findLastWorkingDay($date)
+    function checkNotOffSunday($date,$plant_id){
+        $timestamp = strtotime($date);
+        $format_date = date("Y-m-d", $timestamp);
+        $off_sunday = \app\models\Materialending::findOne(['display_date'=>$format_date,'is_holiday'=>0,'plant_id'=>$plant_id]);
+        return $off_sunday;
+    }
+    function findLastWorkingDay($date,$plant_id=null)
     {
         $currentWeekDay = date("w", strtotime($date));
 
         switch ($currentWeekDay) {
             case "1": {  // monday
-
-                $d = date_create($date);
-                date_sub($d, date_interval_create_from_date_string("2 days"));
-                $lastWorkingDay = date_format($d, "Y-m-d");
-
+                $timestamp = strtotime($date);
+                $format_date = date("Y-m-d", $timestamp);
+                $off_sunday = $this->checkNotOffSunday($format_date,$plant_id);
+                if(isset($off_sunday)){
+                    $d = date_create($date);
+                    date_sub($d, date_interval_create_from_date_string("1 days"));
+                    $lastWorkingDay = date_format($d, "Y-m-d");
+                }else{
+                    $d = date_create($date);
+                    date_sub($d, date_interval_create_from_date_string("2 days"));
+                    $lastWorkingDay = date_format($d, "Y-m-d");
+                }
                 break;
             }
             //  case "0": {  // sunday
@@ -617,7 +629,7 @@ class SalerecordController extends Controller
         $previous_day_materialending = Materialending::findOne(['display_date' => $date, 'plant_id' => $plant_id]);
         if (isset($previous_day_materialending)) {
             if ($previous_day_materialending->is_holiday == 1) {
-                $lastWorkingDay = $this->findLastWorkingDay($date);
+                $lastWorkingDay = $this->findLastWorkingDay($date, $plant_id);
                 //  return 9000;
                 return $this->recursiveCheck($lastWorkingDay, $plant_id);
             } else {
