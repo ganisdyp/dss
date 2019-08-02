@@ -561,8 +561,19 @@ class SiteController extends Controller
         } else {
             $dataProvider->query->where(['deleted' => 0, 'driver_id' => $driver_id, 'DATE_FORMAT(display_date,"%Y-%m")' => $year_month_str, 'plant_id' => $plant_id])->orderBy(['display_date' => 'asc', 'batch_no' => 'asc']);
         }
-        $dataProvider->setPagination(['pageSize' => 100]);
+        $dataProvider->setPagination(['pageSize' => 200]);
         $driver_trip = $dataProvider->getModels();
+
+        // Include Cashsale
+        $searchModel2 = new CashsalerecordSearch();
+        $dataProvider2 = $searchModel2->search(Yii::$app->request->queryParams);
+        if ($plant_id == 0) {
+            $dataProvider2->query->where(['deleted' => 0, 'driver_id' => $driver_id, 'DATE_FORMAT(display_date,"%Y-%m")' => $year_month_str])->orderBy(['display_date' => 'asc', 'batch_no' => 'asc']);
+        } else {
+            $dataProvider2->query->where(['deleted' => 0, 'driver_id' => $driver_id, 'DATE_FORMAT(display_date,"%Y-%m")' => $year_month_str, 'plant_id' => $plant_id])->orderBy(['display_date' => 'asc', 'batch_no' => 'asc']);
+        }
+        $driver_trip2 = $dataProvider2->getModels();
+
         // print_r($dataProvider->getModels());
 
         return $this->render('driver-trip', [
@@ -570,6 +581,7 @@ class SiteController extends Controller
             'customers' => $customers,
             'grades' => $grades,
             'drivertrips' => $driver_trip,
+            'drivertrips2' => $driver_trip2,
             'filter' => $filter,
             'model' => $model,
             'filter_plant' => $plant_id,

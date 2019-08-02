@@ -8,7 +8,8 @@ use app\models\Plant;
 use app\models\Driver;
 use app\models\Location;
 use yii\helpers\ArrayHelper;
-
+use fedemotta\datatables\DataTables;
+use yii\web\JsExpression;
 /* @var $this yii\web\View */
 
 Yii::$app->db->open();
@@ -280,6 +281,14 @@ echo '<br>';
                 $total_rm_display = 0;
                 //print_r($drivertrips);
                 foreach ($drivertrips as $drivertrip) {
+                   /* $searchModel2 = new \app\models\CashsalerecordSearch();
+                    $dataProvider2 = $searchModel2->search(Yii::$app->request->queryParams);
+                    if ($plant_id == 0) {
+                        $dataProvider2->query->where(['deleted' => 0, 'driver_id' => $drivertrip->driver_id, 'DATE_FORMAT(display_date,"%Y-%m-%d")' => $drivertrip->display_date])->orderBy(['display_date' => 'asc', 'batch_no' => 'asc']);
+                    } else {
+                        $dataProvider2->query->where(['deleted' => 0, 'driver_id' => $drivertrip->driver_id, 'DATE_FORMAT(display_date,"%Y-%m-%d")' => $drivertrip->display_date, 'plant_id' => $plant_id])->orderBy(['display_date' => 'asc', 'batch_no' => 'asc']);
+                    }
+                    $driver_trip2 = $dataProvider2->getModels();*/
 
                     ?>
                     <tr>
@@ -293,9 +302,18 @@ echo '<br>';
                         <td><?= $drivertrip->project->name; ?></td>
                         <td><?= Location::findOne($drivertrip->project->location_id)->name; ?></td>
                         <td><?= $drivertrip->special_condition; ?></td>
-                        <td>
+                        <?php if($drivertrip->special_condition != 'trial mix' && $drivertrip->special_condition != 'cancelled mix'){
+                            $check_location = true;
+                        }
+                        $total_rm = round(Location::findOne($drivertrip->project->location_id)->rate_number);
+                        if($check_location && $total_rm==0){
+                            $bg_mark_red = '#ff0000';
+                        }else{
+                            $bg_mark_red = '#000000';
+                        }
+                        ?>
+                        <td style="color: <?= $bg_mark_red ?>;">
                             <?php
-                            $total_rm = round(Location::findOne($drivertrip->project->location_id)->rate_number);
                             if($drivertrip->special_condition == 'double trip'){
                                 $total_rm*=2;
                             }else if($drivertrip->special_condition == 'trial mix' || $drivertrip->special_condition == 'rejected' || $drivertrip->special_condition == 'cancelled'){
@@ -310,7 +328,46 @@ echo '<br>';
                    // $total_m3 += getTotalM3ByCustomer($year_month_str, $customer->id, $plant_id);
                     $index++;
                 }
+                foreach ($drivertrips2 as $drivertrip) { // Cashsalerecord
 
+                    ?>
+                    <tr>
+                        <td><?= date("j-M-Y",strtotime($drivertrip->display_date)); ?></td>
+                        <td><?= $drivertrip->plant->plant_prefix.' '.$drivertrip->batch_no; ?></td>
+                        <td><?= $drivertrip->plant->plant_prefix.' '.$drivertrip->delivery_order_no; ?></td>
+                        <td><?= $drivertrip->grade->name; ?></td>
+                        <td><?= $drivertrip->m3; ?></td>
+                        <td><?= $drivertrip->truck->truck_no; ?></td>
+                        <td><?= $drivertrip->customer->name; ?></td>
+                        <td><?= $drivertrip->project->name; ?></td>
+                        <td><?= Location::findOne($drivertrip->project->location_id)->name; ?></td>
+                        <td><?= $drivertrip->special_condition; ?></td>
+                        <?php if($drivertrip->special_condition != 'trial mix' && $drivertrip->special_condition != 'cancelled mix'){
+                            $check_location = true;
+                        }
+                        $total_rm = round(Location::findOne($drivertrip->project->location_id)->rate_number);
+                        if($check_location && $total_rm==0){
+                            $bg_mark_red = '#ff0000';
+                        }else{
+                            $bg_mark_red = '#000000';
+                        }
+                        ?>
+                        <td style="color: <?= $bg_mark_red ?>;">
+                            <?php
+                            if($drivertrip->special_condition == 'double trip'){
+                                $total_rm*=2;
+                            }else if($drivertrip->special_condition == 'trial mix' || $drivertrip->special_condition == 'rejected' || $drivertrip->special_condition == 'cancelled'){
+                                $total_rm=0;
+                            }
+                            echo Location::findOne($drivertrip->project->location_id)->rate_prefix.$total_rm;
+                            $total_rm_display += $total_rm;
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
+                    // $total_m3 += getTotalM3ByCustomer($year_month_str, $customer->id, $plant_id);
+                    $index++;
+                }
 
                 ?>
                 <tr>
@@ -326,6 +383,75 @@ echo '<br>';
     </div>
 </div>
 <?php
+/*echo DataTables::widget([
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'columns' => [
+        ['class' => 'yii\grid\SerialColumn'],
+        [
+            'attribute' => 'display_date',
+            'value' => function ($model) {
+
+                return date("j-M-Y",strtotime($model->display_date));
+            },
+        ],
+        [
+            'attribute' => 'batch_no',
+            'value' => function ($model) {
+
+                return $model->plant->plant_prefix.' '.$model->batch_no;
+            },
+        ],
+        [
+            'attribute' => 'delivery_order_no',
+            'value' => function ($model) {
+
+                return $model->plant->plant_prefix.' '.$model->delivery_order_no;
+            },
+        ],
+        'grade.name',
+        'm3',
+        'truck.truck_no',
+        'customer.name',
+        'project.name',
+        [
+            'attribute' => 'location',
+            'value' => function ($model) {
+
+                return Location::findOne($model->project->location_id)->name;;
+            },
+        ],
+        'special_condition',
+        [
+            'attribute' => 'cost',
+            'format' => 'html',
+            'value' => function ($model) {
+                if($model->special_condition != 'trial mix' && $model->special_condition != 'cancelled mix'){
+                    $check_location = true;
+                }else{
+                    $check_location = false;
+                }
+                $total_rm = round(Location::findOne($model->project->location_id)->rate_number);
+                if($check_location && $total_rm==0){
+                    $bg_mark_red = '#ff0000';
+                }else{
+                    $bg_mark_red = '#000000';
+                }
+                if($model->special_condition == 'double trip'){
+                    $total_rm*=2;
+                }else if($model->special_condition == 'trial mix' || $model->special_condition == 'rejected' || $model->special_condition == 'cancelled'){
+                    $total_rm=0;
+                }
+                return '<p style="color:'.$bg_mark_red.';">'.Location::findOne($model->project->location_id)->rate_prefix.$total_rm.'</p>';
+            },
+        ],
+        //columns
+
+    ],
+
+
+]);*/
+
 $script = <<< JS
 
  function updateQueryStringParam (key, value) {

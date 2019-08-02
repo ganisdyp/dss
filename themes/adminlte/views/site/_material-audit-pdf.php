@@ -221,7 +221,7 @@ $this->title = 'MONTHLY MATERIAL AUDIT REPORT (' . strtoupper(Plant::findOne($pl
                         <td style="background-color: #b041ff;"><?= $material_need ?></td>
                         <td style="background-color: #b041ff;"><?= $actual_use ?></td>
                         <td style="background-color: #b041ff;"><?= $difference_kg ?></td>
-                        <?php if($difference_kg>=1){?>
+                        <?php if($difference_kg>=2){?>
                         <td style="background-color: #ff0000;"><b><?= $difference_percent ?></b></td>
                         <?php }else{ ?>
                             <td style="background-color: #b041ff;"><?= $difference_percent ?></td>

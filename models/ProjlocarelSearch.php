@@ -4,12 +4,12 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Location;
+use app\models\Projlocarel;
 
 /**
- * LocationSearch represents the model behind the search form of `app\models\Location`.
+ * ProjlocarelSearch represents the model behind the search form of `app\models\Projlocarel`.
  */
-class LocationSearch extends Location
+class ProjlocarelSearch extends Projlocarel
 {
     /**
      * {@inheritdoc}
@@ -17,9 +17,8 @@ class LocationSearch extends Location
     public function rules()
     {
         return [
-            [['id', 'deleted', 'plant_id'], 'integer'],
-            [['name', 'description', 'rate_prefix'], 'safe'],
-            [['rate_number'], 'number'],
+            [['rel_id', 'location_id', 'project_id', 'deleted'], 'integer'],
+            [['date_assigned'], 'safe'],
         ];
     }
 
@@ -41,7 +40,7 @@ class LocationSearch extends Location
      */
     public function search($params)
     {
-        $query = Location::find()->orderBy(['plant_id'=>'asc','rate_number'=>'asc']);
+        $query = Projlocarel::find();
 
         // add conditions that should always apply here
 
@@ -59,15 +58,12 @@ class LocationSearch extends Location
 
         // grid filtering conditions
         $query->andFilterWhere([
-            'id' => $this->id,
-            'rate_number' => $this->rate_number,
+            'rel_id' => $this->rel_id,
+            'location_id' => $this->location_id,
+            'project_id' => $this->project_id,
+            'date_assigned' => $this->date_assigned,
             'deleted' => $this->deleted,
-            'plant_id' => $this->plant_id,
         ]);
-
-        $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'rate_prefix', $this->rate_prefix]);
 
         return $dataProvider;
     }

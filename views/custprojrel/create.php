@@ -5,12 +5,26 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Custprojrel */
 
-$this->title = 'Create Customer-Project Relationship';
+$this->title = '';
 $this->params['breadcrumbs'][] = ['label' => 'Customer-Project Relationship', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="custprojrel-create">
+    <div class="customer-create">
+        <h2>Add Customer</h2>
+        <?= $this->render('/customer/_form', [
+            'customer' => $customer,
+        ]) ?>
 
+    </div>
+    <div class="project-create">
+        <h2>Add Project</h2>
+        <?= $this->render('/project/_form', [
+            'project' => $project,
+        ]) ?>
+
+    </div>
+<div class="custprojrel-create">
+    <h2>Create Customer-Project Relationship</h2>
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>

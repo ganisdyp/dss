@@ -11,13 +11,17 @@ use yii\widgets\ActiveForm;
 <div class="customer-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-    </div>
-
+    <?= Html::beginTag('table', ['class'=>'table table-condensed','style'=>'border-collapse: collapse;']) ?>
+    <?= Html::beginTag('tr', []) ?>
+    <?= Html::beginTag('td', ['width'=>'20%']) ?>
+    <?= $form->field($customer, 'name')->textInput(['maxlength' => true,'placeholder'=>'Customer name'])->label(false) ?>
+    <?= Html::endTag('td') ?>
+    <?= Html::beginTag('td', ['width'=>'20%']) ?>
+    <?= Html::submitButton('Add Project', ['class' => 'btn btn-success']) ?>
+    <?= Html::endTag('td') ?>
+    <?= Html::endTag('tr') ?>
+    <?= Html::endTag('table') ?>
     <?php ActiveForm::end(); ?>
+
 
 </div>

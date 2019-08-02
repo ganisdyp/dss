@@ -4,16 +4,16 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\LocationSearch */
+/* @var $searchModel app\models\ProjlocarelSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Locations';
+$this->title = 'Project-Location Relationship';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="location-index">
+<div class="projlocarel-index">
 
-    <p>
-        <?= Html::a('Create Location', ['create'], ['class' => 'btn btn-success']) ?>
+     <p>
+        <?= Html::a('Create Project-Location Relationship', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php Pjax::begin(); ?>
@@ -25,14 +25,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-          //  'id',
-            'plant.name',
-            'name',
-         //   'rate_prefix',
-            'rate_number',
-            'description:ntext',
-            //'deleted',
-
+            'rel_id',
+            'location_id',
+            'project_id',
+            'date_assigned',
+            'deleted',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

@@ -4,20 +4,20 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Location */
+/* @var $model app\models\Projlocarel */
 
-$this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Locations', 'url' => ['index']];
+$this->title = $model->rel_id;
+$this->params['breadcrumbs'][] = ['label' => 'Projlocarels', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="location-view">
+<div class="projlocarel-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id, 'plant_id' => $model->plant_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id, 'plant_id' => $model->plant_id], [
+        <?= Html::a('Update', ['update', 'id' => $model->rel_id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->rel_id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
@@ -29,13 +29,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'name',
-            'description:ntext',
-            'rate_prefix',
-            'rate_number',
+            'rel_id',
+            'location_id',
+            'project_id',
+            'date_assigned',
             'deleted',
-            'plant_id',
         ],
     ]) ?>
 

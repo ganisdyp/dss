@@ -64,7 +64,7 @@ use yii\helpers\Url;
     ])->label(false); ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'10%']) ?>
-    <?= $form->field($model2, 'special_condition')->dropDownList([ 'cancelled' => 'Cancelled', 'trial mix' => 'Trial mix', 'rejected' => 'Rejected', ]
+    <?= $form->field($model2, 'special_condition')->dropDownList(['double trip' => 'Double trip','cancelled' => 'Cancelled', 'trial mix' => 'Trial mix', 'rejected' => 'Rejected', ]
         , ['prompt' => 'Special Condition','onchange'=>'validateRemark(this.value);'])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'12%']) ?>

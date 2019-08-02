@@ -32,9 +32,9 @@ class Project extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'location_id'], 'required'],
+            [['name'], 'required'],
             [['date_created'], 'safe'],
-            [['deleted', 'location_id'], 'integer'],
+            [['deleted'], 'integer'],
             [['name', 'description'], 'string', 'max' => 255],
         ];
     }
@@ -50,7 +50,6 @@ class Project extends \yii\db\ActiveRecord
             'description' => 'Description',
             'date_created' => 'Date Created',
             'deleted' => 'Deleted',
-            'location_id' => 'Location ID',
         ];
     }
 
@@ -61,4 +60,5 @@ class Project extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Salerecord::className(), ['project_id' => 'id']);
     }
+
 }

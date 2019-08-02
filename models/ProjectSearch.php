@@ -17,7 +17,7 @@ class ProjectSearch extends Project
     public function rules()
     {
         return [
-            [['id', 'deleted', 'location_id'], 'integer'],
+            [['id', 'deleted'], 'integer'],
             [['name', 'description', 'date_created'], 'safe'],
         ];
     }
@@ -61,7 +61,6 @@ class ProjectSearch extends Project
             'id' => $this->id,
             'date_created' => $this->date_created,
             'deleted' => $this->deleted,
-            'location_id' => $this->location_id,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])

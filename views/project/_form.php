@@ -8,20 +8,23 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
+
 <div class="project-form">
 
     <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'location_id')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
-    </div>
-
+    <?= Html::beginTag('table', ['class'=>'table table-condensed','style'=>'border-collapse: collapse;']) ?>
+    <?= Html::beginTag('tr', []) ?>
+    <?= Html::beginTag('td', ['width'=>'20%']) ?>
+    <?= $form->field($project, 'name')->textInput(['maxlength' => true,'placeholder'=>'Project name'])->label(false) ?>
+    <?= Html::endTag('td') ?>
+    <?= Html::beginTag('td', ['width'=>'20%']) ?>
+    <?= $form->field($project, 'description')->textarea(['rows' => 1,'placeholder'=>'Description'])->label(false) ?>
+    <?= Html::endTag('td') ?>
+    <?= Html::beginTag('td', ['width'=>'20%']) ?>
+    <?= Html::submitButton('Add Project', ['class' => 'btn btn-success']) ?>
+    <?= Html::endTag('td') ?>
+    <?= Html::endTag('tr') ?>
+    <?= Html::endTag('table') ?>
     <?php ActiveForm::end(); ?>
 
 </div>

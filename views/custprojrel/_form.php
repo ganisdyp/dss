@@ -20,7 +20,7 @@ use yii\helpers\ArrayHelper;
         ['prompt' => 'Customer Name', 'readonly' => !$model->isNewRecord,
             'id'=>'customer-id','onchange'=>'showProjectList(this.value)'])->label(false) ?>
 
-    <?= $form->field($model, 'project_id')->dropDownList(ArrayHelper::map(Project::find()->where(['deleted' => 0])->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Project Name', 'readonly' => !$model->isNewRecord, 'id'=>'customer-id'])->label(false) ?>
+    <?= $form->field($model, 'project_id')->dropDownList(ArrayHelper::map(Project::find()->where(['deleted' => 0])->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Project Name', 'readonly' => !$model->isNewRecord, 'id'=>'project-id'])->label(false) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

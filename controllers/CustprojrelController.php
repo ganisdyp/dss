@@ -12,6 +12,7 @@ use yii\filters\AccessControl;
 use app\components\BinapileRule;
 use app\models\User;
 use app\models\Project;
+use app\models\Customer;
 
 /**
  * CustprojrelController implements the CRUD actions for Custprojrel model.
@@ -100,6 +101,19 @@ class CustprojrelController extends Controller
      */
     public function actionCreate()
     {
+
+        $project = new Project();
+
+        if ($project->load(Yii::$app->request->post()) && $project->save()) {
+            return $this->redirect(['custprojrel/create']);
+        }
+
+        $customer = new Customer();
+
+        if ($customer->load(Yii::$app->request->post()) && $customer->save()) {
+            return $this->redirect(['custprojrel/create']);
+        }
+
         $model = new Custprojrel();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -108,7 +122,10 @@ class CustprojrelController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'customer' => $customer,
+            'project' => $project,
         ]);
+
     }
 
     /**
