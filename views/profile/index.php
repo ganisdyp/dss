@@ -25,18 +25,39 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+          //  'id',
             'Name',
-            'date_created',
+           // 'date_created',
             'Status',
-            'user_id',
+           // 'user_id',
             //'Username',
             //'Password',
             //'Inactive',
             //'last_accessed',
             //'plant_id',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        $url = str_replace('/'.$model->id.'?user_id='.$model->user_id.'&plant_id='.$model->plant_id,'?id='.$model->id.'&user_id='.$model->user_id,$url);
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                            'title' => Yii::t('app', 'profile-view'),
+                        ]);
+                    },
+                    'update' => function ($url, $model) {
+                        $url = str_replace('/'.$model->id.'?user_id='.$model->user_id.'&plant_id='.$model->plant_id,'?id='.$model->id.'&user_id='.$model->user_id,$url);
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
+                            'title' => Yii::t('app', 'profile-update'),
+                        ]);
+                    },
+                    'delete' => function ($url, $model) {
+                        $url = str_replace('/'.$model->id.'?user_id='.$model->user_id.'&plant_id='.$model->plant_id,'?id='.$model->id.'&user_id='.$model->user_id,$url);
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                            'title' => Yii::t('app', 'profile-delete'), 'data-confirm' => Yii::t('app', 'Are you sure you want to delete this user?')
+                        ]);
+                    }
+
+                ]],
         ],
     ]); ?>
 

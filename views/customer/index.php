@@ -12,9 +12,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="customer-index">
 
-    <p>
-        <?= Html::a('Add Customer', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+
 
     <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -27,13 +25,35 @@ $this->params['breadcrumbs'][] = $this->title;
 
            // 'id',
             'name',
-            'address',
-            'phone1',
-            'phone2',
+          //  'address',
+          //  'phone1',
+          //  'phone2',
             //'deleted',
             //'date_created',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} ',
+                'buttons' => [
+                'view' => function ($url, $model) {
+                    $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
+                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                        'title' => Yii::t('app', 'customer-view'),
+                    ]);
+                },
+                'update' => function ($url, $model) {
+                    $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
+                    return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
+                        'title' => Yii::t('app', 'customer-update'),
+                    ]);
+                },
+             /*   'delete' => function ($url, $model) {
+                    $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
+                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                        'title' => Yii::t('app', 'customer-delete'),
+                    ]);
+                }*/
+
+            ],],
         ],
     ]); ?>
 

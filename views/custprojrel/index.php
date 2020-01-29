@@ -31,7 +31,27 @@ $this->params['breadcrumbs'][] = $this->title;
           //  'deleted',
             'customer.name',
             'project.name',
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn', 'buttons' => [
+                'view' => function ($url, $model) {
+                    $url = str_replace('/'.$model->rel_id,'?id='.$model->rel_id,$url);
+                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                        'title' => Yii::t('app', 'custprojrel-view'),
+                    ]);
+                },
+                'update' => function ($url, $model) {
+                    $url = str_replace('/'.$model->rel_id,'?id='.$model->rel_id,$url);
+                    return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
+                        'title' => Yii::t('app', 'custprojrel-update'),
+                    ]);
+                },
+                'delete' => function ($url, $model) {
+                    $url = str_replace('/'.$model->rel_id,'?id='.$model->rel_id,$url);
+                    return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                        'title' => Yii::t('app', 'custprojrel-delete'),
+                    ]);
+                }
+
+            ],],
         ],
     ]); ?>
 

@@ -12,7 +12,6 @@ use Yii;
  * @property string $description
  * @property string $date_created
  * @property int $deleted
- * @property int $location_id
  *
  * @property Salerecord[] $salerecords
  */
@@ -46,7 +45,7 @@ class Project extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Project Name',
             'description' => 'Description',
             'date_created' => 'Date Created',
             'deleted' => 'Deleted',

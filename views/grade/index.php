@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'mix_design_for_cal',
             //'deleted',
 
-            ['class' => 'yii\grid\ActionColumn',
+            ['class' => 'yii\grid\ActionColumn',  'template' => '{view} {update} ',
                 'buttons' => [
                     'view' => function ($url, $model) {
                         $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
@@ -50,12 +50,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             'title' => Yii::t('app', 'grade-update'),
                         ]);
                     },
-                    'delete' => function ($url, $model) {
+                  /*  'delete' => function ($url, $model) {
                         $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
                             'title' => Yii::t('app', 'grade-delete'),
                         ]);
-                    }
+                    }*/
 
                 ],
                 ],

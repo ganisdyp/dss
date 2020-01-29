@@ -53,22 +53,10 @@ $default_date = date('Y-M');
                             </p>
                         </li>
                         <!-- Menu Body -->
-                        <li class="user-body">
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Followers</a>
-                            </div>
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Sales</a>
-                            </div>
-                            <div class="col-xs-4 text-center">
-                                <a href="#">Friends</a>
-                            </div>
-                        </li>
+
                         <!-- Menu Footer-->
                         <li class="user-footer">
-                            <div class="pull-left">
-                                <a href="/dss/profile?id=1&user_id=1&plant_id=0" class="btn btn-default btn-flat">Profile</a>
-                            </div>
+
                             <div class="pull-right">
                                 <?= Html::a(
                                     'Sign out',
@@ -81,9 +69,6 @@ $default_date = date('Y-M');
                 </li>
 
                 <!-- User Account: style can be found in dropdown.less -->
-                <li>
-                    <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-                </li>
             </ul>
         </div>
     </nav>

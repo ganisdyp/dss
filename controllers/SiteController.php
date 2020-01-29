@@ -190,7 +190,39 @@ class SiteController extends Controller
             'filter_plant' => $plant_id,
         ]);
     }
+    /**
+     * Displays monthly material audit report.
+     *
+     * @return string
+     */
+    public function actionMaterialauditm($plant_id = null, $filter = null)
+    {
 
+        /* $searchModel = new SalerecordSearch();
+         $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$plant_id,$date);*/
+        $model = new Salerecord();
+        $searchModel = new CustomerSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
+        $dataProvider->setPagination(['pageSize' => 100]);
+        $customers = $dataProvider->getModels();
+
+        $searchModel = new GradeSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
+        $dataProvider->setPagination(['pageSize' => 100]);
+        $grades = $dataProvider->getModels();
+        // print_r($dataProvider->getModels());
+
+        return $this->render('material-audit-m', [
+            /*'searchModel' => $searchModel, */
+            'customers' => $customers,
+            'grades' => $grades,
+            'filter' => $filter,
+            'model' => $model,
+            'filter_plant' => $plant_id,
+        ]);
+    }
     /**
      * Displays monthly material audit report pdf.
      *
@@ -217,6 +249,67 @@ class SiteController extends Controller
 
         // get your HTML raw content without any layouts or scripts
         $content = $this->renderPartial('_material-audit-pdf', [
+            'customers' => $customers,
+            'grades' => $grades,
+            'filter' => $filter,
+            'model' => $model,
+            'filter_plant' => $plant_id,
+        ]);
+
+        // setup kartik\mpdf\Pdf component
+        $pdf = new Pdf([
+            'mode' => Pdf::MODE_UTF8,
+            // A4 paper format
+            'format' => Pdf::FORMAT_A4,
+            // portrait orientation
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            // stream to browser inline
+            'destination' => Pdf::DEST_BROWSER,
+            // your html content input
+            'content' => $content,
+            // format content from your own css file if needed or use the
+            // enhanced bootstrap css built by Krajee for mPDF formatting
+            'cssFile' => '@app/web/css/pdf.css',
+            // any css to be embedded if required
+            'cssInline' => 'table,tr,td{border:none !important;}',
+            // set mPDF properties on the fly
+            'options' => ['title' => 'Preview Monthly Material Audit: '.$plant_id],
+            // call mPDF methods on the fly
+            'methods' => [
+                //'SetHeader'=>[''],
+                //'SetFooter'=>['{PAGENO}'],
+            ]
+        ]);
+
+        // return the pdf output as per the destination setting
+        return $pdf->render();
+    }
+    /**
+     * Displays monthly material audit report pdf.
+     *
+     * @return string
+     */
+    public function actionMaterialauditmpdf($plant_id = null, $filter = null)
+    {
+
+        /* $searchModel = new SalerecordSearch();
+         $dataProvider = $searchModel->search(Yii::$app->request->queryParams,$plant_id,$date);*/
+        $model = new Salerecord();
+        $searchModel = new CustomerSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
+        $dataProvider->setPagination(['pageSize' => 100]);
+        $customers = $dataProvider->getModels();
+
+        $searchModel = new GradeSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->where(['deleted' => 0])->andWhere(['<>', 'id', 9999])->orderBy(['name' => 'asc']);
+        $dataProvider->setPagination(['pageSize' => 100]);
+        $grades = $dataProvider->getModels();
+        // print_r($dataProvider->getModels());
+
+        // get your HTML raw content without any layouts or scripts
+        $content = $this->renderPartial('_material-audit-m-pdf', [
             'customers' => $customers,
             'grades' => $grades,
             'filter' => $filter,

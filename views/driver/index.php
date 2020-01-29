@@ -25,12 +25,34 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+           // 'id',
             'name',
             'remark:ntext',
             'employee_id',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',  'template' => '{view} {update} ',
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                            'title' => Yii::t('app', 'driver-view'),
+                        ]);
+                    },
+                    'update' => function ($url, $model) {
+                        $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
+                            'title' => Yii::t('app', 'driver-update'),
+                        ]);
+                    },
+                /*    'delete' => function ($url, $model) {
+                        $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                            'title' => Yii::t('app', 'driver-delete'),
+                        ]);
+                    }*/
+
+                ],
+            ],
         ],
     ]); ?>
 

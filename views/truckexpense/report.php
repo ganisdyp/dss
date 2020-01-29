@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 ?>
-
+<a target="_blank" href="<?= str_replace('report','reportpdf',$_SERVER['REQUEST_URI']) ?>"><p><i class="fa fa-print"></i> Export as PDF</p></a>
 <div class="truckexpense-index">
 
     <?php Pjax::begin(); ?>

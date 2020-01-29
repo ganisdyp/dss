@@ -191,7 +191,7 @@ if ($month == 'Jan') {
 $days_in_month = cal_days_in_month(CAL_GREGORIAN, $format_month, $year);
 $year_month_str = $year . "-" . $format_month;
 
-$this->title = 'MONTHLY SALES REPORT (' . strtoupper(Plant::findOne($plant_id)->name) . ' ' . strtoupper($month) . ' ' . strtoupper($year) . ')';
+$this->title = 'MONTHLY CASHSALES REPORT (' . strtoupper(Plant::findOne($plant_id)->name) . ' ' . strtoupper($month) . ' ' . strtoupper($year) . ')';
 
 ?>
 <div class="site-index">

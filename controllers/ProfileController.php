@@ -24,7 +24,7 @@ class ProfileController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['GET'],
                 ],
             ],
         ];
@@ -93,9 +93,9 @@ class ProfileController extends Controller
              //   $model->plant_id = 4;
                 $model->save();
             }
-
+          //  var_dump($model);
           //  var_dump($user);
-            return $this->redirect(['view', 'id' => $model->id, 'user_id' => $user->id]);
+            return $this->redirect(['view?id='.$model->id.'&user_id='.$user->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -150,7 +150,9 @@ class ProfileController extends Controller
     public function actionDelete($id, $user_id)
     {
         $this->findModel($id, $user_id)->delete();
-
+        if (($model = User::findOne($user_id)) !== null) {
+            $model->delete();
+        }
         return $this->redirect(['index']);
     }
 

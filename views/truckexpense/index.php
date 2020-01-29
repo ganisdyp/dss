@@ -21,12 +21,12 @@ use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Truck Expense';
-$this->params['breadcrumbs'][] = $this->title;
+//$this->params['breadcrumbs'][] = $this->title;
 
 
 
 ?>
-
+<a target="_blank" href="<?= str_replace('index','pdf',$_SERVER['REQUEST_URI']) ?>"><p><i class="fa fa-print"></i> Export as PDF</p></a>
 <div class="truckexpense-index">
 
     <?php Pjax::begin(); ?>
@@ -110,9 +110,13 @@ $this->params['breadcrumbs'][] = $this->title;
         $total_diesel_litre = $get_total_diesel[$i]["sum_litre"];
         $total_diesel_rm = $get_total_diesel[$i]["sum_rm"];
     }
-    $fe_litre_per_m3 = $total_diesel_litre/$total_m3;
-    $fe_rm_per_m3 = $total_diesel_rm/$total_m3;
 
+    if($total_m3==0){
+
+    }else {
+        $fe_litre_per_m3 = $total_diesel_litre / $total_m3;
+        $fe_rm_per_m3 = $total_diesel_rm / $total_m3;
+    }
 
  /*   if($plant_id != 0) {
         $fuelefficiency = Fuelefficiency::findOne(['display_month' => $filter_date, 'truck_id' => $truck_id]);

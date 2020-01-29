@@ -37,7 +37,8 @@ class Location extends \yii\db\ActiveRecord
             [['rate_number'], 'number'],
             [['name'], 'string', 'max' => 255],
             [['rate_prefix'], 'string', 'max' => 10],
-            [['id', 'plant_id'], 'unique', 'targetAttribute' => ['id', 'plant_id']],
+          //  [['id', 'plant_id'], 'unique', 'targetAttribute' => ['id', 'plant_id']],
+            [['plant_id'], 'exist', 'skipOnError' => true, 'targetClass' => Plant::className(), 'targetAttribute' => ['plant_id' => 'id']],
         ];
     }
 
@@ -48,7 +49,7 @@ class Location extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Area',
             'description' => 'Description',
             'rate_prefix' => 'Rate Prefix',
             'rate_number' => 'Rate Number',

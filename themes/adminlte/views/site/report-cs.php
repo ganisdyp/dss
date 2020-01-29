@@ -191,9 +191,10 @@ if ($month == 'Jan') {
 $days_in_month = cal_days_in_month(CAL_GREGORIAN, $format_month, $year);
 $year_month_str = $year . "-" . $format_month;
 
-$this->title = 'MONTHLY SALES REPORT (' . strtoupper(Plant::findOne($plant_id)->name) . ' ' . strtoupper($month) . ' ' . strtoupper($year) . ')';
+$this->title = 'MONTHLY CASHSALES REPORT (' . strtoupper(Plant::findOne($plant_id)->name) . ' ' . strtoupper($month) . ' ' . strtoupper($year) . ')';
 
 ?>
+<a target="_blank" href="<?= str_replace('reportcs','pdfcs',$_SERVER['REQUEST_URI']) ?>"><p><i class="fa fa-print"></i> Export as PDF</p></a>
 <style>
 
     table, tr, th, td {

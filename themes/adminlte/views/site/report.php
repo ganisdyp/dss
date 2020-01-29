@@ -194,6 +194,7 @@ $year_month_str = $year . "-" . $format_month;
 $this->title = 'MONTHLY SALES REPORT (' . strtoupper(Plant::findOne($plant_id)->name) . ' ' . strtoupper($month) . ' ' . strtoupper($year) . ')';
 
 ?>
+<a target="_blank" href="<?= str_replace('report','pdf',$_SERVER['REQUEST_URI']) ?>"><p><i class="fa fa-print"></i> Export as PDF</p></a>
 <style>
 
     table, tr, th, td {

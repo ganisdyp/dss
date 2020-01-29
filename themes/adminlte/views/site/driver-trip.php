@@ -7,6 +7,7 @@ use yii\widgets\ActiveForm;
 use app\models\Plant;
 use app\models\Driver;
 use app\models\Location;
+use app\models\Projlocarel;
 use yii\helpers\ArrayHelper;
 use fedemotta\datatables\DataTables;
 use yii\web\JsExpression;
@@ -300,12 +301,18 @@ echo '<br>';
                         <td><?= $drivertrip->truck->truck_no; ?></td>
                         <td><?= $drivertrip->customer->name; ?></td>
                         <td><?= $drivertrip->project->name; ?></td>
-                        <td><?= Location::findOne($drivertrip->project->location_id)->name; ?></td>
+                        <?php $projlocarels = Projlocarel::find()->where(['project_id'=>$drivertrip->project->id])->createCommand()->queryAll();
+                     $location_id = 0;
+                      foreach($projlocarels as $projlocarel){
+                          $location_id = $projlocarel["location_id"];
+                      }
+                        ?>
+                        <td><?= strtoupper(Location::findOne($location_id)->name); ?></td>
                         <td><?= $drivertrip->special_condition; ?></td>
                         <?php if($drivertrip->special_condition != 'trial mix' && $drivertrip->special_condition != 'cancelled mix'){
                             $check_location = true;
                         }
-                        $total_rm = round(Location::findOne($drivertrip->project->location_id)->rate_number);
+                        $total_rm = round(Location::findOne($location_id)->rate_number);
                         if($check_location && $total_rm==0){
                             $bg_mark_red = '#ff0000';
                         }else{
@@ -319,7 +326,7 @@ echo '<br>';
                             }else if($drivertrip->special_condition == 'trial mix' || $drivertrip->special_condition == 'rejected' || $drivertrip->special_condition == 'cancelled'){
                                 $total_rm=0;
                             }
-                            echo Location::findOne($drivertrip->project->location_id)->rate_prefix.$total_rm;
+                            echo Location::findOne($location_id)->rate_prefix.$total_rm;
                             $total_rm_display += $total_rm;
                             ?>
                         </td>
@@ -340,12 +347,18 @@ echo '<br>';
                         <td><?= $drivertrip->truck->truck_no; ?></td>
                         <td><?= $drivertrip->customer->name; ?></td>
                         <td><?= $drivertrip->project->name; ?></td>
-                        <td><?= Location::findOne($drivertrip->project->location_id)->name; ?></td>
+                        <?php $projlocarels = Projlocarel::find()->where(['project_id'=>$drivertrip->project->id])->createCommand()->queryAll();
+                        $location_id = 0;
+                        foreach($projlocarels as $projlocarel){
+                            $location_id = $projlocarel["location_id"];
+                        }
+                        ?>
+                        <td><?= strtoupper(Location::findOne($location_id)->name); ?></td>
                         <td><?= $drivertrip->special_condition; ?></td>
                         <?php if($drivertrip->special_condition != 'trial mix' && $drivertrip->special_condition != 'cancelled mix'){
                             $check_location = true;
                         }
-                        $total_rm = round(Location::findOne($drivertrip->project->location_id)->rate_number);
+                        $total_rm = round(Location::findOne($location_id)->rate_number);
                         if($check_location && $total_rm==0){
                             $bg_mark_red = '#ff0000';
                         }else{
@@ -359,7 +372,7 @@ echo '<br>';
                             }else if($drivertrip->special_condition == 'trial mix' || $drivertrip->special_condition == 'rejected' || $drivertrip->special_condition == 'cancelled'){
                                 $total_rm=0;
                             }
-                            echo Location::findOne($drivertrip->project->location_id)->rate_prefix.$total_rm;
+                            echo Location::findOne($location_id)->rate_prefix.$total_rm;
                             $total_rm_display += $total_rm;
                             ?>
                         </td>
