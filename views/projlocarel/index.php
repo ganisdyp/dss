@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use app\models\Project;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ProjlocarelSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -27,7 +28,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
           //  'rel_id',
             'location.name',
-            'project.name',
+            [
+                'attribute' => 'project.name',
+                'value' => function ($model) {
+                    return Project::findOne($model->project_id)->name;
+                }
+            ],
             'date_assigned',
          //   'deleted',
 
