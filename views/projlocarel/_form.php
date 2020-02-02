@@ -23,8 +23,9 @@ use yii\web\JsExpression;
     <?php $form = ActiveForm::begin(); ?>
     <?= $form->field($model, 'project')->widget(AutoComplete::className(), [
         'options' => [
-            'class' => 'form-control'
+            'class' => 'form-control',
         ],
+
         'clientOptions' => [
          //   'appendTo'=>'#w2',
             'source' => Project::find()->select(['id as id', 'name as value', 'name as label'])
@@ -43,7 +44,7 @@ use yii\web\JsExpression;
 <?php
 $locations = Location::find()->where(['deleted' => 0])->orderBy(['plant_id'=>'ASC','rate_number' => 'ASC'])->all();
 foreach($locations as &$location){
-    $location->name = $location->name.'  |  '.$location->rate_number.' ('.$location->plant->name.')';
+    $location->name = $location->name.'  |  RM'.$location->rate_number.' ('.$location->plant->name.')';
 }
 ?>
     <?= $form->field($model, 'location_id')->dropDownList(ArrayHelper::map($locations, 'id', 'name'),
@@ -60,7 +61,11 @@ foreach($locations as &$location){
 <?php $this->registerJsFile('http://code.jquery.com/jquery-migrate-3.0.0.js', ['depends' => [\yii\web\JqueryAsset::className()]])?>
 <?php $this->registerJs('
                 $.fn.init_id = function(){
-                    $("#projlocarel-project_id").val($(this).val());            
+                    $("#projlocarel-project_id").val($(this).val());  
+                    var e = $(this).val();
+                             
+                              showLocationList(e);
+                              
                 };
            
             ')?>

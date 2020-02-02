@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\Location;
 use app\models\Project;
+use app\models\Plant;
 /**
  * ProjlocarelController implements the CRUD actions for Projlocarel model.
  */
@@ -148,16 +149,17 @@ class ProjlocarelController extends Controller
             $out = [];
             if (isset($data['project_id'])) {
                 $project_id = $data['project_id'];
-                $locations = Location::find()->select('location.id as id, location.name as name')
+                $locations = Location::find()->select('location.id as id, location.rate_number as rate_number, location.name as name,location.plant_id as plant_id')
                     ->innerJoin('proj_loca_rel', 'proj_loca_rel.location_id = location.id AND proj_loca_rel.deleted=0')
-                    ->where(['proj_loca_rel.location_id' => $project_id, 'location.deleted' => 0])->all();
+                    ->where(['proj_loca_rel.project_id' => $project_id, 'location.deleted' => 0])->all();
                 if (isset($locations)) {
 
                 } else {
                     $locations = null;
                 }
                 foreach($locations as $location){
-                    $out[] = $location->name;}
+                    $out[] = $location->name.' | RM'.$location->rate_number.' ('.Plant::findOne($location->plant_id)->name.')';
+                }
             }
             return $out;
         }

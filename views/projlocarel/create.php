@@ -42,10 +42,10 @@ function showLocationList (project_id) {
   data: { project_id: project_id }
     })
   .done(function( msg ) {
-     // alert(msg);
+    //  alert(msg);
    // var projects = JSON.parse(msg);
     var index = 1;
-    document.getElementById("existing-location").innerHTML = "<b>Existing Location</b><br>";
+    document.getElementById("existing-location").innerHTML = "<b>Existing Location Related</b><br>";
   for(var i in msg){
       document.getElementById("existing-location").innerHTML += ("&#8226 "+msg[i])+"<br>";
   index++;
