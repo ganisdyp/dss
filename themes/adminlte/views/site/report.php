@@ -204,7 +204,7 @@ $this->title = 'MONTHLY SALES REPORT (' . strtoupper(Plant::findOne($plant_id)->
 </style>
 <div class="site-index">
 
-    <div class="jumbotron">
+    <div class="jumbotron" style="padding-top: 100px;padding-bottom: 10px;">
         <?php
         if ($user_role != 1) { ?>
             <?php

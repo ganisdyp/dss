@@ -117,7 +117,8 @@ class CustprojrelController extends Controller
         $model = new Custprojrel();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'rel_id' => $model->rel_id, 'project_id' => $model->project_id, 'customer_id' => $model->customer_id]);
+          //  return $this->redirect(['view', 'rel_id' => $model->rel_id, 'project_id' => $model->project_id, 'customer_id' => $model->customer_id]);
+        return $this->redirect(['custprojrel/index']);
         }
 
         return $this->render('create', [

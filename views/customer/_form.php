@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
     <?= $form->field($customer, 'name')->textInput(['maxlength' => true,'placeholder'=>'Customer name'])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'20%']) ?>
-    <?= Html::submitButton('Add Project', ['class' => 'btn btn-success']) ?>
+    <?= Html::submitButton('Add Customer', ['class' => 'btn btn-success']) ?>
     <?= Html::endTag('td') ?>
     <?= Html::endTag('tr') ?>
     <?= Html::endTag('table') ?>

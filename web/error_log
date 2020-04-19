@@ -1,0 +1,58 @@
+[27-Jan-2020 03:51:25 UTC] PHP Parse error:  syntax error, unexpected ',' in /home/binapile/dss.binapile.com/themes/adminlte/views/layouts/left.php on line 65
+[29-Jan-2020 07:35:36 UTC] An Error occurred while handling another error:
+exception 'yii\web\HeadersAlreadySentException' with message 'Headers already sent in /home/binapile/dss.binapile.com/controllers/ProfileController.php on line 97.' in /home/binapile/dss.binapile.com/vendor/yiisoft/yii2/web/Response.php:366
+Stack trace:
+#0 /home/binapile/dss.binapile.com/vendor/yiisoft/yii2/web/Response.php(339): yii\web\Response->sendHeaders()
+#1 /home/binapile/dss.binapile.com/vendor/yiisoft/yii2/web/ErrorHandler.php(135): yii\web\Response->send()
+#2 /home/binapile/dss.binapile.com/vendor/yiisoft/yii2/base/ErrorHandler.php(111): yii\web\ErrorHandler->renderException(Object(yii\web\HeadersAlreadySentException))
+#3 [internal function]: yii\base\ErrorHandler->handleException(Object(yii\web\HeadersAlreadySentException))
+#4 {main}
+Previous exception:
+exception 'yii\web\HeadersAlreadySentException' with message 'Headers already sent in /home/binapile/dss.binapile.com/controllers/ProfileController.php on line 97.' in /home/binapile/dss.binapile.com/vendor/yiisoft/yii2/web/Response.php:366
+Stack trace:
+#0 /home/binapile/dss.binapile.com/vendor/yiisoft/yii2/web/Response.php(339): yii\web\Response->sendHeaders()
+#1 /home/binapile/dss.binapile.com/vendor/yiisoft/yii2/base/Application.php(392): yii\web\Response->send()
+#2 /home/binapile/dss.binapile.com/web/index.php(13): yii\base\Application->run()
+#3 {main}
+$_SERVER = [
+    'PATH' => '/usr/local/bin:/bin:/usr/bin',
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate',
+    'HTTP_ACCEPT_LANGUAGE' => 'th-TH,th;q=0.9,en;q=0.8',
+    'HTTP_CONNECTION' => 'keep-alive',
+    'CONTENT_TYPE' => 'application/x-www-form-urlencoded',
+    'CONTENT_LENGTH' => '270',
+    'HTTP_COOKIE' => 'PHPSESSID=mc7dbki2r7gso31cpg0a313do2; _csrf=4d24a7027a6e980e457bd11954d720b10f7b0c340828dcd789fb91ddc7e1d83fa%3A2%3A%7Bi%3A0%3Bs%3A5%3A%22_csrf%22%3Bi%3A1%3Bs%3A32%3A%22lnwSwH_hrkLmPCkOnKr46XFzqaSctdF7%22%3B%7D',
+    'HTTP_HOST' => 'dss.binapile.com',
+    'HTTP_REFERER' => 'http://dss.binapile.com/profile/create',
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36',
+    'HTTP_CACHE_CONTROL' => 'max-age=0',
+    'HTTP_VIA' => 'HTTP/1.1 NSCL-22100-TT20004788034122510949291',
+    'HTTP_ORIGIN' => 'http://dss.binapile.com',
+    'HTTP_UPGRADE_INSECURE_REQUESTS' => '1',
+    'DOCUMENT_ROOT' => '/home/binapile/dss.binapile.com',
+    'REMOTE_ADDR' => '58.9.34.29',
+    'REMOTE_PORT' => '19660',
+    'SERVER_ADDR' => '103.27.74.99',
+    'SERVER_NAME' => 'dss.binapile.com',
+    'SERVER_ADMIN' => 'webmaster@dss.binapile.com',
+    'SERVER_PORT' => '80',
+    'REQUEST_URI' => '/profile/create',
+    'REDIRECT_URL' => '/web/profile/create',
+    'REDIRECT_STATUS' => '200',
+    'SCRIPT_FILENAME' => '/home/binapile/dss.binapile.com/web/index.php',
+    'QUERY_STRING' => '',
+    'SCRIPT_URI' => 'http://dss.binapile.com/profile/create',
+    'SCRIPT_URL' => '/profile/create',
+    'SCRIPT_NAME' => '/web/index.php',
+    'SERVER_PROTOCOL' => 'HTTP/1.1',
+    'SERVER_SOFTWARE' => 'LiteSpeed',
+    'REQUEST_METHOD' => 'POST',
+    'PHP_SELF' => '/web/index.php',
+    'REQUEST_TIME_FLOAT' => 1580283335.494225978851318359375,
+    'REQUEST_TIME' => 1580283335,
+]
+[02-Feb-2020 04:04:17 UTC] PHP Parse error:  syntax error, unexpected '->' (T_OBJECT_OPERATOR) in /home/binapile/dss.binapile.com/views/projlocarel/index.php on line 33
+[02-Feb-2020 04:05:24 UTC] PHP Parse error:  syntax error, unexpected '->' (T_OBJECT_OPERATOR) in /home/binapile/dss.binapile.com/views/projlocarel/index.php on line 34
+[02-Feb-2020 04:42:37 UTC] PHP Fatal error:  Class 'app\controllers\Plant' not found in /home/binapile/dss.binapile.com/controllers/ProjlocarelController.php on line 160
+[05-Apr-2020 16:49:55 UTC] PHP Fatal error:  Class 'DateTimePicker' not found in /home/binapile/dss.binapile.com/themes/adminlte/views/site/report.php on line 232

@@ -47,13 +47,14 @@ class LocationController extends Controller
     /**
      * Displays a single Location model.
      * @param integer $id
+     * @param integer $plant_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($id, $plant_id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($id, $plant_id),
         ]);
     }
 
@@ -67,7 +68,7 @@ class LocationController extends Controller
         $model = new Location();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'id' => $model->id, 'plant_id' => $model->plant_id]);
         }
 
         return $this->render('create', [
@@ -79,15 +80,16 @@ class LocationController extends Controller
      * Updates an existing Location model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
+     * @param integer $plant_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $plant_id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($id, $plant_id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'id' => $model->id, 'plant_id' => $model->plant_id]);
         }
 
         return $this->render('update', [
@@ -99,12 +101,13 @@ class LocationController extends Controller
      * Deletes an existing Location model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
+     * @param integer $plant_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete($id, $plant_id)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($id, $plant_id)->delete();
 
         return $this->redirect(['index']);
     }
@@ -113,12 +116,13 @@ class LocationController extends Controller
      * Finds the Location model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
+     * @param integer $plant_id
      * @return Location the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id, $plant_id)
     {
-        if (($model = Location::findOne($id)) !== null) {
+        if (($model = Location::findOne(['id' => $id, 'plant_id' => $plant_id])) !== null) {
             return $model;
         }
 
