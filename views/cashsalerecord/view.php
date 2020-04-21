@@ -30,8 +30,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'batch_no',
             'delivery_order_no',
+            'batch_no',
             'm3',
             'summary_status',
             'date_created',

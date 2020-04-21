@@ -59,10 +59,10 @@ if($numItems2 != 0) {
     <?= '#' ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'6%']) ?>
-    <?= $form->field($model, 'batch_no')->textInput(['maxlength' => true,'value'=>$next_batch_no])->label(false) ?>
+    <?= $form->field($model, 'delivery_order_no')->textInput(['maxlength' => true,'value'=>$next_do_no])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'6%']) ?>
-    <?= $form->field($model, 'delivery_order_no')->textInput(['maxlength' => true,'value'=>$next_do_no])->label(false) ?>
+    <?= $form->field($model, 'batch_no')->textInput(['maxlength' => true,'value'=>$next_batch_no])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'18%']) ?>
     <?= $form->field($model, 'customer_id')->dropDownList(ArrayHelper::map(Customer::find()->where(['deleted' => 0])->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Customer Name', 'readonly' => !$model->isNewRecord, 'id'=>'customer-id'])->label(false) ?>

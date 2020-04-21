@@ -32,10 +32,10 @@ use yii\helpers\Url;
     <?= '#' ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'6%']) ?>
-    <?= $form->field($model2, 'batch_no')->textInput(['maxlength' => true])->label(false) ?>
+    <?= $form->field($model2, 'delivery_order_no')->textInput(['maxlength' => true])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'6%']) ?>
-    <?= $form->field($model2, 'delivery_order_no')->textInput(['maxlength' => true])->label(false) ?>
+    <?= $form->field($model2, 'batch_no')->textInput(['maxlength' => true])->label(false) ?>
     <?= Html::endTag('td') ?>
     <?= Html::beginTag('td', ['width'=>'18%']) ?>
     <?= $form->field($model2, 'customer_id')->dropDownList(ArrayHelper::map(Customer::find()->where(['deleted' => 0])->orderBy(['name' => 'ASC'])->all(), 'id', 'name'), ['prompt' => 'Customer Name', 'readonly' => !$model2->isNewRecord, 'id'=>'customer-id-cashsale'])->label(false) ?>

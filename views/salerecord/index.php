@@ -203,8 +203,8 @@ $this->title = 'Sale records';
         <thead class="thead-dark">
         <tr>
             <th>#</th>
-            <th>Batch No.</th>
             <th>D/O No.</th>
+            <th>Batch No.</th>
             <th>Customer Name</th>
             <th>Grade</th>
             <th>M3</th>
@@ -234,8 +234,8 @@ $this->title = 'Sale records';
                     ${'progressive_m3' . $i} += $record->m3;
                     echo '<tr style="background-color:' . $query[$i]["color_code"] . ';color:' . $text_color . ';">';
                     echo '<td>' . $count . '</td>';
-                    echo '<td>' . $record->batch_no . '</td>';
                     echo '<td>' . $record->delivery_order_no . '</td>';
+                    echo '<td>' . $record->batch_no . '</td>';
                     echo '<td>' . $record->customer->name . '</td>';
                     echo '<td>' . $record->grade->charac_strength28 . '</td>';
                     echo '<td>' . round($record->m3, 1) . '</td>';
@@ -334,8 +334,8 @@ onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . 
         </tr>
         <tr>
             <th>#</th>
-            <th>Batch No.</th>
             <th>D/O No.</th>
+            <th>Batch No.</th>
             <th>Customer Name</th>
             <th>Grade</th>
             <th>M3</th>
@@ -381,8 +381,8 @@ onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . 
                 ${'progressive_m3_cs' . $i} += $record->m3;
                 echo '<tr style="background-color:' . $color . ';color:' . $text_color . ';">';
                 echo '<td>' . $count_cashsale . '</td>';
-                echo '<td>' . $record->batch_no . '</td>';
                 echo '<td>' . $record->delivery_order_no . '</td>';
+                echo '<td>' . $record->batch_no . '</td>';
                 echo '<td>' . $record->customer->name . '</td>';
                 echo '<td>' . $record->grade->charac_strength28 . '</td>';
                 echo '<td>' . round($record->m3, 1) . '</td>';
