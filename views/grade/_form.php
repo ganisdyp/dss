@@ -28,8 +28,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'mix_design_for_cal')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'deleted')->textInput() ?>
-
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
