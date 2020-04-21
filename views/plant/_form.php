@@ -16,8 +16,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'description')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'deleted')->textInput() ?>
-
     <?= $form->field($model, 'plant_prefix')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group">

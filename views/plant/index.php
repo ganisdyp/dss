@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'plant_prefix',
 
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {update} ',
+                'template' => '{view} {update} {delete}',
                 'buttons' => [
                     'view' => function ($url, $model) {
                         $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
@@ -46,12 +46,17 @@ $this->params['breadcrumbs'][] = $this->title;
                             'title' => Yii::t('app', 'plant-update'),
                         ]);
                     },
-               /*     'delete' => function ($url, $model) {
+                    'delete' => function ($url, $model) {
                         $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
                             'title' => Yii::t('app', 'plant-delete'),
+                             'data' => [
+                                'confirm' => 'Are you sure you want to delete this item?',
+                                'method' => 'post',
+
+                            ],
                         ]);
-                    }*/
+                    }
 
                 ],],
         ],

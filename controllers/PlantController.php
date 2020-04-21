@@ -23,7 +23,7 @@ class PlantController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['GET','POST'],
                 ],
             ],
         ];
@@ -67,7 +67,7 @@ class PlantController extends Controller
         $model = new Plant();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view?id='.$model->id]);
         }
 
         return $this->render('create', [
@@ -87,7 +87,7 @@ class PlantController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view?id='.$model->id]);
         }
 
         return $this->render('update', [
@@ -104,9 +104,13 @@ class PlantController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        /*$this->findModel($id)->delete();
+        return $this->redirect(['index']);*/
+        $model = $this->findModel($id);
+        $model->deleted = 1;
+        if ($model->save()) {
+            return $this->redirect(['index']);
+        }
     }
 
     /**
