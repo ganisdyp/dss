@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 $this->title = 'Update Driver: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Drivers', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view?id='.$model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="driver-update">

@@ -151,8 +151,8 @@ $this->title = 'Sale records';
             <td colspan="2"><b>PLANT:</b><?php
                 if ($user_role != 1) { ?>
                     <?php $form = ActiveForm::begin(); ?>
-                    <?= $form->field($model, 'plant')->dropDownList(ArrayHelper::map(Plant::find()->where(['<>', 'id', 0])->all(), 'id', 'name'),
-                        ['prompt' => '-Plant-',
+                    <?= $form->field($model, 'plant')->dropDownList(ArrayHelper::map(Plant::find()->where(['<>', 'id', 0])->andWhere(['deleted' => 0])->all(), 'id', 'name'),
+                        [/*'prompt' => '-Plant-',*/
                             'onchange' => 'updateQueryStringParam("plant_id",this.value);'])->label(false) ?>
                     <?= $form->field($model, 'role_hidden')->hiddenInput(
                         ['value' => $user_role
@@ -221,8 +221,10 @@ $this->title = 'Sale records';
         <?php
         $total_m3 = 0;
         $count = 1;
+        $keep_salerecords = array();
+        $key = 0;
         foreach ($salerecords as $record) {
-
+            $keep_salerecords[$key] = $record;
             for ($i = 0; $i < count($query); $i++) {
 
                 if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
@@ -234,7 +236,20 @@ $this->title = 'Sale records';
                     ${'progressive_m3' . $i} += $record->m3;
                     echo '<tr style="background-color:' . $query[$i]["color_code"] . ';color:' . $text_color . ';">';
                     echo '<td>' . $count . '</td>';
-                    echo '<td>' . $record->delivery_order_no . '</td>';
+                    // Check DO No. (Skipped or not?)
+                    $current_DO = $record->delivery_order_no;
+                    if($key!=0) {
+                        $prev_index = $key - 1;
+                        $prev_obj = $keep_salerecords[$prev_index];
+                        if ($record->delivery_order_no - $prev_obj->delivery_order_no >1){
+                            echo '<td><p style="color:#ff0000;"><i class="fa fa-exclamation-circle"> skipped</i>' . $record->delivery_order_no . '</p></td>';
+                        }else {
+                            echo '<td>' . $record->delivery_order_no . '</td>';
+                        }
+                    }else{
+                        echo '<td>' . $record->delivery_order_no . '</td>';
+                    }
+
                     echo '<td>' . $record->batch_no . '</td>';
                     echo '<td>' . $record->customer->name . '</td>';
                     echo '<td>' . $record->grade->charac_strength28 . '</td>';
@@ -258,7 +273,9 @@ onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . 
 
             }
             $count++;
+        $key++;
         }
+
         ?>
         <tr style="font-weight:bold;">
             <td colspan="3"></td>
@@ -284,24 +301,24 @@ onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . 
 
         $count = 1;
 
-            for ($i = 0; $i < count($query); $i++) {
-               // foreach ($salerecords as $record) {
+        for ($i = 0; $i < count($query); $i++) {
+            // foreach ($salerecords as $record) {
 
-             //   if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
-                    if ($query[$i]["color_code"] == '#5D2E8C') {
-                        $text_color = '#eee';
-                    } else {
-                        $text_color = '#000000';
-                    }
-                    echo '<tr style="background-color:' . $query[$i]["color_code"] . ';color:' . $text_color . ';">';
-                    echo '<td>' . $count . '</td>';
-                    echo '<td>' . Customer::findOne(["id"=>$query[$i]["customer_id"]])->name . '</td>';
-                    echo '<td>' . Grade::findOne(["id"=>$query[$i]["grade_id"]])->name . '</td>';
-                    echo '<td>' . ${'progressive_m3' . $i} . '</td>';
-                    echo '<td>' . Project::findOne(["id"=>$query[$i]["project_id"]])->name . '</td>';
-                    echo '</tr>';
+            //   if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
+            if ($query[$i]["color_code"] == '#5D2E8C') {
+                $text_color = '#eee';
+            } else {
+                $text_color = '#000000';
+            }
+            echo '<tr style="background-color:' . $query[$i]["color_code"] . ';color:' . $text_color . ';">';
+            echo '<td>' . $count . '</td>';
+            echo '<td>' . Customer::findOne(["id" => $query[$i]["customer_id"]])->name . '</td>';
+            echo '<td>' . Grade::findOne(["id" => $query[$i]["grade_id"]])->name . '</td>';
+            echo '<td>' . ${'progressive_m3' . $i} . '</td>';
+            echo '<td>' . Project::findOne(["id" => $query[$i]["project_id"]])->name . '</td>';
+            echo '</tr>';
 
-           // }
+            // }
             $count++;
         }
         ?>
@@ -323,113 +340,121 @@ onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . 
             </div>
             <?php
         }
-    } ?>
-
-    <table class="table">
-        <thead class="thead-dark">
-        <tr>
-            <th colspan="13">
-                <h4><b>Cash Sale Summary</b></h4>
-            </th>
-        </tr>
-        <tr>
-            <th>#</th>
-            <th>D/O No.</th>
-            <th>Batch No.</th>
-            <th>Customer Name</th>
-            <th>Grade</th>
-            <th>M3</th>
-            <th>Progressive M3</th>
-            <th>Truck</th>
-            <th>Driver</th>
-            <th>Location</th>
-            <th>Special Condition</th>
-            <th>Remark</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php
-        $total_m3_cashsale = 0;
-        $count_cashsale = 1;
-        // print_r($cashsalerecords);
-        foreach ($cashsalerecords as $record) {
-            for ($i = 0; $i < count($query2); $i++) {
-                if ($query2[$i]["customer_id"] == $record->customer_id && $query2[$i]["grade_id"] == $record->grade_id && $query2[$i]["project_id"] == $record->project_id) {
-                    $color = $query2[$i]["color_code"];
+    }
+    if ($plant_id == 2){
+    ?>
+    <button id="cashsalerecordbtn" class="btn btn-link minus" type="button" data-toggle="collapse" data-target=".cashsalerecord-box" aria-expanded="true" aria-controls="cashsalerecord-box">
+       (+) Expand
+    </button>
+    <div class="cashsalerecord-box collapse" aria-expanded="false" style="height:0px;">
+        <table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th colspan="13">
+                    <h4><b>Cash Sale Summary</b></h4>
+                </th>
+            </tr>
+            <tr>
+                <th>#</th>
+                <th>D/O No.</th>
+                <th>Batch No.</th>
+                <th>Customer Name</th>
+                <th>Grade</th>
+                <th>M3</th>
+                <th>Progressive M3</th>
+                <th>Truck</th>
+                <th>Driver</th>
+                <th>Location</th>
+                <th>Special Condition</th>
+                <th>Remark</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php
+            $total_m3_cashsale = 0;
+            $count_cashsale = 1;
+            // print_r($cashsalerecords);
+            foreach ($cashsalerecords as $record) {
+                for ($i = 0; $i < count($query2); $i++) {
+                    if ($query2[$i]["customer_id"] == $record->customer_id && $query2[$i]["grade_id"] == $record->grade_id && $query2[$i]["project_id"] == $record->project_id) {
+                        $color = $query2[$i]["color_code"];
+                    }
                 }
-            }
-            for ($i = 0; $i < count($query); $i++) {
-                if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
-                    $color = $query[$i]["color_code"];
-                    break;
+                for ($i = 0; $i < count($query); $i++) {
+                    if ($query[$i]["customer_id"] == $record->customer_id && $query[$i]["grade_id"] == $record->grade_id && $query[$i]["project_id"] == $record->project_id) {
+                        $color = $query[$i]["color_code"];
+                        break;
+                    }
                 }
-            }
 
 
-            for ($i = 0; $i < count($query2); $i++) {
+                for ($i = 0; $i < count($query2); $i++) {
 
-                //  if ($query2[$i]["customer_id"] == $record->customer_id && $query2[$i]["grade_id"] == $record->grade_id && $query2[$i]["project_id"] == $record->project_id) {
+                    //  if ($query2[$i]["customer_id"] == $record->customer_id && $query2[$i]["grade_id"] == $record->grade_id && $query2[$i]["project_id"] == $record->project_id) {
 
-                //    $color = $color[$i]["color_code"];
+                    //    $color = $color[$i]["color_code"];
 
-                if ($color == '#5D2E8C') {
-                    $text_color = '#eee';
-                } else {
-                    $text_color = '#000000';
-                }
-                ${'progressive_m3_cs' . $i} += $record->m3;
-                echo '<tr style="background-color:' . $color . ';color:' . $text_color . ';">';
-                echo '<td>' . $count_cashsale . '</td>';
-                echo '<td>' . $record->delivery_order_no . '</td>';
-                echo '<td>' . $record->batch_no . '</td>';
-                echo '<td>' . $record->customer->name . '</td>';
-                echo '<td>' . $record->grade->charac_strength28 . '</td>';
-                echo '<td>' . round($record->m3, 1) . '</td>';
-                echo '<td>' . ${'progressive_m3_cs' . $i} . '</td>';
-                echo '<td>' . $record->truck->truck_no . '</td>';
-                echo '<td>' . $record->driver->name . '</td>';
-                echo '<td>' . $record->project->name . '</td>';
-                echo '<td>' . $record->special_condition . '</td>';
-                echo '<td>' . $record->remark . '</td>';
-                echo '<td><a href="delete?id=' . $record->id . '&plant_id=' . $record->plant_id . '&customer_id=' . $record->customer_id . '&grade_id=' . $record->grade_id . '">
+                    if ($color == '#5D2E8C') {
+                        $text_color = '#eee';
+                    } else {
+                        $text_color = '#000000';
+                    }
+                    ${'progressive_m3_cs' . $i} += $record->m3;
+                    echo '<tr style="background-color:' . $color . ';color:' . $text_color . ';">';
+                    echo '<td>' . $count_cashsale . '</td>';
+                    echo '<td>' . $record->delivery_order_no . '</td>';
+                    echo '<td>' . $record->batch_no . '</td>';
+                    echo '<td>' . $record->customer->name . '</td>';
+                    echo '<td>' . $record->grade->charac_strength28 . '</td>';
+                    echo '<td>' . round($record->m3, 1) . '</td>';
+                    echo '<td>' . ${'progressive_m3_cs' . $i} . '</td>';
+                    echo '<td>' . $record->truck->truck_no . '</td>';
+                    echo '<td>' . $record->driver->name . '</td>';
+                    echo '<td>' . $record->project->name . '</td>';
+                    echo '<td>' . $record->special_condition . '</td>';
+                    echo '<td>' . $record->remark . '</td>';
+                    echo '<td><a href="delete?id=' . $record->id . '&plant_id=' . $record->plant_id . '&customer_id=' . $record->customer_id . '&grade_id=' . $record->grade_id . '">
 <i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
-                echo '<td><a 
+                    echo '<td><a 
 onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . ',' . $record->truck->id . ',' . $record->driver->id . ',' . $record->project->id . ')" href="#">
 <i class="fa fa-refresh" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
-                echo '</tr>';
-                $total_m3_cashsale += round($record->m3, 2);
-                /* } else {*/
+                    echo '</tr>';
+                    $total_m3_cashsale += round($record->m3, 2);
+                    /* } else {*/
 
 //                }
 
+                }
+                $count_cashsale++;
             }
-            $count_cashsale++;
-        }
-        ?>
-        <tr style="font-weight:bold;">
-            <td colspan="3"></td>
-            <td colspan="1" style="text-align:center;">TOTAL</td>
-            <td colspan="1"><?= $total_m3_cashsale; ?></td>
-            <td>M3</td>
-        </tr>
-        </tbody>
-    </table>
+            ?>
+            <tr style="font-weight:bold;">
+                <td colspan="3"></td>
+                <td colspan="1" style="text-align:center;">TOTAL</td>
+                <td colspan="1"><?= $total_m3_cashsale; ?></td>
+                <td>M3</td>
+            </tr>
+            </tbody>
+        </table> <?php } ?>
+    </div>
 </div>
 
 <?php
 
 if ($user_role != 5) {
-    if ($display_button == true) { ?>
+    if ($display_button == true) {
+        if ($plant_id == 2) {
+            ?>
+            <div class="cashsalerecord-box collapse" aria-expanded="false" style="height:0px;">
+                <div class="cashsalerecord-create">
 
-        <div class="cashsalerecord-create">
-
-            <?= $this->render('/cashsalerecord/create', [
-                'model2' => $model2,
-            ]) ?>
-
-        </div>
-        <?php
+                    <?= $this->render('/cashsalerecord/create', [
+                        'model2' => $model2,
+                    ]) ?>
+                </div>
+            </div>
+        <?php }
         $form = ActiveForm::begin(['id' => 'confirm-form']); ?>
         <div class="row">
             <div class="col-md-3"></div>
@@ -575,10 +600,23 @@ function copyThisRowData(customer_id,grade_id,truck_id,driver_id,project_id){
     
     
 }
+
 JS;
 
 $script2 = <<< JS
 
+$(document).ready(function(){
+ $("#cashsalerecordbtn").on('click',function(){
+       var current_text = $("#cashsalerecordbtn").html();
+       if($("#cashsalerecordbtn").hasClass("minus")){
+        $("#cashsalerecordbtn").removeClass("minus").addClass("plus");
+        $("#cashsalerecordbtn").html("(-) Collapse");
+       }else if($("#cashsalerecordbtn").hasClass("plus")){
+            $("#cashsalerecordbtn").removeClass("plus").addClass("minus");
+        $("#cashsalerecordbtn").html("(+) Expand");
+       }
+    });
+ });
 
     var urlParamString = location.search.split("plant_id" + "=");
     if (urlParamString.length <= 1){
@@ -602,6 +640,8 @@ $script2 = <<< JS
         var date = urlParamString2[1].split("&");
         $("#salerecord-display_date").val(date);
     }
+    
+   
 /*$('#confirm-form').submit(function(e){
        e.preventDefault(); // dont submit multiple times
        $("#material-ending").submit(function(){

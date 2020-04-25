@@ -47,7 +47,7 @@ class Plant extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Plant Name',
             'description' => 'Description',
             'deleted' => 'Deleted',
             'plant_prefix' => 'Plant Prefix',

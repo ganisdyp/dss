@@ -68,8 +68,20 @@ class ProjlocarelController extends Controller
     {
         $project = new Project();
 
-        if ($project->load(Yii::$app->request->post()) && $project->save()) {
-            return $this->redirect(['projlocarel/create']);
+        if ($project->load(Yii::$app->request->post())) {
+            $new_project = $project->name;
+            $existence_p = Project::findOne(['name'=>$new_project,'deleted'=>0]);
+            if (isset($existence_p)) {
+                /*foreach($existence as $e){
+                    $eid = $e->id;
+                }
+                return $this->redirect(['customer/view?id='.$eid]);*/
+                return $this->redirect(['projlocarel/create']);
+            } else {
+                if($project->save()){
+                    return $this->redirect(['projlocarel/create']);
+                }
+            }
         }
 
         $location = new Location();

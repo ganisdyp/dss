@@ -50,6 +50,7 @@ class Salerecord extends \yii\db\ActiveRecord
             [['batch_no', 'delivery_order_no', 'plant_id', 'customer_id', 'grade_id', 'truck_id', 'driver_id', 'display_date', 'project_id'], 'required'],
             [['batch_no', 'delivery_order_no', 'plant_id', 'customer_id', 'grade_id', 'deleted', 'truck_id', 'driver_id', 'project_id'], 'integer'],
             [['m3'], 'number'],
+            ['m3', 'compare', 'operator'=>'>', 'compareValue'=>0],
             [['summary_status', 'special_condition', 'remark'], 'string'],
             [['date_created', 'display_date'], 'safe'],
             [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['customer_id' => 'id']],

@@ -17,10 +17,10 @@ if (Yii::$app->user->isGuest) {
     $default_filter_m = 'filter=' . date('Y-M');
     $default_filter_monthly_report = 'plant_id=0&filter=' . date('Y-M');
     $default_monthly_report = 'month=' . date('Y-M');
-    $default_filter_driver_report = 'plant_id=0&driver_id=0&filter=' . date('Y-M');
-    $default_filter_truckexpense_report = 'truck_id=0&month=' . date('Y-M');
+    $default_filter_driver_report = 'plant_id=1&driver_id=0&filter=' . date('Y-M');
+    $default_filter_truckexpense_report = 'truck_id=1&month=' . date('Y-M');
     if ($user_plant_id == 0) {
-        $default_filter_daily_salerecord = 'plant_id=0&date=' . date('Y-m-d');
+        $default_filter_daily_salerecord = 'plant_id=1&date=' . date('Y-m-d');
     } else {
         $default_filter_daily_salerecord = 'date=' . date('Y-m-d');
     }

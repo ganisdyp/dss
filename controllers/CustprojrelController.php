@@ -28,7 +28,7 @@ class CustprojrelController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['get'],
+                    'delete' => ['GET','POST'],
                 ],
             ],
             'access' => [
@@ -82,15 +82,13 @@ class CustprojrelController extends Controller
     /**
      * Displays a single Custprojrel model.
      * @param integer $rel_id
-     * @param integer $project_id
-     * @param integer $customer_id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($rel_id, $project_id, $customer_id)
+    public function actionView($rel_id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($rel_id, $project_id, $customer_id),
+            'model' => $this->findModel($rel_id),
         ]);
     }
 
@@ -104,14 +102,39 @@ class CustprojrelController extends Controller
 
         $project = new Project();
 
-        if ($project->load(Yii::$app->request->post()) && $project->save()) {
-            return $this->redirect(['custprojrel/create']);
+        if ($project->load(Yii::$app->request->post())) {
+            $new_project = $project->name;
+            $existence_p = Project::findOne(['name'=>$new_project,'deleted'=>0]);
+            if (isset($existence_p)) {
+                /*foreach($existence as $e){
+                    $eid = $e->id;
+                }
+                return $this->redirect(['customer/view?id='.$eid]);*/
+                return $this->redirect(['custprojrel/create']);
+            } else {
+                if($project->save()){
+                    return $this->redirect(['custprojrel/create']);
+                }
+            }
         }
 
         $customer = new Customer();
 
-        if ($customer->load(Yii::$app->request->post()) && $customer->save()) {
-            return $this->redirect(['custprojrel/create']);
+        if ($customer->load(Yii::$app->request->post())) {
+            $new_customer = $customer->name;
+            $existence_c = Customer::findOne(['name'=>$new_customer,'deleted'=>0]);
+            if (isset($existence_c)) {
+                /*foreach($existence as $e){
+                    $eid = $e->id;
+                }
+                return $this->redirect(['customer/view?id='.$eid]);*/
+                return $this->redirect(['custprojrel/create']);
+            } else {
+                if($customer->save()){
+                    return $this->redirect(['custprojrel/create']);
+                }
+            }
+
         }
 
         $model = new Custprojrel();
@@ -160,25 +183,27 @@ class CustprojrelController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($rel_id, $project_id, $customer_id)
+    public function actionDelete($rel_id)
     {
-        $this->findModel($rel_id, $project_id, $customer_id)->delete();
-
-        return $this->redirect(['index']);
+        /*$this->findModel($id)->delete();
+        return $this->redirect(['index']);*/
+        $model = $this->findModel($rel_id);
+        $model->deleted = 1;
+        if ($model->save()) {
+            return $this->redirect(['index']);
+        }
     }
 
     /**
      * Finds the Custprojrel model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $rel_id
-     * @param integer $project_id
-     * @param integer $customer_id
      * @return Custprojrel the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($rel_id, $project_id, $customer_id)
+    protected function findModel($rel_id)
     {
-        if (($model = Custprojrel::findOne(['rel_id' => $rel_id, 'project_id' => $project_id, 'customer_id' => $customer_id])) !== null) {
+        if (($model = Custprojrel::findOne(['rel_id' => $rel_id])) !== null) {
             return $model;
         }
 

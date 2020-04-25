@@ -23,7 +23,7 @@ class CustomerController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['GET','POST'],
                 ],
             ],
         ];
@@ -66,8 +66,17 @@ class CustomerController extends Controller
     {
         $model = new Customer();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($model->load(Yii::$app->request->post())) {
+            $new_customer = $model->name;
+            $customers = Customer::find()->where(['name' => $new_customer, 'deleted' => 0])->all();
+            if (isset($customers)) {
+                return $this->redirect(['index']);
+            } else {
+                if($model->save()){
+                    return $this->redirect(['index']);
+                }
+            }
+
         }
 
         return $this->render('create', [
@@ -104,9 +113,13 @@ class CustomerController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        /*$this->findModel($id)->delete();
+        return $this->redirect(['index']);*/
+        $model = $this->findModel($id);
+        $model->deleted = 1;
+        if ($model->save()) {
+            return $this->redirect(['index']);
+        }
     }
 
     /**

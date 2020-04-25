@@ -47,8 +47,8 @@ if($user_role!=1){
             <td colspan="2"><b>PLANT:</b><?php
                 if ($user_role != 1) { ?>
                     <?php $form = ActiveForm::begin(); ?>
-                    <?= $form->field($model, 'plant')->dropDownList(ArrayHelper::map(Plant::find()->where(['<>', 'id', 0])->all(), 'id', 'name'),
-                        ['prompt' => '-Plant-',
+                    <?= $form->field($model, 'plant')->dropDownList(ArrayHelper::map(Plant::find()->where(['<>', 'id', 0])->andWhere(['deleted'=>0])->all(), 'id', 'name'),
+                        [/*'prompt' => '-Plant-',*/
                             'onchange' => 'updateQueryStringParam("plant_id",this.value);'])->label(false) ?>
                     <?= $form->field($model, 'role_hidden')->hiddenInput(
                         ['value' => $user_role

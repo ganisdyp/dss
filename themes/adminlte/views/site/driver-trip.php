@@ -214,8 +214,8 @@ $this->title = 'DRIVER TRIP REPORT (' . strtoupper(Plant::findOne($plant_id)->na
         if ($user_role != 1) { ?>
             <?php
             $form = ActiveForm::begin(); ?>
-            <?= $form->field($model, 'plant')->dropDownList(ArrayHelper::map(Plant::find()->all(), 'id', 'name'),
-                ['prompt' => '-Plant-',
+            <?= $form->field($model, 'plant')->dropDownList(ArrayHelper::map(Plant::find()->where(['<>','id',0])->andWhere(['deleted'=>0])->all(), 'id', 'name'),
+                [/*'prompt' => '-Plant-',*/
                     'onchange' => 'updateQueryStringParam("plant_id",this.value);'])->label(false) ?>
 
             <?php ActiveForm::end();
@@ -249,7 +249,7 @@ $this->title = 'DRIVER TRIP REPORT (' . strtoupper(Plant::findOne($plant_id)->na
 echo '<br>';
         $form = ActiveForm::begin(); ?>
         <?= $form->field($model, 'driver')->dropDownList(ArrayHelper::map(Driver::find()->all(), 'id', 'name'),
-            ['prompt' => '-Driver-',
+            [/*'prompt' => '-Driver-',*/
                 'onchange' => 'updateQueryStringParam("driver_id",this.value);'])->label(false) ?>
 
         <?php ActiveForm::end(); ?>

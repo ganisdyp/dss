@@ -31,23 +31,22 @@ $this->params['breadcrumbs'][] = $this->title;
           //  'deleted',
             'customer.name',
             'project.name',
-            ['class' => 'yii\grid\ActionColumn', 'buttons' => [
+            ['class' => 'yii\grid\ActionColumn',  'template' => '{view} {delete}','buttons' => [
                 'view' => function ($url, $model) {
-                    $url = str_replace('/'.$model->rel_id,'?id='.$model->rel_id,$url);
+                    $url = str_replace('/'.$model->rel_id,'?rel_id='.$model->rel_id,$url);
                     return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
                         'title' => Yii::t('app', 'custprojrel-view'),
                     ]);
                 },
-                'update' => function ($url, $model) {
-                    $url = str_replace('/'.$model->rel_id,'?id='.$model->rel_id,$url);
-                    return Html::a('<span class="glyphicon glyphicon-pencil"></span>', $url, [
-                        'title' => Yii::t('app', 'custprojrel-update'),
-                    ]);
-                },
                 'delete' => function ($url, $model) {
-                    $url = str_replace('/'.$model->rel_id,'?id='.$model->rel_id,$url);
+                    $url = str_replace('/'.$model->rel_id,'?rel_id='.$model->rel_id,$url);
                     return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
                         'title' => Yii::t('app', 'custprojrel-delete'),
+                        'data' => [
+                            'confirm' => 'Are you sure you want to delete this item?',
+                            'method' => 'post',
+
+                        ],
                     ]);
                 }
 

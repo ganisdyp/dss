@@ -43,6 +43,7 @@ class Cashsalerecord extends \yii\db\ActiveRecord
             [['batch_no', 'delivery_order_no', 'plant_id', 'customer_id', 'grade_id', 'truck_id', 'driver_id', 'display_date', 'project_id'], 'required'],
             [['batch_no', 'plant_id', 'customer_id', 'grade_id', 'deleted', 'truck_id', 'driver_id', 'project_id'], 'integer'],
             [['m3'], 'number'],
+            ['m3', 'compare', 'operator'=>'>', 'compareValue'=>0],
             [['delivery_order_no','summary_status', 'special_condition', 'remark'], 'string'],
             [['date_created', 'display_date'], 'safe'],
             [['delivery_order_no'], 'string', 'max' => 100],

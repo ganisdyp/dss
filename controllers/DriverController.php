@@ -23,7 +23,7 @@ class DriverController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['GET','POST'],
                 ],
             ],
         ];
@@ -67,7 +67,7 @@ class DriverController extends Controller
         $model = new Driver();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view?id='.$model->id]);
         }
 
         return $this->render('create', [
@@ -87,7 +87,7 @@ class DriverController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view?id='.$model->id]);
         }
 
         return $this->render('update', [

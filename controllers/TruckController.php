@@ -23,7 +23,7 @@ class TruckController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['GET'],
+                    'delete' => ['GET','POST'],
                 ],
             ],
         ];
@@ -67,7 +67,7 @@ class TruckController extends Controller
         $model = new Truck();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view?id='.$model->id]);
         }
 
         return $this->render('create', [
@@ -87,7 +87,7 @@ class TruckController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view?id='.$model->id]);
         }
 
         return $this->render('update', [

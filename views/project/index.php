@@ -45,12 +45,17 @@ $this->params['breadcrumbs'][] = $this->title;
                             'title' => Yii::t('app', 'project-update'),
                         ]);
                     },
-                 /*   'delete' => function ($url, $model) {
+                    'delete' => function ($url, $model) {
                         $url = str_replace('/'.$model->id,'?id='.$model->id,$url);
                         return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
                             'title' => Yii::t('app', 'project-delete'),
+                            'data' => [
+                                'confirm' => 'Are you sure you want to delete this item?',
+                                'method' => 'post',
+
+                            ],
                         ]);
-                    }*/
+                    }
 
                 ],
 

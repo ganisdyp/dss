@@ -33,6 +33,7 @@ class Truck extends \yii\db\ActiveRecord
             [['truck_no'], 'required'],
             [['remark'], 'string'],
             [['truck_no'], 'string', 'max' => 100],
+            [['truck_no'], 'unique'],
         ];
     }
 

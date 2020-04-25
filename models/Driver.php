@@ -30,12 +30,11 @@ class Driver extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'name'], 'required'],
-            [['id'], 'integer'],
+            [['name'], 'required'],
             [['remark'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['employee_id'], 'string', 'max' => 45],
-            [['id'], 'unique'],
+            [['name'], 'unique'],
         ];
     }
 
