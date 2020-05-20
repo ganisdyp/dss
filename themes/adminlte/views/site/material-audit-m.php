@@ -238,7 +238,7 @@ $this->title = 'MONTHLY MATERIAL AUDIT REPORT (' . strtoupper(Plant::findOne($pl
                 </thead>
                 <tbody>
                 <?php
-                foreach (Plant::find()->where(['<>', 'id', 0])->all() as $plant) {
+                foreach (Plant::find()->where(['<>', 'id', 0])->where(['deleted'=>0])->all() as $plant) {
                     $plant_id = $plant->id;
                     $total_material_need = 0;
                     $total_actual_use = 0;

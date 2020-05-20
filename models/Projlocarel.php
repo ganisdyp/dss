@@ -18,8 +18,6 @@ class Projlocarel extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public $project;
-
     public static function tableName()
     {
         return 'proj_loca_rel';

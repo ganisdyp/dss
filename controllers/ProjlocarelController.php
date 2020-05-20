@@ -25,7 +25,7 @@ class ProjlocarelController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['GET','POST'],
                 ],
             ],
         ];
@@ -93,7 +93,7 @@ class ProjlocarelController extends Controller
         $model = new Projlocarel();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->rel_id]);
+            return $this->redirect(['view?id='.$model->rel_id]);
         }
 
         return $this->render('create', [

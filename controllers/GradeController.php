@@ -66,7 +66,17 @@ class GradeController extends Controller
     {
         $model = new Grade();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $new_grade= $model->name;
+            $existence_g = Grade::findOne(['name'=>$new_grade,'deleted'=>0]);
+            if (isset($existence_g)) {
+                Yii::$app->session->setFlash('warning', $existence_g->name.' does exist! Please review information & update below record instead..');
+                return $this->redirect(['grade/view?id='.$existence_g->id]);
+            } else {
+                if($model->save()){
+                    return $this->redirect(['grade/index']);
+                }
+            }
             return $this->redirect(['view?id='.$model->id]);
         }
 

@@ -89,7 +89,7 @@ class LocationController extends Controller
         $model = $this->findModel($id, $plant_id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id, 'plant_id' => $model->plant_id]);
+            return $this->redirect(['view?id='.$model->id.'&plant_id='.$model->plant_id]);
         }
 
         return $this->render('update', [

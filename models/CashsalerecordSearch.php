@@ -64,7 +64,7 @@ class CashsalerecordSearch extends Cashsalerecord
         //  $query = Salerecord::find()->where(['display_date'=>date('Y-m-d'),'deleted'=>0])->orderBy(['plant_id'=>'asc','customer_id'=>'asc','grade_id'=>'asc','location_id'=>'asc','batch_no'=>'asc']);
 
         if($summary_status == null) {
-            $query = Cashsalerecord::find()->where(['display_date' => $date, 'deleted' => 0, 'plant_id' => $plant_id])->orderBy(['batch_no' => 'asc', 'plant_id' => 'asc', 'customer_id' => 'asc', 'grade_id' => 'asc', 'project_id' => 'asc']);
+            $query = Cashsalerecord::find()->where(['display_date' => $date, 'deleted' => 0, 'plant_id' => $plant_id])->orderBy(['delivery_order_no' => 'asc', 'plant_id' => 'asc', 'customer_id' => 'asc', 'grade_id' => 'asc', 'project_id' => 'asc']);
         }else{
             $query = Cashsalerecord::find()->where(['display_date'=>$date,'deleted'=>0,'plant_id'=>$plant_id,'summary_status'=>$summary_status])->orderBy(['batch_no'=>'asc','plant_id'=>'asc','customer_id'=>'asc','grade_id'=>'asc','project_id'=>'asc']);
 

@@ -36,7 +36,7 @@ class Grade extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'charac_strength28', 'cement_type', 'specified_slump', 'coarse_agg_type', 'fine_agg_type', 'admixture', 'mix_design_for_cal'], 'required'],
+            [['name', 'charac_strength28', 'cement_type', 'specified_slump', 'coarse_agg_type', 'fine_agg_type', 'admixture'], 'required'],
             [['mix_design_for_cal'], 'number'],
             [['deleted'], 'integer'],
             [['name', 'charac_strength28', 'cement_type', 'specified_slump', 'coarse_agg_type', 'fine_agg_type', 'admixture'], 'string', 'max' => 100],

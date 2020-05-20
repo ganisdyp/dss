@@ -13,10 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="projlocarel-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->rel_id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->rel_id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -30,8 +27,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'rel_id',
-            'location_id',
-            'project_id',
+            'location.name',
+            ['label'=>'Project',
+                'value' => function($model){
+        return $model->project->name;
+                }
+
+],
             'date_assigned',
             'deleted',
         ],

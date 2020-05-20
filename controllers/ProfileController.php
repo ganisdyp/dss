@@ -120,6 +120,8 @@ class ProfileController extends Controller
             if ($oldPass != $user->password_hash) {
                 $newPass = $user->password_hash;
                 $user->password_hash = Yii::$app->security->generatePasswordHash($user->password_hash);
+            }else{
+                $newPass = $user->password_hash;
             }
             if ($user->save()) {
                /* $file = UploadedFile::getInstance($model, 'profile_img');
@@ -131,7 +133,7 @@ class ProfileController extends Controller
                 $model->save();
             }
 
-            return $this->redirect(['view', 'id' => $model->id, 'user_id' => $model->user_id]);
+            return $this->redirect(['view?id='.$model->id.'&user_id='.$model->user_id]);
         } else {
             return $this->render('update', [
                 'model' => $model,

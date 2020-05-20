@@ -40,8 +40,11 @@ class ProjlocarelSearch extends Projlocarel
      */
     public function search($params)
     {
-        $query = Projlocarel::find();
-
+     /*   $query = Projlocarel::find();*/
+        $query = Projlocarel::find()->innerJoin('location','proj_loca_rel.location_id = location.id')
+            ->innerJoin('project','proj_loca_rel.project_id = project.id')
+            ->where(['location.deleted'=>0,'project.deleted'=>0,'proj_loca_rel.deleted'=>0])
+            ->orderBy('project.name');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

@@ -162,8 +162,8 @@ $this->title = 'DAILY MATERIAL AUDIT REPORT (' . strtoupper(Plant::findOne($plan
         if ($user_role != 1) { ?>
             <?php
             $form = ActiveForm::begin(); ?>
-            <?= $form->field($model, 'plant')->dropDownList(ArrayHelper::map(Plant::find()->all(), 'id', 'name'),
-                ['prompt' => '-Plant-',
+            <?= $form->field($model, 'plant')->dropDownList(ArrayHelper::map(Plant::find()->where(['deleted'=>0])->all(), 'id', 'name'),
+                [
                     'onchange' => 'updateQueryStringParam("plant_id",this.value);'])->label(false) ?>
 
             <?php ActiveForm::end();
