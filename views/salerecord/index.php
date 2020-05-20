@@ -255,15 +255,27 @@ $this->title = 'Sale records';
                     echo '<td>' . $record->grade->charac_strength28 . '</td>';
                     echo '<td>' . round($record->m3, 1) . '</td>';
                     echo '<td>' . ${'progressive_m3' . $i} . '</td>';
-                    echo '<td>' . $record->truck->truck_no . '</td>';
-                    echo '<td>' . $record->driver->name . '</td>';
+                    if(isset($record->truck)) {
+                        echo '<td>' . $record->truck->truck_no . '</td>';
+                        $truck_info = $record->truck->id;
+                    }else{
+                        echo '<td>-----</td>';
+                        $truck_info = 0;
+                    }
+                    if(isset($record->driver)) {
+                        echo '<td>' . $record->driver->name . '</td>';
+                        $driver_info = $record->driver->id;
+                    }else{
+                        echo '<td>-----</td>';
+                        $driver_info = 0;
+                    }
                     echo '<td>' . $record->project->name . '</td>';
                     echo '<td>' . $record->special_condition . '</td>';
                     echo '<td>' . $record->remark . '</td>';
                     echo '<td><a href="delete?id=' . $record->id . '&plant_id=' . $record->plant_id . '&customer_id=' . $record->customer_id . '&grade_id=' . $record->grade_id . '">
 <i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
                     echo '<td><a 
-onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . ',' . $record->truck->id . ',' . $record->driver->id . ',' . $record->project->id . ')" href="#">
+onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . ',' . $truck_info . ',' . $driver_info . ',' . $record->project->id . ')" href="#">
 <i class="fa fa-refresh" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
                     echo '</tr>';
                     $total_m3 += round($record->m3, 2);
@@ -409,15 +421,27 @@ onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . 
                     echo '<td>' . $record->grade->charac_strength28 . '</td>';
                     echo '<td>' . round($record->m3, 1) . '</td>';
                     echo '<td>' . ${'progressive_m3_cs' . $i} . '</td>';
-                    echo '<td>' . $record->truck->truck_no . '</td>';
-                    echo '<td>' . $record->driver->name . '</td>';
+                    if(isset($record->truck)) {
+                        echo '<td>' . $record->truck->truck_no . '</td>';
+                        $truck_info = $record->truck->id;
+                    }else{
+                        echo '<td>-----</td>';
+                        $truck_info = 0;
+                    }
+                    if(isset($record->driver)) {
+                        echo '<td>' . $record->driver->name . '</td>';
+                        $driver_info = $record->driver->id;
+                    }else{
+                        echo '<td>-----</td>';
+                        $driver_info = 0;
+                    }
                     echo '<td>' . $record->project->name . '</td>';
                     echo '<td>' . $record->special_condition . '</td>';
                     echo '<td>' . $record->remark . '</td>';
                     echo '<td><a href="delete?id=' . $record->id . '&plant_id=' . $record->plant_id . '&customer_id=' . $record->customer_id . '&grade_id=' . $record->grade_id . '">
 <i class="fa fa-trash" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
                     echo '<td><a 
-onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . ',' . $record->truck->id . ',' . $record->driver->id . ',' . $record->project->id . ')" href="#">
+onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . ',' . $truck_info . ',' . $driver_info . ',' . $record->project->id . ')" href="#">
 <i class="fa fa-refresh" aria-hidden="true" style="font-size:16pt;"></i></a></td>';
                     echo '</tr>';
                     $total_m3_cashsale += round($record->m3, 2);
@@ -438,7 +462,7 @@ onclick="copyThisRowData(' . $record->customer->id . ',' . $record->grade->id . 
             </tbody>
         </table> <?php } ?>
     </div>
-</div>
+
 
 <?php
 
@@ -553,9 +577,9 @@ if ($user_role != 5) {
         <?= Html::submitButton('Edit summary', ['class' => 'btn btn-success']) ?>
         <?php ActiveForm::end();
     }
-}
-
-
+} ?>
+</div>
+<?php
 $script = <<< JS
 
  function updateQueryStringParam (key, value) {
